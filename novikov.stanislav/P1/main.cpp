@@ -1,77 +1,68 @@
 #include <iostream>
 #include <limits>
 
-namespace novikov
+int main()
 {
-  int processSequence(std::istream& in, std::ostream& out, std::ostream& err)
+  const int code_invalid_input = 1;
+  const int code_too_long = 2;
+  const unsigned long long initial_len = 1;
+  const unsigned long long max_value = std::numeric_limits< unsigned long long >::max();
+
+  long long current = 0;
+  if (!(std::cin >> current))
   {
-    const int code_invalid_input = 1;
-    const int code_too_long = 2;
-    const unsigned long long initial_len = 1;
-    const unsigned long long max_value = std::numeric_limits< unsigned long long >::max();
+    std::cerr << "Error: invalid input data\n";
+    return code_invalid_input;
+  }
 
-    long long current = 0;
-    if (!(in >> current))
-    {
-      err << "Error: invalid input data" << std::endl;
-      return code_invalid_input;
-    }
+  if (current == 0)
+  {
+    std::cout << 0 << "\n";
+    return 0;
+  }
 
+  long long previous = current;
+  unsigned long long current_len = initial_len;
+  unsigned long long max_len = initial_len;
+
+  while (std::cin >> current)
+  {
     if (current == 0)
     {
-      out << 0 << std::endl;
-      return 0;
+      break;
     }
 
-    long long prev = current;
-    unsigned long long current_len = initial_len;
-    unsigned long long max_len = initial_len;
-
-    while (in >> current)
+    if (current <= previous)
     {
-      if (current == 0)
+      if (current_len < max_value)
       {
-        break;
-      }
-
-      if (current <= prev)
-      {
-        if (current_len < max_value)
-        {
-          current_len++;
-        }
+        current_len++;
       }
       else
       {
-        current_len = initial_len;
+        std::cerr << "Error: current_len exceeded maximum value.\n";
+        return code_too_long;
       }
-
-      if (current_len > max_len)
-      {
-        max_len = current_len;
-      }
-
-      prev = current;
     }
-
-    if (in.fail())
+    else
     {
-      err << "Error: invalid input sequence" << std::endl;
-      return code_invalid_input;
+      current_len = initial_len;
     }
 
-    if (max_len == max_value)
+    if (current_len > max_len)
     {
-      err << "Error: sequence is too long" << std::endl;
-      return code_too_long;
+      max_len = current_len;
     }
 
-    out << max_len << std::endl;
-    return 0;
+    previous = current;
   }
-}
 
-int main()
-{
-  return novikov::processSequence(std::cin, std::cout, std::cerr);
+  if (std::cin.fail())
+  {
+    std::cerr << "Error: invalid input sequence\n";
+    return code_invalid_input;
+  }
+
+  std::cout << max_len << "\n";
+  return 0;
 }
