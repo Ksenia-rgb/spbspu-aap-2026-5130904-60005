@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/nikita/spbspu-aap-2026-5130904-60005/laptev.nikita/P0/main'
+relocations:     []
+...
