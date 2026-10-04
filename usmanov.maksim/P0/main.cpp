@@ -1,7 +1,1 @@
-#include <iostream>
-
-int main() 
-{
-    std::cout << "usmanov.maksim" << std::endl;
-    return 0;
-}
+#include <iostream> int main() { std::cout << "usmanov.maksim" << std::endl; return 0; }
