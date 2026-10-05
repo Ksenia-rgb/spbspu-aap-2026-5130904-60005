@@ -1,6 +1,7 @@
 #include <iostream>
 
-bool f(long long int a, long long int b, long long int c) {
+bool f(long long int a, long long int b, long long int c)
+{
   const long long int aq = a * a;
   const long long int bq = b * b;
   const long long int cq = c * c;
@@ -11,7 +12,8 @@ bool f(long long int a, long long int b, long long int c) {
   return true;
 }
 
-int main() {
+int main()
+{
   const int min_required_args = 3;
   const int error_exit_code_2 = 2;
 
