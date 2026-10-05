@@ -1,7 +1,6 @@
 #include <iostream>
 
 bool f(long long int a, long long int b, long long int c) {
-  
   const long long int aq = a * a;
   const long long int bq = b * b;
   const long long int cq = c * c;
