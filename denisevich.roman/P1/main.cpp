@@ -3,19 +3,22 @@
 #include <limits>
 int func()
 {
+  const int err1 = 1;
+  const int err2 = 2;
+  const int err0 = 0;
   int max_val = std::numeric_limits< int >::max();
   int a = 0;
   int i = 0;
   int count = 1;
   std::cin >> a;
   if (std::cin.fail() && !std::cin.eof()) {
-    throw 1;
+    throw err1;
   } else if (std::cin.eof()) {
-    throw 2;
+    throw err2;
   }
   if (a == 0) {
     std::cout << 0;
-    return 0;
+    return err0;
   }
   int c = a;
   while (a != 0) {
@@ -29,16 +32,17 @@ int func()
     std::cin >> a;
     count++;
     if (count == max_val) {
-      throw 2;
+      throw err2;
     }
     if (std::cin.fail()) {
-      throw 1;
+      throw err1;
     }
   }
   return i;
 }
 int main()
 {
+  int nole = 0;
   int two = 2;
   int one = 1;
   try {
@@ -55,5 +59,5 @@ int main()
       return error2;
     }
   }
-  return 0;
+  return nole;
 }
