@@ -44,11 +44,13 @@ int main()
     std::cout << res << "\n";
   } catch (int k) {
     if (k == 1) {
+      int error1 = 1;
       std::cerr << "Error" << "\n";
-      return 1;
+      return error1;
     } else if (k == 2) {
+      int error2 = 2;
       std::cerr << "The length is incorrect" << "\n";
-      return 2;
+      return error2;
     }
   }
   return 0;
