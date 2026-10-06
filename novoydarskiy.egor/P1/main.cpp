@@ -2,6 +2,7 @@
 
 int main()
 {
+  const int divisor = 2;
   long long num = 0, max_count = 0, current_count = 0;
   while (true) {
     std::cin >> num;
@@ -12,7 +13,7 @@ int main()
     if (num == 0) {
       break;
     }
-    if (num % 2 == 0) {
+    if (num % divisor == 0) {
       current_count++;
       if (current_count > max_count) {
         max_count = current_count;
