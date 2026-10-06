@@ -39,15 +39,17 @@ int func()
 }
 int main()
 {
+  int two = 2;
+  int one = 1;
   try {
     int res = func();
     std::cout << res << "\n";
   } catch (int k) {
-    if (k == 1) {
+    if (k == one) {
       int error1 = 1;
       std::cerr << "Error" << "\n";
       return error1;
-    } else if (k == 2) {
+    } else if (k == two) {
       int error2 = 2;
       std::cerr << "The length is incorrect" << "\n";
       return error2;
