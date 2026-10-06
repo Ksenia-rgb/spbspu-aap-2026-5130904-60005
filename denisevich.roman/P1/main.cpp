@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stdexcept>
 #include <limits>
 int func()
 {
@@ -9,7 +8,7 @@ int func()
   const int max_val = std::numeric_limits< int >::max();
   int a = 0;
   int count = 1;
-  int i=0;
+  int i = 0;
   std::cin >> a;
   if (std::cin.fail() && !std::cin.eof()) {
     throw err1;
