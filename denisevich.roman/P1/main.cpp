@@ -6,10 +6,10 @@ int func()
   const int err1 = 1;
   const int err2 = 2;
   const int err0 = 0;
-  int max_val = std::numeric_limits< int >::max();
+  const int max_val = std::numeric_limits< int >::max();
   int a = 0;
-  int i = 0;
   int count = 1;
+  int i=0;
   std::cin >> a;
   if (std::cin.fail() && !std::cin.eof()) {
     throw err1;
@@ -42,19 +42,19 @@ int func()
 }
 int main()
 {
-  int nole = 0;
-  int two = 2;
-  int one = 1;
+  const int nole = 0;
+  const int two = 2;
+  const int one = 1;
   try {
-    int res = func();
+    const int res = func();
     std::cout << res << "\n";
   } catch (int k) {
     if (k == one) {
-      int error1 = 1;
+      const int error1 = 1;
       std::cerr << "Error" << "\n";
       return error1;
     } else if (k == two) {
-      int error2 = 2;
+      const int error2 = 2;
       std::cerr << "The length is incorrect" << "\n";
       return error2;
     }
