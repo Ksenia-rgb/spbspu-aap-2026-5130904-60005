@@ -2,7 +2,7 @@
 
 int main()
 {
-  int count = 1, count_pr = 0, count_pos = 0, cnt = 0;
+  int count = 1, count_pr = 0, count_pos = 0, cnt1 = 0, cnt2 = 0;
   bool has_pr = false;
   while (count != 0) {
     std::cin >> count;
@@ -19,10 +19,13 @@ int main()
     }
     if (count_pos != 0 && count_pr != 0) {
       if (count_pos > count_pr) {
-        cnt++;
+        cnt1++;
+      }
+      if ((count_pr < 0 && count_pos > 0) || (count_pr > 0 && count_pos < 0)) {
+        cnt2++;
       }
     }
   }
-  std::cout << cnt << "\n";
+  std::cout << cnt1 << "\n" << cnt2 << "\n";
   return 0;
 }
