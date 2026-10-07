@@ -51,8 +51,7 @@ int main()
 
       if (value != 0) {
         if (size >= k_max_len) {
-          throw std::out_of_range(
-              "Bro, length of arr must belong to the interval");
+          throw std::out_of_range("Bro, length of arr must belong to the interval");
         }
 
         arr[size] = value;
@@ -67,8 +66,7 @@ int main()
     }
 
     if (size >= k_min_len_for_local_max) {
-      std::cout << "Count of local maximums: " << countLocalMax(arr, size)
-                << std::endl;
+      std::cout << "Count of local maximums: " << countLocalMax(arr, size) << std::endl;
     } else {
       throw std::out_of_range("Bro, length of arr must belong to the interval");
     }
