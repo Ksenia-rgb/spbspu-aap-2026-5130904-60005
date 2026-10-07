@@ -1,26 +1,26 @@
 #include <iostream>
 #include <stdexcept>
 
-const int kMaxLen = 10000;
-const int kMinLenForLocalMax = 3;
+const int k_max_len = 10000;
+const int k_min_len_for_local_max = 3;
 
 int findMax(const int *arr, const int len) {
   if (len < 1) {
     throw std::out_of_range("Bro, length of arr must belong to the interval");
   }
 
-  int maxValue = arr[0];
+  int max_value = arr[0];
   for (int i = 0; i < len; ++i) {
-    if (maxValue < arr[i]) {
-      maxValue = arr[i];
+    if (max_value < arr[i]) {
+      max_value = arr[i];
     }
   }
 
-  return maxValue;
+  return max_value;
 }
 
 int countLocalMax(const int *arr, const int len) {
-  if (len < kMinLenForLocalMax) {
+  if (len < k_min_len_for_local_max) {
     throw std::out_of_range("Bro, length of arr must belong to the interval");
   }
 
@@ -35,7 +35,7 @@ int countLocalMax(const int *arr, const int len) {
 }
 
 int main() {
-  int arr[kMaxLen];
+  int arr[k_max_len];
   int size = 0;
   int value = -1;
 
@@ -47,7 +47,7 @@ int main() {
       }
 
       if (value != 0) {
-        if (size >= kMaxLen) {
+        if (size >= k_max_len) {
           throw std::out_of_range(
               "Bro, length of arr must belong to the interval");
         }
@@ -63,7 +63,7 @@ int main() {
       throw std::out_of_range("Bro, length of arr must belong to the interval");
     }
 
-    if (size >= kMinLenForLocalMax) {
+    if (size >= k_min_len_for_local_max) {
       std::cout << "Count of local maximums: " << countLocalMax(arr, size)
                 << std::endl;
     } else {
