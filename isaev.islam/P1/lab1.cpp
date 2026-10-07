@@ -1,56 +1,86 @@
 #include <iostream>
 
-bool f(long long int a, long long int b, long long int c)
-{
-  const long long int aq = a * a;
-  const long long int bq = b * b;
-  const long long int cq = c * c;
-
-  if (!((aq + bq) == cq)) {
-    return false;
+namespace sequence_processing {
+  bool is_increasing(long long int current, long long int next_val)
+  {
+    return next_val > current;
   }
-  return true;
+
+  bool is_between(long long int prev, long long int curr, long long int next_val)
+  {
+    return (curr < prev) && (curr > next_val);
+  }
 }
 
 int main()
 {
-  const int min_required_args = 3;
+  const int error_exit_code_1 = 1;
   const int error_exit_code_2 = 2;
+  const int min_elements_for_grt_lss = 3;
 
   long long int a = 0;
   long long int b = 0;
   long long int c = 0;
-  int args = 0;
-  int tri = 0;
+
+  int current_length = 0;
+  int max_length = 0;
+  int total_elements = 0;
+  int grt_lss_count = 0;
 
   if (!(std::cin >> a)) {
-    std::cerr << "Ошибка ввода" << std::endl;
-    return 1;
+    std::cerr << "неверный формат данных" << std::endl;
+    return error_exit_code_1;
   }
+
   if (a == 0) {
-    std::cerr << "Мало значений" << std::endl;
-    return error_exit_code_2;
+    std::cout << 0 << std::endl;
+    std::cout << 0 << std::endl;
+    return 0;
   }
-  args++;
+
+  total_elements++;
+  current_length = 1;
+  max_length = 1;
 
   if (!(std::cin >> b)) {
-    std::cerr << "Ошибка ввода" << std::endl;
-    return 1;
+    std::cerr << "неверный формат данных" << std::endl;
+    return error_exit_code_1;
   }
+
   if (b == 0) {
-    std::cerr << "Мало значений" << std::endl;
+    std::cout << max_length << std::endl;
+    std::cerr << "мало элементов для второй характеристики" << std::endl;
     return error_exit_code_2;
   }
-  args++;
+
+  total_elements++;
+  if (sequence_processing::is_increasing(a, b)) {
+    current_length++;
+  } else {
+    current_length = 1;
+  }
+  if (current_length > max_length) {
+    max_length = current_length;
+  }
 
   while (std::cin >> c) {
     if (c == 0) {
       break;
     }
-    args++;
+    total_elements++;
 
-    if (f(a, b, c)) {
-      tri += 1;
+    if (sequence_processing::is_increasing(b, c)) {
+      current_length++;
+    } else {
+      current_length = 1;
+    }
+
+    if (current_length > max_length) {
+      max_length = current_length;
+    }
+
+    if (sequence_processing::is_between(a, b, c)) {
+      grt_lss_count++;
     }
 
     a = b;
@@ -58,15 +88,17 @@ int main()
   }
 
   if (!std::cin && c != 0) {
-    std::cerr << "Ошибка ввода" << std::endl;
-    return 1;
+    std::cerr << "неккоретные символы в потоке" << std::endl;
+    return error_exit_code_1;
   }
-  if (args < min_required_args) {
-    std::cerr << "Мало значений" << std::endl;
+
+  std::cout << max_length << std::endl;
+
+  if (total_elements < min_elements_for_grt_lss) {
+    std::cerr << "мало элементов для второй характеристики" << std::endl;
     return error_exit_code_2;
   }
 
-  std::cout << args << std::endl;
-  std::cout << tri << std::endl;
+  std::cout << grt_lss_count << std::endl;
   return 0;
 }
