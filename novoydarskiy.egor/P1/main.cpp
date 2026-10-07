@@ -46,13 +46,13 @@ int main()
     ++len_of_seq;
   }
 
-  std::cout << "Результат расчета характеристики №14: " << max_count << std::endl;
+  std::cout << "Характеристика №14: " << max_count << std::endl;
 
   if (len_of_seq < min_len) {
-    std::cerr << "Последовательность слишком короткая для расчета характеристики №11";
+    std::cerr << "Последовательность слишком короткая";
     return len_error;
   }
 
-  std::cout << "Результат расчета характеристики №11: " << count_of_del << std::endl;
+  std::cout << "Характеристика №11: " << count_of_del << std::endl;
   return good;
 }
