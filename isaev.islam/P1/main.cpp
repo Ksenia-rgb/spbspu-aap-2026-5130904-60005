@@ -1,12 +1,12 @@
 #include <iostream>
 
 namespace sequence_processing {
-  bool is_increasing(long long int current, long long int next_val)
+  bool increasing(long long int current, long long int next_val)
   {
     return next_val > current;
   }
 
-  bool is_between(long long int prev, long long int curr, long long int next_val)
+  bool between(long long int prev, long long int curr, long long int next_val)
   {
     return (curr < prev) && (curr > next_val);
   }
@@ -54,7 +54,7 @@ int main()
   }
 
   total_elements++;
-  if (sequence_processing::is_increasing(a, b)) {
+  if (sequence_processing::increasing(a, b)) {
     current_length++;
   } else {
     current_length = 1;
@@ -69,7 +69,7 @@ int main()
     }
     total_elements++;
 
-    if (sequence_processing::is_increasing(b, c)) {
+    if (sequence_processing::increasing(b, c)) {
       current_length++;
     } else {
       current_length = 1;
@@ -79,7 +79,7 @@ int main()
       max_length = current_length;
     }
 
-    if (sequence_processing::is_between(a, b, c)) {
+    if (sequence_processing::between(a, b, c)) {
       grt_lss_count++;
     }
 
