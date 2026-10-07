@@ -1,12 +1,12 @@
 #include <iostream>
 
 namespace sequence_processing {
-  bool is_increasing(long long int current, long long int next_val)
+  const bool is_increasing(long long int current, long long int next_val)
   {
     return next_val > current;
   }
 
-  bool is_between(long long int prev, long long int curr, long long int next_val)
+  const bool is_between(long long int prev, long long int curr, long long int next_val)
   {
     return (curr < prev) && (curr > next_val);
   }
