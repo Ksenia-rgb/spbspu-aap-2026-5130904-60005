@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <cstddef>
 
 int main()
 {
@@ -9,9 +10,9 @@ int main()
   int number = 0;
   int maxx = std::numeric_limits< int >::min();
   int prev_number = std::numeric_limits< int >::max();
-  size_t count_zd3 = 0;
-  size_t length_zd5 = 0;
-  size_t length_zd5_max = 0;
+  std::size_t count_zd3 = 0;
+  std::size_t length_zd5 = 0;
+  std::size_t length_zd5_max = 0;
   std::cin >> number;
   if (std::cin.fail()) {
     std::cerr << "Incorrect input" << std::endl;
