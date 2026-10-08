@@ -1,9 +1,10 @@
+#include <cstddef>
 #include <iostream>
 
 int main() {
-  int n = 1, count = 0, previous = 0, before_previous = 0, ans_for_15 = 0,
-      ans_for_6 = 0, current_length_6 = 1;
-  const int c1 = 1, c2 = 2;
+  int n = 1, previous = 0, before_previous = 0;
+  std::size_t count = 0, ans_for_15 = 0, ans_for_6 = 0, current_length_6 = 1;
+  const int c1 = 1, c2 = 2, c3 = 3;
   const int exit_code_good = 0;
   const int exit_code_incorrect_input = 1;
   const int exit_code_short_seq = 2;
@@ -28,7 +29,8 @@ int main() {
       }
     }
     if (count > c2) {
-      if (n == (previous + before_previous)) {
+      if (static_cast<long long>(n) ==
+          static_cast<long long>(previous) + before_previous) {
         ans_for_15 += 1;
       }
     }
@@ -39,7 +41,7 @@ int main() {
     ans_for_6 = 1;
   }
   std::cout << ans_for_6 << std::endl;
-  if (count < 3) {
+  if (count < c3) {
     std::cerr << "Error!" << std::endl;
     return exit_code_short_seq;
   }
