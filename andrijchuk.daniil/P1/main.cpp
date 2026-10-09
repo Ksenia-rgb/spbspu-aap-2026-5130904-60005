@@ -14,7 +14,7 @@ namespace andrijchuk
     }
   }
 
-  l_l loc_min_cnt(l_l n, l_l prev_n, l_l pr_prev_n, l_l count)
+  l_l locMinCnt(l_l n, l_l prev_n, l_l pr_prev_n, l_l count)
   {
     if (pr_prev_n > prev_n && prev_n < n)
     {
@@ -23,7 +23,7 @@ namespace andrijchuk
     return count;
   }
 
-  l_l sum_dup_cnt(l_l n, l_l prev_n, l_l pr_prev_n, l_l count)
+  l_l sumDupCnt(l_l n, l_l prev_n, l_l pr_prev_n, l_l count)
   {
     if (n == pr_prev_n + prev_n)
     {
@@ -62,8 +62,8 @@ int main()
       k++;
       if (k >= min_arg)
       {
-        count_locmin = ad::loc_min_cnt(n, prev_n, pr_prev_n, count_locmin);
-        count_sumdup = ad::sum_dup_cnt(n, prev_n, pr_prev_n, count_sumdup);
+        count_locmin = ad::locMinCnt(n, prev_n, pr_prev_n, count_locmin);
+        count_sumdup = ad::sumDupCnt(n, prev_n, pr_prev_n, count_sumdup);
       }
       pr_prev_n = prev_n;
       prev_n = n;
