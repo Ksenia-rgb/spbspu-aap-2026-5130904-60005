@@ -4,7 +4,7 @@
 
 int main()
 {
-  std::size_t max_len = std::numeric_limits< size_t >::max();
+  const std::size_t max_len = std::numeric_limits< size_t >::max();
   std::size_t len = 0;
   long long har11 = 0;
   long long har10 = 0;
