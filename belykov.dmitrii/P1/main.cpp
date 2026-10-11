@@ -1,6 +1,7 @@
 #include <iostream>
 
-namespace belykov {
+namespace belykov
+{
   void monDec(int current, int &prev, int &cur_len, int &max_len, bool &first)
   {
     if (first)
@@ -17,7 +18,10 @@ namespace belykov {
       }
       else
       {
-        if (cur_len > max_len) max_len = cur_len;
+        if (cur_len > max_len)
+        {
+          max_len = cur_len;
+        }
         cur_len = 1;
       }
     }
@@ -72,7 +76,10 @@ namespace belykov {
       std::cerr << "Error: Cannot calculate AFT-MAX.\n";
       return 2;
     }
-    if (cur_dec_len > max_dec_len) max_dec_len = cur_dec_len;
+    if (cur_dec_len > max_dec_len)
+    {
+      max_dec_len = cur_dec_len;
+    }
     std::cout << max_dec_len << "\n";
     std::cout << count_after_max << "\n";
     return 0;
