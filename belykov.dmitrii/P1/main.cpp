@@ -50,7 +50,7 @@ namespace belykov
   }
   int run()
   {
-    int current;
+    int current = 0;
     int count = 0;
     int prev = 0;
     int cur_dec_len = 0;
