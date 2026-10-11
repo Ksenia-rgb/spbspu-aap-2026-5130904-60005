@@ -3,19 +3,19 @@
 namespace belykov {
   void monDec(int current, int &prev, int &cur_len, int &max_len, bool &first)
   {
-    if (first) 
+    if (first)
     {
       cur_len = 1;
       max_len = 1;
       first = false;
-    } 
-    else 
+    }
+    else
     {
-      if (current <= prev) 
+      if (current <= prev)
       {
         cur_len++;
-      } 
-      else 
+      }
+      else
       {
         if (cur_len > max_len) max_len = cur_len;
         cur_len = 1;
@@ -31,20 +31,20 @@ namespace belykov {
       count_after = 0;
       first = false;
     }
-    else 
+    else
     {
-      if (current > max_val) 
+      if (current > max_val)
       {
         max_val = current;
         count_after = 0;
-      } 
-      else 
+      }
+      else
       {
         count_after++;
       }
     }
   }
-  int run() 
+  int run()
   {
     int current;
     int count = 0;
@@ -55,18 +55,18 @@ namespace belykov {
     int max_val = 0;
     int count_after_max = 0;
     bool first_aft = true;
-    while (std::cin >> current && current != 0) 
+    while (std::cin >> current && current != 0)
     {
       count++;
       monDec(current, prev, cur_dec_len, max_dec_len, first_dec);
       aftMax(current, max_val, count_after_max, first_aft);
     }
-    if (!std::cin && !std::cin.eof()) 
+    if (!std::cin && !std::cin.eof())
     {
       std::cerr << "Error: Invalid input data.\n";
       return 1;
     }
-    if (count == 0) 
+    if (count == 0)
     {
       std::cout << 0 << "\n";
       std::cerr << "Error: Cannot calculate AFT-MAX.\n";
@@ -78,7 +78,7 @@ namespace belykov {
     return 0;
   }
 }
-int main() 
+int main()
 {
   return belykov::run();
 }
