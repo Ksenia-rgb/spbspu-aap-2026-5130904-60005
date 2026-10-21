@@ -26,7 +26,7 @@ int main()
   bool zero_found = false;
 
   if (!(std::cin >> a)) {
-    std::cerr << "неверный формат данных" << std::endl;
+    std::cerr << "uncorrect data format" << std::endl;
     return error_exit_code;
   }
 
@@ -39,7 +39,7 @@ int main()
   max_length = 1;
 
   if (!(std::cin >> b)) {
-    std::cerr << "неверный формат данных" << std::endl;
+    std::cerr << "uncorrect data format" << std::endl;
     return error_exit_code;
   }
 
@@ -83,7 +83,7 @@ int main()
   }
 
   if (!zero_found) {
-    std::cerr << "некорректные символы в потоке" << std::endl;
+    std::cerr << "uncorrect symbols" << std::endl;
     return error_exit_code;
   }
 
