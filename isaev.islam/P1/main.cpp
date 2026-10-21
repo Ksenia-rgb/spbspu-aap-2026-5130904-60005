@@ -1,9 +1,9 @@
 #include <iostream>
 
-namespace sequence_processing {
+namespace isaev {
   bool increasing(long long int current, long long int next_val)
   {
-    return next_val > current;
+    return next_val >= current;
   }
 
   bool between(long long int prev, long long int curr, long long int next_val)
@@ -54,7 +54,7 @@ int main()
   }
 
   total_elements++;
-  if (sequence_processing::increasing(a, b)) {
+  if (isaev::increasing(a, b)) {
     current_length++;
   } else {
     current_length = 1;
@@ -69,7 +69,7 @@ int main()
     }
     total_elements++;
 
-    if (sequence_processing::increasing(b, c)) {
+    if (isaev::increasing(b, c)) {
       current_length++;
     } else {
       current_length = 1;
@@ -79,7 +79,7 @@ int main()
       max_length = current_length;
     }
 
-    if (sequence_processing::between(a, b, c)) {
+    if (isaev::between(a, b, c)) {
       grt_lss_count++;
     }
 
@@ -93,12 +93,6 @@ int main()
   }
 
   std::cout << max_length << std::endl;
-
-  if (total_elements < min_elements_for_grt_lss) {
-    std::cerr << "мало элементов для второй характеристики" << std::endl;
-    return error_exit_code_2;
-  }
-
   std::cout << grt_lss_count << std::endl;
   return 0;
 }
