@@ -14,9 +14,7 @@ namespace isaev {
 
 int main()
 {
-  const int error_exit_code_1 = 1;
-  const int error_exit_code_2 = 2;
-  const int min_elements_for_grt_lss = 3;
+  const int error_exit_code = 1;
 
   long long int a = 0;
   long long int b = 0;
@@ -24,12 +22,12 @@ int main()
 
   int current_length = 0;
   int max_length = 0;
-  int total_elements = 0;
   int grt_lss_count = 0;
+  bool zero_found = false;
 
   if (!(std::cin >> a)) {
     std::cerr << "неверный формат данных" << std::endl;
-    return error_exit_code_1;
+    return error_exit_code;
   }
 
   if (a == 0) {
@@ -37,23 +35,20 @@ int main()
     std::cout << 0 << std::endl;
     return 0;
   }
-
-  total_elements++;
   current_length = 1;
   max_length = 1;
 
   if (!(std::cin >> b)) {
     std::cerr << "неверный формат данных" << std::endl;
-    return error_exit_code_1;
+    return error_exit_code;
   }
 
   if (b == 0) {
     std::cout << max_length << std::endl;
-    std::cerr << "мало элементов для второй характеристики" << std::endl;
-    return error_exit_code_2;
+    std::cout << 0 << std::endl;
+    return 0;
   }
 
-  total_elements++;
   if (isaev::increasing(a, b)) {
     current_length++;
   } else {
@@ -65,9 +60,9 @@ int main()
 
   while (std::cin >> c) {
     if (c == 0) {
+      zero_found = true;
       break;
     }
-    total_elements++;
 
     if (isaev::increasing(b, c)) {
       current_length++;
@@ -87,9 +82,9 @@ int main()
     b = c;
   }
 
-  if (!std::cin && c != 0) {
-    std::cerr << "неккоретные символы в потоке" << std::endl;
-    return error_exit_code_1;
+  if (!zero_found) {
+    std::cerr << "некорректные символы в потоке" << std::endl;
+    return error_exit_code;
   }
 
   std::cout << max_length << std::endl;
