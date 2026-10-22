@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 
 namespace isaev {
   bool increasing(long long int current, long long int next_val)
@@ -15,6 +16,8 @@ namespace isaev {
 int main()
 {
   const int error_exit_code = 1;
+  const int error_exit_code_overflow = 2;
+  const int max_int = std::numeric_limits< int >::max();
 
   long long int a = 0;
   long long int b = 0;
@@ -24,6 +27,8 @@ int main()
   int max_length = 0;
   int grt_lss_count = 0;
   bool zero_found = false;
+  bool length_overflow = false;
+  bool count_overflow = false;
 
   if (!(std::cin >> a)) {
     std::cerr << "uncorrect data format" << std::endl;
@@ -65,7 +70,11 @@ int main()
     }
 
     if (isaev::increasing(b, c)) {
-      current_length++;
+      if (current_length == max_int) {
+        length_overflow = true;
+      } else {
+        current_length++;
+      }
     } else {
       current_length = 1;
     }
@@ -75,7 +84,11 @@ int main()
     }
 
     if (isaev::between(a, b, c)) {
-      grt_lss_count++;
+      if (grt_lss_count == max_int) {
+        count_overflow = true;
+      } else {
+        grt_lss_count++;
+      }
     }
 
     a = b;
@@ -87,7 +100,15 @@ int main()
     return error_exit_code;
   }
 
-  std::cout << max_length << std::endl;
-  std::cout << grt_lss_count << std::endl;
+  if (!length_overflow) {
+    std::cout << max_length << std::endl;
+  }
+  if (!count_overflow) {
+    std::cout << grt_lss_count << std::endl;
+  }
+  if (length_overflow || count_overflow) {
+    std::cerr << "overflow" << std::endl;
+    return error_exit_code_overflow;
+  }
   return 0;
 }
