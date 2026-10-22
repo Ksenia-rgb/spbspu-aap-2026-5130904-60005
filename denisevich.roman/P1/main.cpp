@@ -5,7 +5,7 @@ int main()
   const int end = 0;
   const int input_error = 1;
   const int noterror_justresult = 0;
-  const int invalid_size=2;
+  const int invalid_size = 2;
   try {
     int result = 0;
     int counter = 0;
@@ -41,16 +41,15 @@ int main()
         counter = 1;
       }
       previous = a;
-      if (counter>result){
-      	result=counter;
+      if (counter > result) {
+        result = counter;
       }
       std::cin >> a;
-    if (std::cin.fail()) {
+      if (std::cin.fail()) {
         throw input_error;
       }
-
     }
-std::cout << i << "\n";
+    std::cout << i << "\n";
     std::cout << result << "\n";
   } catch (int k) {
     if (k == input_error) {
@@ -58,10 +57,10 @@ std::cout << i << "\n";
       std::cerr << "Error" << "\n";
       return error1;
     }
-    if (k==invalid_size){
-    	const int eror2=2;
-	std::cerr << "The lenght is incorrect";
-	return eror2;
+    if (k == invalid_size) {
+      const int eror2 = 2;
+      std::cerr << "The lenght is incorrect";
+      return eror2;
     }
   }
   return end;
