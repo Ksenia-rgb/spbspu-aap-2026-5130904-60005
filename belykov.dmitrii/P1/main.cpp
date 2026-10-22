@@ -2,6 +2,9 @@
 
 namespace belykov
 {
+  const int exit_success_code = 0;
+  const int exit_invalid_input = 1;
+  const int exit_empty_sequence = 2;
   void monDec(int current, int &prev, int &cur_len, int &max_len, bool &first)
   {
     if (first)
@@ -68,13 +71,13 @@ namespace belykov
     if (!std::cin && !std::cin.eof())
     {
       std::cerr << "Error: Invalid input data.\n";
-      return 1;
+      return exit_invalid_input;
     }
     if (count == 0)
     {
       std::cout << 0 << "\n";
       std::cerr << "Error: Cannot calculate AFT-MAX.\n";
-      return 2;
+      return exit_empty_sequence;
     }
     if (cur_dec_len > max_dec_len)
     {
@@ -82,7 +85,7 @@ namespace belykov
     }
     std::cout << max_dec_len << "\n";
     std::cout << count_after_max << "\n";
-    return 0;
+    return exit_success_code;
   }
 }
 int main()
