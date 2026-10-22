@@ -11,12 +11,6 @@ int main()
   std::cout << "ввести значения: ";
   while (std::cin >> n)
   {
-    if (!std::cin)
-    {
-      std::cout << "Некорректный ввод\n";
-      return cin_err;
-    }
-
     if (n == 0)
     {
       break;
@@ -62,6 +56,11 @@ int main()
     {
       sub_max = max;
     }
+  }
+  if (!std::cin)
+  {
+    std::cerr << "Некорректный ввод\n";
+    return cin_err;
   }
 
   if (k_el <= 2)
