@@ -7,7 +7,7 @@ int main()
   const int code_good = 0;
   const int code_invalid_input = 1;
   const int code_short = 2;
-  std::size_t max_len = std::numeric_limits< size_t >::max();
+  const std::size_t max_len = std::numeric_limits< size_t >::max();
   std::size_t len = 0;
   long long har11 = 0;
   long long har10 = 0;
