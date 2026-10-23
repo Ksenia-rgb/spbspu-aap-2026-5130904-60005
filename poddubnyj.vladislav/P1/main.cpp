@@ -7,7 +7,7 @@ const int SUCCESS = 0;
 const int NOT_SEQ = 1;
 const int IMPOSE_CALC = 2;
 
-int resSeq()
+int resSeqs()
 {
   std::size_t cnt_min = 0;
   std::size_t cnt_max = 0;
@@ -82,5 +82,5 @@ int resSeq()
 
 int main()
 {
-  return poddubnyj::resSeq();
+  return poddubnyj::resSeqs();
 }
