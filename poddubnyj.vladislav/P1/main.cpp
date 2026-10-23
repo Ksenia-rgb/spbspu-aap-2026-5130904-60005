@@ -66,6 +66,8 @@ int resSeqs() {
   std::cout << cnt_max << "\n";
   return SUCCESS;
 }
-} // namespace poddubnyj
+}
 
-int main() { return poddubnyj::resSeqs(); }
+int main() {
+  return poddubnyj::resSeqs();
+}
