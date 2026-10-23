@@ -18,8 +18,7 @@ int resSeq() {
   }
 
   if (x == 0) {
-    std::cerr << "error: sequence is empty, it is imposible to calculate"
-              << "\n";
+    std::cerr << "error: sequence is empty, it is imposible to calculate" << "\n";
     return IMPOSE_CALC;
   }
 
