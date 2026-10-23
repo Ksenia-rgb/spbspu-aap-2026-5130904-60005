@@ -67,7 +67,7 @@ namespace poddubnyj {
     std::cout << cnt_max << "\n";
     return SUCCESS;
   }
-} // namespace poddubnyj
+}
 
 int main()
 {
