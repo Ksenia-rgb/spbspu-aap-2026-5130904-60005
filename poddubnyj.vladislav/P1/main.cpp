@@ -1,27 +1,23 @@
 #include <cstddef>
 #include <iostream>
 
-namespace poddubnyj
-{
+namespace poddubnyj {
 const int SUCCESS = 0;
 const int NOT_SEQ = 1;
 const int IMPOSE_CALC = 2;
 
-int resSeqs()
-{
+int resSeqs() {
   std::size_t cnt_min = 0;
   std::size_t cnt_max = 0;
 
   int x = 0;
 
-  if (!(std::cin >> x))
-  {
+  if (!(std::cin >> x)) {
     std::cerr << "error: it is not sequence" << "\n";
     return NOT_SEQ;
   }
 
-  if (x == 0)
-  {
+  if (x == 0) {
     std::cerr << "error: empty sequence" << "\n";
     return IMPOSE_CALC;
   }
@@ -34,41 +30,33 @@ int resSeqs()
 
   bool correct_complete = false;
 
-  while (std::cin >> x)
-  {
-    if (x == 0)
-    {
+  while (std::cin >> x) {
+    if (x == 0) {
       correct_complete = true;
       break;
     }
 
-    if (x == curr_min)
-    {
+    if (x == curr_min) {
       cnt_min++;
     }
 
-    if (x == curr_max)
-    {
+    if (x == curr_max) {
       cnt_max++;
     }
 
-    if (x < curr_min)
-    {
+    if (x < curr_min) {
       cnt_min = 1;
       curr_min = x;
     }
 
-    if (x > curr_max)
-    {
+    if (x > curr_max) {
       cnt_max = 1;
       curr_max = x;
     }
   }
 
-  if (!correct_complete)
-  {
-    if (std::cin.fail())
-    {
+  if (!correct_complete) {
+    if (std::cin.fail()) {
       std::cerr << "error: it is not sequence" << "\n";
       return NOT_SEQ;
     }
@@ -78,9 +66,6 @@ int resSeqs()
   std::cout << cnt_max << "\n";
   return SUCCESS;
 }
-}
+} // namespace poddubnyj
 
-int main()
-{
-  return poddubnyj::resSeqs();
-}
+int main() { return poddubnyj::resSeqs(); }
