@@ -1,13 +1,13 @@
 #include <cstddef>
 #include <iostream>
 
-namespace poddubnyj 
+namespace poddubnyj
 {
 const int SUCCESS = 0;
 const int NOT_SEQ = 1;
 const int IMPOSE_CALC = 2;
 
-int resSeqs() 
+int resSeqs()
 {
   std::size_t cnt_min = 0;
   std::size_t cnt_max = 0;
@@ -82,5 +82,5 @@ int resSeqs()
 
 int main()
 {
-  return poddubnyj::resSeqs(); 
+  return poddubnyj::resSeqs();
 }
