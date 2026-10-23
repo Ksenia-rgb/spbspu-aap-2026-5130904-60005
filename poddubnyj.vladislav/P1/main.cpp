@@ -6,11 +6,11 @@ const int SUCCESS = 0;
 const int NOT_SEQ = 1;
 const int IMPOSE_CALC = 2;
 
-int res_seq() {
+int resSeq() {
   std::size_t cnt_min = 0;
   std::size_t cnt_max = 0;
 
-  int x;
+  int x = 0;
 
   if (!(std::cin >> x)) {
     std::cerr << "error: it is not sequence" << "\n";
@@ -69,4 +69,4 @@ int res_seq() {
 }
 } // namespace poddubnyj
 
-int main() { return poddubnyj::res_seq(); }
+int main() { return poddubnyj::resSeq(); }
