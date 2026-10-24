@@ -236,12 +236,12 @@ int main(int argc, char **argv)
   }
   catch (const std::invalid_argument &error)
   {
-    std::cerr << "Error: " << error.what() << '\n';
+    std::cerr << "Error:" << error.what() << '\n';
     return isaev::badArgumentsCode;
   }
   catch (const std::exception &error)
   {
-    std::cerr << "Error: " << error.what() << '\n';
+    std::cerr << "Error:" << error.what() << '\n';
     return isaev::badDataCode;
   }
   return 0;
