@@ -24,11 +24,15 @@ namespace usmanov
     {
       throw std::runtime_error("Invalid arguments count");
     }
-    if (av[num_index] == nullptr || av[num_index] == '\0')
+    if (av[num_index] == nullptr || av[num_index][0] == '\0')
     {
       throw std::runtime_error("First parameter is invalid");
     }
-    if (av[num_index] != stack_num && av[num_index] != heap_num)
+    if (av[num_index][0] != stack_num && av[num_index][0] != heap_num)
+    {
+      throw std::runtime_error("First parameter is out of range");
+    }
+    if (av[num_index][1] != '\0')
     {
       throw std::runtime_error("First parameter is out of range");
     }
@@ -167,7 +171,7 @@ int main(int argc, char **argv)
       return ad::other_errors_exitcode3;
     }
 
-    if (num == ad::stack_num)
+    if (num[0] == ad::stack_num)
     {
       if (rows * cols > ad::stack_args_count)
       {
@@ -177,7 +181,7 @@ int main(int argc, char **argv)
       ad::matrixInput(stack_array, rows, cols, input);
       ad::results(stack_array, rows, cols, output);
     }
-    else if (num == ad::heap_num)
+    else if (num[0] == ad::heap_num)
     {
       heap_array = new int[rows * cols];
       ad::matrixInput(heap_array, rows, cols, input);
