@@ -501,9 +501,9 @@ int main(int argc, char** argv)
     return novikov::status_failure;
   }
 
-  const char* mode_text = argv[1];
-  const char* input_path = argv[2];
-  const char* output_path = argv[3];
+  const char* const mode_text = argv[1];
+  const char* const input_path = argv[2];
+  const char* const output_path = argv[3];
 
   int mode = 0;
   if (!novikov::parseNumber(mode_text, mode))
