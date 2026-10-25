@@ -7,33 +7,6 @@
 
 namespace isaev
 {
-  enum class ArrayKind
-  {
-    fixed,
-    dynamic
-  };
-
-  struct matrix_size_t
-  {
-    std::size_t rows;
-    std::size_t cols;
-  };
-
-  class DynamicArray
-  {
-  public:
-    DynamicArray(const DynamicArray &) = delete;
-    explicit DynamicArray(std::size_t size);
-    ~DynamicArray();
-
-    DynamicArray &operator=(const DynamicArray &) = delete;
-
-    int *getData();
-
-  private:
-    int *data_;
-  };
-
   const int expectedArgc = 4;
   const int taskIndex = 1;
   const int inputIndex = 2;
@@ -43,42 +16,42 @@ namespace isaev
   const std::size_t fixedCapacity = 10000;
   const std::size_t lastIndexOffset = 1;
 
-  static ArrayKind parseArrayKind(const char *argument)
+  static bool isFixedArrayTask(const char *argument)
   {
     if (std::strcmp(argument, "1") == 0)
     {
-      return ArrayKind::fixed;
+      return true;
     }
     if (std::strcmp(argument, "2") == 0)
     {
-      return ArrayKind::dynamic;
+      return false;
     }
     throw std::invalid_argument("the first parameter must be 1 or 2");
   }
 
-  static matrix_size_t readMatrixSize(std::istream &input)
+  static void readMatrixSize(std::istream &input, std::size_t &rows, std::size_t &cols)
   {
-    int rows = 0;
-    int cols = 0;
-    if (!(input >> rows >> cols))
+    int intRows = 0;
+    int intCols = 0;
+    if (!(input >> intRows >> intCols))
     {
       throw std::runtime_error("matrix size is missing or is not a pair of integers");
     }
-    if ((rows < 0) || (cols < 0))
+    if ((intRows < 0) || (intCols < 0))
     {
       throw std::runtime_error("matrix size must not be negative");
     }
-    const matrix_size_t size = {static_cast< std::size_t >(rows), static_cast< std::size_t >(cols)};
-    if ((size.cols != 0) && (size.rows > (std::numeric_limits< std::size_t >::max() / size.cols)))
+    rows = static_cast< std::size_t >(intRows);
+    cols = static_cast< std::size_t >(intCols);
+    if ((cols != 0) && (rows > (std::numeric_limits< std::size_t >::max() / cols)))
     {
       throw std::runtime_error("matrix is too large");
     }
-    return size;
   }
 
-  static void readMatrixElements(std::istream &input, int *elements, const matrix_size_t &size)
+  static void readMatrixElements(std::istream &input, int *elements, std::size_t rows, std::size_t cols)
   {
-    const std::size_t count = size.rows * size.cols;
+    const std::size_t count = rows * cols;
     for (std::size_t index = 0; index < count; ++index)
     {
       if (!(input >> elements[index]))
@@ -159,16 +132,17 @@ namespace isaev
     return (maxSum == noSum) ? 0 : maxSum;
   }
 
-  static void writeResults(const char *outputName, const int *elements, const matrix_size_t &size)
+  static void writeResults(const char *outputName, const int *elements, std::size_t rows, std::size_t cols)
   {
-    const std::size_t nonZeroDiagonals = countNonZeroDiagonals(elements, size.rows, size.cols);
-    const long long maxDiagonalSum = findMaxMinorDiagonalSum(elements, size.rows, size.cols);
+    const std::size_t nonZeroDiagonals = countNonZeroDiagonals(elements, rows, cols);
+    const long long maxDiagonalSum = findMaxMinorDiagonalSum(elements, rows, cols);
     std::ofstream output(outputName);
     if (!output)
     {
       throw std::runtime_error("cannot open the output file");
     }
-    output << nonZeroDiagonals << ' ' << maxDiagonalSum << '\n';
+    output << nonZeroDiagonals << '\n';
+    output << maxDiagonalSum << '\n';
     output.flush();
     if (!output)
     {
@@ -178,37 +152,36 @@ namespace isaev
 
   static void processFixedArray(std::istream &input, const char *outputName)
   {
-    const matrix_size_t size = readMatrixSize(input);
-    if ((size.rows * size.cols) > fixedCapacity)
+    std::size_t rows = 0;
+    std::size_t cols = 0;
+    readMatrixSize(input, rows, cols);
+    if ((rows * cols) > fixedCapacity)
     {
       throw std::runtime_error("the matrix does not fit into the fixed-size array");
     }
     int elements[fixedCapacity] = {};
-    readMatrixElements(input, elements, size);
-    writeResults(outputName, elements, size);
+    readMatrixElements(input, elements, rows, cols);
+    writeResults(outputName, elements, rows, cols);
   }
 
   static void processDynamicArray(std::istream &input, const char *outputName)
   {
-    const matrix_size_t size = readMatrixSize(input);
-    DynamicArray elements(size.rows * size.cols);
-    readMatrixElements(input, elements.getData(), size);
-    writeResults(outputName, elements.getData(), size);
+    std::size_t rows = 0;
+    std::size_t cols = 0;
+    readMatrixSize(input, rows, cols);
+    int *elements = new int[rows * cols]();
+    try
+    {
+      readMatrixElements(input, elements, rows, cols);
+      writeResults(outputName, elements, rows, cols);
+    }
+    catch (...)
+    {
+      delete[] elements;
+      throw;
+    }
+    delete[] elements;
   }
-}
-
-isaev::DynamicArray::DynamicArray(std::size_t size):
-  data_(new int[size]())
-{}
-
-isaev::DynamicArray::~DynamicArray()
-{
-  delete[] data_;
-}
-
-int *isaev::DynamicArray::getData()
-{
-  return data_;
 }
 
 int main(int argc, char **argv)
@@ -219,13 +192,13 @@ int main(int argc, char **argv)
     {
       throw std::invalid_argument("expected parameters: <task number> <input file> <output file>");
     }
-    const isaev::ArrayKind kind = isaev::parseArrayKind(argv[isaev::taskIndex]);
+    const bool isFixed = isaev::isFixedArrayTask(argv[isaev::taskIndex]);
     std::ifstream input(argv[isaev::inputIndex]);
     if (!input)
     {
       throw std::runtime_error("cannot open the input file");
     }
-    if (kind == isaev::ArrayKind::fixed)
+    if (isFixed)
     {
       isaev::processFixedArray(input, argv[isaev::outputIndex]);
     }
@@ -236,12 +209,12 @@ int main(int argc, char **argv)
   }
   catch (const std::invalid_argument &error)
   {
-    std::cerr << "Error:" << error.what() << '\n';
+    std::cerr << "Error: " << error.what() << '\n';
     return isaev::badArgumentsCode;
   }
   catch (const std::exception &error)
   {
-    std::cerr << "Error:" << error.what() << '\n';
+    std::cerr << "Error: " << error.what() << '\n';
     return isaev::badDataCode;
   }
   return 0;
