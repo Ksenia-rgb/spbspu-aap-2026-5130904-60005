@@ -132,7 +132,7 @@ namespace isaev
     return (maxSum == noSum) ? 0 : maxSum;
   }
 
-  static void writeResults(const char *outputName, const int *elements, std::size_t rows, std::size_t cols)
+  static void writeResults(const char *outputName, const int *elements, size_t rows, size_t cols)
   {
     const std::size_t nonZeroDiagonals = countNonZeroDiagonals(elements, rows, cols);
     const long long maxDiagonalSum = findMaxMinorDiagonalSum(elements, rows, cols);
@@ -209,12 +209,12 @@ int main(int argc, char **argv)
   }
   catch (const std::invalid_argument &error)
   {
-    std::cerr << "Error: " << error.what() << '\n';
+    std::cerr << "Error:" << error.what() << '\n';
     return isaev::badArgumentsCode;
   }
   catch (const std::exception &error)
   {
-    std::cerr << "Error: " << error.what() << '\n';
+    std::cerr << "Error:" << error.what() << '\n';
     return isaev::badDataCode;
   }
   return 0;
