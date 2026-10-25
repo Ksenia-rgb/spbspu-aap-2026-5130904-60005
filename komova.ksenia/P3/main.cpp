@@ -20,7 +20,7 @@ namespace komova {
   }
   void ReadMatrix(int* arr, size_t rows, size_t cols, std::istream& input)
   {
-    for (int i = 0; i < rows * cols; i++) {
+    for (size_t i = 0; i < rows * cols; i++) {
       if (!(input >> arr[i])) {
         throw std::invalid_argument("");
       }
@@ -105,7 +105,7 @@ int main(int argc, char** argv)
     int matrix[10000];
     try {
       komova::ReadMatrix(matrix, rows, cols, input);
-    } catch (std::invalid_argument) {
+    } catch (std::invalid_argument& e) {
       std::cerr << "Ошибка чтения элементов матрицы" << std::endl;
       return invalid_input_or_output;
     }
@@ -118,11 +118,11 @@ int main(int argc, char** argv)
       matrix = new int[rows * cols];
       komova::ReadMatrix(matrix, rows, cols, input);
 
-    } catch (std::bad_alloc) {
+    } catch (std::bad_alloc& e) {
       delete matrix;
       std::cerr << "Ошибка выделения памяти" << std::endl;
       return invalid_input_or_output;
-    } catch (std::invalid_argument) {
+    } catch (std::invalid_argument& e) {
       delete matrix;
       std::cerr << "Ошибка чтения элементов матрицы" << std::endl;
       return invalid_input_or_output;
