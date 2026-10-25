@@ -1,25 +1,26 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <vector>
 
 namespace evsyukov {
 
   const int k_arg_error = 1;
   const int k_data_error = 2;
 
-  long long min(long long a, long long b)
+  constexpr long long k_max_matrix_elements = 100000000;
+  constexpr long long k_static_buffer_size = 10000;
+
+  long long minArg(long long a, long long b)
   {
-    long long min_arg = 0;
-    if (a < b) {
-      min_arg = a;
-    } else {
-      min_arg = b;
-    }
-    return min_arg;
+    return (a < b) ? a : b;
   }
 
-  int count_local_max(const int* a, long long rows, long long cols)
+  int countLocalMax(const int* a, long long rows, long long cols)
   {
+    if (rows < 3 || cols < 3 || a == nullptr) {
+      return 0;
+    }
     int count = 0;
     for (long long i = 1; i + 1 < rows; ++i) {
       for (long long j = 1; j + 1 < cols; ++j) {
@@ -43,12 +44,15 @@ namespace evsyukov {
     return count;
   }
 
-  bool fill_inc_wav(int* a, long long rows, long long cols)
+  bool fillIncWav(int* a, long long rows, long long cols)
   {
+    if (a == nullptr || rows <= 0 || cols <= 0) {
+      return true;
+    }
     long long layer = 0;
     for (long long i = 0; i < rows; ++i) {
       for (long long j = 0; j < cols; ++j) {
-        layer = min(min(i, j), min(rows - 1 - i, cols - 1 - j)) + 1;
+        layer = minArg(minArg(i, j), minArg(rows - 1 - i, cols - 1 - j)) + 1;
         if (a[i * cols + j] > std::numeric_limits< int >::max() - layer) {
           return false;
         }
@@ -65,72 +69,75 @@ namespace evsyukov {
       std::cerr << "Invalid_input\n";
       return k_arg_error;
     }
-    const char* s = argv[1];
+
+    const char* const s = argv[1];
     if (s[0] != '\0' && s[1] == '\0' && (s[0] == '1' || s[0] == '2')) {
       num = argv[1][0] - '0';
     } else {
       std::cerr << "Error first parameter \n";
       return k_arg_error;
     }
+
     std::ifstream in(argv[2]);
     if (!(in)) {
       std::cerr << "Invalid_file\n";
       return k_data_error;
     }
+
     long long rows = 0, cols = 0;
-    if (!(in >> rows >> cols) || rows < 0 || cols < 0) {
+    if (!(in >> rows >> cols) || rows <= 0 || cols <= 0) {
       std::cerr << "Error rows or cols/over_flow\n";
       return k_data_error;
     }
-    if (rows > 100000000 || cols > 100000000) {
+
+    if (rows > k_max_matrix_elements / cols) {
       std::cerr << "Error rows or cols\n";
       return k_data_error;
     }
-    if (cols > 0 && rows > 100000000 / cols) {
-      std::cerr << "Error rows or cols\n";
-      return k_data_error;
-    }
-    int buf[10000];
+
+    int buf[k_static_buffer_size];
+    std::vector< int > dynamic_buf;
     int* a = nullptr;
+
     if (num == 1) {
+      if (rows * cols > k_static_buffer_size) {
+        std::cerr << "Over_flow\n";
+        return k_data_error;
+      }
       a = buf;
+    } else if (num == 2) {
+      try {
+        dynamic_buf.resize(rows * cols);
+        a = dynamic_buf.data();
+      } catch (const std::bad_alloc&) {
+        std::cerr << "Memory allocation failed\n";
+        return k_data_error;
+      }
     }
-    if (num == 1 && rows * cols > 10000) {
-      std::cerr << "Over_flow\n";
-      return k_data_error;
-    }
-    if (num == 2) {
-      a = new int[rows * cols];
-    }
+
     for (long long i = 0; i < rows * cols; ++i) {
       int x = 0;
       if (!(in >> x)) {
         std::cerr << "Error arguments matrix\n";
-        if (num == 2) {
-          delete[] a;
-        }
         return k_data_error;
       }
       a[i] = x;
     }
+
     int dummy = 0;
     if (in >> dummy) {
       std::cerr << "Error arguments matrix\n";
-      if (num == 2) {
-        delete[] a;
-      }
       return k_data_error;
     }
-    int count = count_local_max(a, rows, cols);
+
+    const int count = countLocalMax(a, rows, cols);
     std::ofstream out(argv[3]);
     if (!out) {
       std::cerr << "Cannot open output\n";
-      if (num == 2) {
-        delete[] a;
-      }
       return k_data_error;
     }
-    bool is_overflow = !fill_inc_wav(a, rows, cols);
+
+    const bool is_overflow = !fillIncWav(a, rows, cols);
     if (is_overflow) {
       std::cerr << "FLL-INC-WAV error\n";
     } else {
@@ -141,9 +148,7 @@ namespace evsyukov {
       out << "\n";
     }
     out << count << "\n";
-    if (num == 2) {
-      delete[] a;
-    }
+
     if (is_overflow) {
       return k_data_error;
     }
@@ -155,3 +160,4 @@ int main(int argc, char** argv)
 {
   return evsyukov::run(argc, argv);
 }
+
