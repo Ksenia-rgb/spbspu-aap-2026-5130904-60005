@@ -9,7 +9,7 @@ namespace laptev {
 
   bool increasing(long long int prev, long long int curr)
   {
-    return curr > prev;
+    return curr >= prev;
   }
 
 }
