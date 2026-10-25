@@ -4,6 +4,7 @@
 namespace demyanov {
   const int ERR_ARGS = 1;
   const int ERR_MATRIX = 2;
+  const int ARGS_COUNT = 4;
   const int MAX_SIZE = 10000;
 
   bool read_matrix(std::istream& input, int* data, int rows, int cols)
@@ -16,7 +17,7 @@ namespace demyanov {
     return true;
   }
 
-  // Вариант 12: номер строки (с единицы) с самой длинной серией равных элементов
+  // Variant 12: row number (from 1) with the longest run of equal elements
   int find_row_with_longest_run(int* data, int rows, int cols)
   {
     int best_row = 0;
@@ -38,7 +39,7 @@ namespace demyanov {
     return best_row;
   }
 
-  // Вариант 7: спираль от левого верхнего угла против часовой стрелки
+  // Variant 7: spiral from the top left corner, counterclockwise
   void spiral(int* data, int rows, int cols)
   {
     int top = 0;
@@ -87,9 +88,23 @@ namespace demyanov {
     output << "\n";
   }
 
+  int process_matrix(std::istream& input, std::ostream& output, int* data, int rows, int cols)
+  {
+    if (!read_matrix(input, data, rows, cols)) {
+      std::cerr << "Error: bad matrix elements" << "\n";
+      return ERR_MATRIX;
+    }
+
+    int row = find_row_with_longest_run(data, rows, cols);
+    spiral(data, rows, cols);
+    write_matrix(output, data, rows, cols);
+    output << row << "\n";
+    return 0;
+  }
+
   int run(int argc, char** argv)
   {
-    if (argc != 4) {
+    if (argc != ARGS_COUNT) {
       std::cerr << "Error: need 3 arguments: num input output" << "\n";
       return ERR_ARGS;
     }
@@ -119,29 +134,16 @@ namespace demyanov {
       return ERR_MATRIX;
     }
 
-    int fixed_data[MAX_SIZE] = {};
-    int* data = fixed_data;
-    if (is_dynamic) {
-      data = new int[rows * cols];
+    int result = 0;
+    if (is_fixed) {
+      int fixed_data[MAX_SIZE] = {};
+      result = process_matrix(input, output, fixed_data, rows, cols);
+    } else {
+      int* dynamic_data = new int[rows * cols];
+      result = process_matrix(input, output, dynamic_data, rows, cols);
+      delete[] dynamic_data;
     }
-
-    if (!read_matrix(input, data, rows, cols)) {
-      std::cerr << "Error: bad matrix elements" << "\n";
-      if (is_dynamic) {
-        delete[] data;
-      }
-      return ERR_MATRIX;
-    }
-
-    int row = find_row_with_longest_run(data, rows, cols);
-    spiral(data, rows, cols);
-    write_matrix(output, data, rows, cols);
-    output << row << "\n";
-
-    if (is_dynamic) {
-      delete[] data;
-    }
-    return 0;
+    return result;
   }
 }
 
