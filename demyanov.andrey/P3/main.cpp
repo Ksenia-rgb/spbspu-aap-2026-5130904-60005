@@ -7,7 +7,7 @@ namespace demyanov {
   const int ARGS_COUNT = 4;
   const int MAX_SIZE = 10000;
 
-  bool read_matrix(std::istream& input, int* data, int rows, int cols)
+  bool readMatrix(std::istream& input, int* data, int rows, int cols)
   {
     for (int i = 0; i < rows * cols; ++i) {
       if (!(input >> data[i])) {
@@ -18,7 +18,7 @@ namespace demyanov {
   }
 
   // Variant 12: row number (from 1) with the longest run of equal elements
-  int find_row_with_longest_run(int* data, int rows, int cols)
+  int findRowWithLongestRun(int* data, int rows, int cols)
   {
     int best_row = 0;
     int best_len = 0;
@@ -79,7 +79,7 @@ namespace demyanov {
     }
   }
 
-  void write_matrix(std::ostream& output, int* data, int rows, int cols)
+  void writeMatrix(std::ostream& output, int* data, int rows, int cols)
   {
     output << rows << " " << cols;
     for (int i = 0; i < rows * cols; ++i) {
@@ -88,16 +88,16 @@ namespace demyanov {
     output << "\n";
   }
 
-  int process_matrix(std::istream& input, std::ostream& output, int* data, int rows, int cols)
+  int processMatrix(std::istream& input, std::ostream& output, int* data, int rows, int cols)
   {
-    if (!read_matrix(input, data, rows, cols)) {
+    if (!readMatrix(input, data, rows, cols)) {
       std::cerr << "Error: bad matrix elements" << "\n";
       return ERR_MATRIX;
     }
 
-    int row = find_row_with_longest_run(data, rows, cols);
+    const int row = findRowWithLongestRun(data, rows, cols);
     spiral(data, rows, cols);
-    write_matrix(output, data, rows, cols);
+    writeMatrix(output, data, rows, cols);
     output << row << "\n";
     return 0;
   }
@@ -109,8 +109,8 @@ namespace demyanov {
       return ERR_ARGS;
     }
 
-    bool is_fixed = (argv[1][0] == '1' && argv[1][1] == '\0');
-    bool is_dynamic = (argv[1][0] == '2' && argv[1][1] == '\0');
+    const bool is_fixed = (argv[1][0] == '1' && argv[1][1] == '\0');
+    const bool is_dynamic = (argv[1][0] == '2' && argv[1][1] == '\0');
     if (!is_fixed && !is_dynamic) {
       std::cerr << "Error: num is not 1 or 2" << "\n";
       return ERR_ARGS;
@@ -137,10 +137,10 @@ namespace demyanov {
     int result = 0;
     if (is_fixed) {
       int fixed_data[MAX_SIZE] = {};
-      result = process_matrix(input, output, fixed_data, rows, cols);
+      result = processMatrix(input, output, fixed_data, rows, cols);
     } else {
-      int* dynamic_data = new int[rows * cols];
-      result = process_matrix(input, output, dynamic_data, rows, cols);
+      int* const dynamic_data = new int[rows * cols];
+      result = processMatrix(input, output, dynamic_data, rows, cols);
       delete[] dynamic_data;
     }
     return result;
