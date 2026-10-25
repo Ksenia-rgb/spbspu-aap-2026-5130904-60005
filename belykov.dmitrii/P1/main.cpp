@@ -68,7 +68,7 @@ namespace belykov
       monDec(current, prev, cur_dec_len, max_dec_len, first_dec);
       aftMax(current, max_val, count_after_max, first_aft);
     }
-    if (!std::cin && !std::cin.eof())
+    if (!std::cin)
     {
       std::cerr << "Error: Invalid input data.\n";
       return exit_invalid_input;
