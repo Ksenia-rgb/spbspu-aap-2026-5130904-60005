@@ -208,8 +208,8 @@ namespace novikov
     return true;
   }
 
-  static bool countDiagonal(const int* matrix, std::size_t rows, std::size_t cols,
-                            std::size_t start_row, std::size_t start_col, std::size_t& count)
+  static bool countDiagonal(const int* matrix, std::size_t rows, std::size_t cols, std::size_t start_row,
+      std::size_t start_col, std::size_t& count)
   {
     std::size_t row = start_row;
     std::size_t col = start_col;
@@ -385,8 +385,8 @@ namespace novikov
     return true;
   }
 
-  static bool printMatrix(std::ostream& output, const int* matrix, std::size_t rows, std::size_t cols,
-                          std::size_t count)
+  static bool printMatrix(
+      std::ostream& output, const int* matrix, std::size_t rows, std::size_t cols, std::size_t count)
   {
     output << rows << ' ' << cols;
     std::size_t index = 0;
@@ -402,8 +402,8 @@ namespace novikov
     return true;
   }
 
-  static int process(std::istream& input, std::ostream& output, int* data,
-                     std::size_t rows, std::size_t cols, std::size_t count)
+  static int process(
+      std::istream& input, std::ostream& output, int* data, std::size_t rows, std::size_t cols, std::size_t count)
   {
     if (!readElements(input, data, count))
     {
@@ -517,14 +517,14 @@ int main(int argc, char** argv)
     return novikov::status_failure;
   }
 
-  std::ifstream input { input_path };
+  std::ifstream input{input_path};
   if (!input)
   {
     std::cerr << "Cannot open input file\n";
     return novikov::status_failure;
   }
 
-  std::ofstream output { output_path };
+  std::ofstream output{output_path};
   if (!output)
   {
     std::cerr << "Cannot open output file\n";
