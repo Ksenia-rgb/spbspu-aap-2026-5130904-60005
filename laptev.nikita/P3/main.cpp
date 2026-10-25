@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  const char* mode = argv[1];
+  const char* const mode = argv[1];
   if (!(mode[0] == '1' && mode[1] == '\0') && !(mode[0] == '2' && mode[1] == '\0')) {
     std::cerr << "First parameter must be 1 or 2\n";
     return 1;
