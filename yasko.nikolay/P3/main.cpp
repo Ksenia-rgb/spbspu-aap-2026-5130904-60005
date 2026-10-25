@@ -79,7 +79,7 @@ namespace yasko
     {
         long long rows_i = 0;
         long long cols_i = 0;
-        if (!(input >> rows_i >> cols_i) || rows_i < 0 || cols_i < 0)
+        if (!(input >> rows_i >> cols_i) || rows_i <= 0 || cols_i <= 0)
         {
             throw std::invalid_argument("");
         }
