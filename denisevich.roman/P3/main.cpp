@@ -2,8 +2,9 @@
 #include <fstream>
 #include <limits>
 #include <new>
+#include <cstddef>
 namespace denisevich {
-  int* old_useless_func(const char* mode, const size_t n, const size_t m)
+  int* allocateArray(const char* mode, const std::size_t n, const std::size_t m)
   {
     int* back = nullptr;
     const char mode_2 = '2';
@@ -12,9 +13,9 @@ namespace denisevich {
     }
     return back;
   }
-  size_t min(size_t n, size_t m)
+  std::size_t getMin(std::size_t n, std::size_t m)
   {
-    size_t back = 0;
+    std::size_t back = 0;
     if (n >= m) {
       back = m;
     } else {
@@ -22,11 +23,11 @@ namespace denisevich {
     }
     return back;
   }
-  size_t processing_2(const int* data, size_t n, size_t m)
+  std::size_t countLocalMin(const int* data, std::size_t n, std::size_t m)
   {
-    size_t enumerator = 0;
-    for (size_t str = 1; str < n - 1; str++) {
-      for (size_t pillar = 2; pillar < m; pillar++) {
+    std::size_t enumerator = 0;
+    for (std::size_t str = 1; str < n - 1; str++) {
+      for (std::size_t pillar = 2; pillar < m; pillar++) {
         const std::size_t index = str * m - 1 + pillar;
         const int number = data[index];
         const bool less_than_row = (number < data[index - 1]) && (number < data[index + 1]);
@@ -41,26 +42,26 @@ namespace denisevich {
     }
     return enumerator;
   }
-  long long int processing_1(const int* data, size_t n, size_t m)
+  long long int findMaxDiagSum(const int* data, std::size_t n, std::size_t m)
   {
     long long int total = 0;
     long long int prev_total = std::numeric_limits< long long >::min();
     long long int first = static_cast< long long >(n) - static_cast< long long >(m);
     long long int second = static_cast< long long >(m) - static_cast< long long >(n);
-    size_t str = 0;
-    size_t pillar = 1;
+    std::size_t str = 0;
+    std::size_t pillar = 1;
     if (first <= 0) {
       first = 0;
     }
     if (second <= 0) {
       second = 0;
     }
-    size_t count = min(m, n);
+    std::size_t count = getMin(m, n);
     str += 1;
-    size_t prev_str = 0;
+    std::size_t prev_str = 0;
     while (first != 0) {
       prev_str = str;
-      for (size_t i = 0; i < count; i++) {
+      for (std::size_t i = 0; i < count; i++) {
         total += data[str * m - 1 + pillar];
         pillar += 1;
         str += 1;
@@ -77,7 +78,7 @@ namespace denisevich {
     pillar = 1;
     while (count != 0) {
       prev_str = str;
-      for (size_t j = count; j > 0; j--) {
+      for (std::size_t j = count; j > 0; j--) {
         total += data[str * m - 1 + pillar];
         pillar += 1;
         str += 1;
@@ -90,13 +91,13 @@ namespace denisevich {
       total = 0;
       count--;
     }
-    count = min(m, n);
+    count = getMin(m, n);
     str = 0;
     pillar = 2;
-    size_t prev_pillar = 0;
+    std::size_t prev_pillar = 0;
     while (second != 0) {
       prev_pillar = pillar;
-      for (size_t i = 0; i < count; i++) {
+      for (std::size_t i = 0; i < count; i++) {
         total += data[str * m - 1 + pillar];
         pillar += 1;
         str += 1;
@@ -113,7 +114,7 @@ namespace denisevich {
     str = 0;
     while (count != 0) {
       prev_pillar = pillar;
-      for (size_t j = count; j > 0; j--) {
+      for (std::size_t j = count; j > 0; j--) {
         total += data[str * m - 1 + pillar];
         pillar += 1;
         str += 1;
@@ -141,9 +142,9 @@ int main(int argc, char** argv)
     std::cerr << "Wrong input" << '\n';
     return invalid_input;
   }
-  const char* mode = argv[1];
-  const char* input_path = argv[2];
-  const char* output_path = argv[3];
+  const char* const mode = argv[1];
+  const char* const input_path = argv[2];
+  const char* const output_path = argv[3];
   if ((mode[0] != mode1 && mode[0] != mode2) || mode[1] != '\0') {
     std::cerr << "Wrong mode" << '\n';
     return invalid_input;
@@ -154,9 +155,9 @@ int main(int argc, char** argv)
     return invalid_input;
   }
   int cursor = 0;
-  size_t quantity = 0;
-  size_t lines = 0;
-  size_t columns = 0;
+  std::size_t quantity = 0;
+  std::size_t lines = 0;
+  std::size_t columns = 0;
   while (input >> cursor) {
     if (quantity < 1) {
       if (cursor < 0) {
@@ -198,8 +199,8 @@ int main(int argc, char** argv)
     return all_good;
   }
   try {
-    int* data = denisevich::old_useless_func(mode, lines, columns);
-    const long int array_size = 10000;
+    int* data = denisevich::allocateArray(mode, lines, columns);
+    const std::size_t array_size = 10000;
     int array[array_size] = {};
     if (data == nullptr) {
       data = array;
@@ -208,20 +209,20 @@ int main(int argc, char** argv)
     input.seekg(0);
     long long skip = 0;
     input >> skip >> skip;
-    for (size_t i = 0; i < quantity; i++) {
+    for (std::size_t i = 0; i < quantity; i++) {
       input >> data[i];
     }
-    size_t result_2 = denisevich::processing_2(data, lines, columns);
-    long long result_14 = denisevich::processing_1(data, lines, columns);
+    const std::size_t result_2 = denisevich::countLocalMin(data, lines, columns);
+    const long long result_14 = denisevich::findMaxDiagSum(data, lines, columns);
     if (mode[0] == mode2) {
       delete[] data;
     }
-    if (!(output << result_2)) {
+    if (!(output << result_14)) {
       std::cerr << "Targeted file error" << '\n';
       return incorrect_content;
     }
     output << '\n';
-    if (!(output << result_14)) {
+    if (!(output << result_2)) {
       std::cerr << "Targeted file error" << '\n';
       return incorrect_content;
     }
