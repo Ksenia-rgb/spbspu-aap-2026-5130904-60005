@@ -44,8 +44,7 @@ int main()
       if (counter > result) {
         result = counter;
       }
-      std::cin >> a;
-      if (std::cin.fail()) {
+      if (!(std::cin >> a)) {
         throw input_error;
       }
     }
