@@ -3,6 +3,8 @@
 #include <limits>
 #include <string>
 #include <new>
+#include <cstddef>
+#include <stdexcept>
 
 namespace komova {
   const size_t max_size_t = std::numeric_limits< std::size_t >::max();
@@ -20,7 +22,7 @@ namespace komova {
     }
     return y;
   }
-  void ReadMatrix(int* arr, size_t rows, size_t cols, std::istream& input)
+  void readMatrix(int* arr, const size_t rows, const size_t cols, std::istream& input)
   {
     for (size_t i = 0; i < rows * cols; i++) {
       if (!(input >> arr[i])) {
@@ -28,13 +30,13 @@ namespace komova {
       }
     }
   }
-  void MaxSumSDG(int* arr, size_t rows, size_t cols, std::ostream& output)
+  void maxSumSdg(const int* arr, const size_t rows, const size_t cols, std::ostream& output)
   {
     int mxsum = 0;
     for (long long i = -static_cast< long long >(rows) + 1; i < static_cast< long long >(cols); i++) {
       int sum = 0;
       for (size_t j = 0; j < rows; j++) {
-        long long col = static_cast< long long >(j) + i;
+        const long long col = static_cast< long long >(j) + i;
         if (i != 0 and col >= 0 and col < static_cast< long long >(cols)) {
           sum += arr[j * cols + col];
         }
@@ -43,10 +45,10 @@ namespace komova {
     }
     output << mxsum << std::endl;
   }
-  void LWR_TRI_MTX(int* arr, size_t rows, size_t cols, std::ostream& output)
+  void lwrTriMtx(const int* arr, const size_t rows, const size_t cols, std::ostream& output)
   {
     bool flag = true;
-    size_t kv_razm = min(rows, cols);
+    const size_t kv_razm = min(rows, cols);
     if (kv_razm > 0) {
       for (size_t i = 0; i < kv_razm - 1; i++) {
         for (size_t j = i + 1; j < kv_razm; j++) {
@@ -71,20 +73,24 @@ namespace komova {
 }
 int main(int argc, char** argv)
 {
+  const int first_index = 1;
+  const int input_index = 2;
+  const int output_index = 3;
+  const int count_arg = 4;
   const int invalid_arguments = 1;
   const int invalid_input_or_output = 2;
   const size_t max_size_static_matrix = 10000;
   long long rows_signed = 0;
   long long cols_signed = 0;
-  if (argc != 4) {
+  if (argc != count_arg) {
     std::cerr << "Неверное количество параметров" << std::endl;
     return invalid_arguments;
   }
-  if (std::string(argv[1]) != "2" and std::string(argv[1]) != "1") {
+  if (std::string(argv[first_index]) != "2" and std::string(argv[first_index]) != "1") {
     std::cerr << "Неверный первый параметр" << std::endl;
     return invalid_arguments;
   }
-  std::ifstream input{argv[2]};
+  std::ifstream input{argv[input_index]};
   if (!input) {
     std::cerr << "Ошибка открытия входного файла" << std::endl;
     return invalid_input_or_output;
@@ -99,27 +105,27 @@ int main(int argc, char** argv)
     std::cerr << "Слишком большие размеры матрицы" << std::endl;
     return invalid_input_or_output;
   }
-  std::ofstream output{argv[3]};
+  std::ofstream output{argv[output_index]};
   if (!output) {
     std::cerr << "Ошибка открытия выходного файла" << std::endl;
     return invalid_input_or_output;
   }
-  if (std::string(argv[1]) == "1") {
+  if (std::string(argv[first_index]) == "1") {
     int matrix[max_size_static_matrix];
     try {
-      komova::ReadMatrix(matrix, rows, cols, input);
+      komova::readMatrix(matrix, rows, cols, input);
     } catch (std::invalid_argument& e) {
       std::cerr << "Ошибка чтения элементов матрицы" << std::endl;
       return invalid_input_or_output;
     }
-    komova::MaxSumSDG(matrix, rows, cols, output);
-    komova::LWR_TRI_MTX(matrix, rows, cols, output);
+    komova::maxSumSdg(matrix, rows, cols, output);
+    komova::lwrTriMtx(matrix, rows, cols, output);
   }
-  if (std::string(argv[1]) == "2") {
+  if (std::string(argv[first_index]) == "2") {
     int* matrix = nullptr;
     try {
       matrix = new int[rows * cols];
-      komova::ReadMatrix(matrix, rows, cols, input);
+      komova::readMatrix(matrix, rows, cols, input);
 
     } catch (std::bad_alloc& e) {
       delete[] matrix;
@@ -130,8 +136,8 @@ int main(int argc, char** argv)
       std::cerr << "Ошибка чтения элементов матрицы" << std::endl;
       return invalid_input_or_output;
     }
-    komova::MaxSumSDG(matrix, rows, cols, output);
-    komova::LWR_TRI_MTX(matrix, rows, cols, output);
+    komova::maxSumSdg(matrix, rows, cols, output);
+    komova::lwrTriMtx(matrix, rows, cols, output);
     delete[] matrix;
   }
   return 0;
