@@ -82,6 +82,10 @@ namespace evsyukov {
       std::cerr << "Error rows or cols/over_flow\n";
       return k_data_error;
     }
+    if (rows > 100000000 || cols > 100000000) {
+      std::cerr << "Error rows or cols\n";
+      return k_data_error;
+    }
     if (cols > 0 && rows > 100000000 / cols) {
       std::cerr << "Error rows or cols\n";
       return k_data_error;
