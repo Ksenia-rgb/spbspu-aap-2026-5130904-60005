@@ -107,7 +107,8 @@ namespace usmanov
   {
     output << (isUpperTriangular(arr, rows, cols) ? "true" : "false") << '\n';
 
-    int * const temp_arr = const_cast< int * >(arr);
+int *const temp_arr = const_cast< int * >(arr);
+
     transformLeftTopClockwise(temp_arr, rows, cols);
 
     output << rows << " " << cols;
