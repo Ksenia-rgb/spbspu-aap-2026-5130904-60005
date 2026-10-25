@@ -43,7 +43,7 @@ int main()
     }
   }
 
-  if (std::cin.fail() && !std::cin.eof())
+  if (std::cin.fail())
   {
     std::cerr << "invalid argument" << std::endl;
     return code_invalid_input;
