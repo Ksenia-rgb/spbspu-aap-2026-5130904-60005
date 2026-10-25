@@ -3,29 +3,31 @@
 
 namespace laptev {
 
+  const int max_fixed_elements = 10000;
+
   int numRowLsr(const int* a, int rows, int cols)
   {
-    int bestRow = 0;
-    int bestLen = 0;
+    int best_row = 0;
+    int best_len = 0;
     for (int i = 0; i < rows; ++i) {
-      int curLen = 1;
-      int rowBest = (cols > 0) ? 1 : 0;
+      int cur_len = 1;
+      int row_best = (cols > 0) ? 1 : 0;
       for (int j = 1; j < cols; ++j) {
         if (a[i * cols + j] == a[i * cols + j - 1]) {
-          ++curLen;
+          ++cur_len;
         } else {
-          curLen = 1;
+          cur_len = 1;
         }
-        if (curLen > rowBest) {
-          rowBest = curLen;
+        if (cur_len > row_best) {
+          row_best = cur_len;
         }
       }
-      if (rowBest > bestLen) {
-        bestLen = rowBest;
-        bestRow = i + 1;
+      if (row_best > best_len) {
+        best_len = row_best;
+        best_row = i + 1;
       }
     }
-    return bestRow;
+    return best_row;
   }
 
   int cntNzrDig(const int* a, int rows, int cols)
@@ -35,20 +37,20 @@ namespace laptev {
       if (d == 0) {
         continue;
       }
-      bool hasZero = false;
-      bool hasElem = false;
+      bool has_zero = false;
+      bool has_elem = false;
       for (int i = 0; i < rows; ++i) {
-        int j = i + d;
+        const int j = i + d;
         if (j < 0 || j >= cols) {
           continue;
         }
-        hasElem = true;
+        has_elem = true;
         if (a[i * cols + j] == 0) {
-          hasZero = true;
+          has_zero = true;
           break;
         }
       }
-      if (hasElem && !hasZero) {
+      if (has_elem && !has_zero) {
         ++count;
       }
     }
@@ -69,7 +71,7 @@ int main(int argc, char** argv)
     std::cerr << "First parameter must be 1 or 2\n";
     return 1;
   }
-  int modeNum = (mode[0] == '1') ? 1 : 2;
+  const int mode_num = (mode[0] == '1') ? 1 : 2;
 
   std::ifstream input(argv[2]);
   if (!input) {
@@ -82,11 +84,12 @@ int main(int argc, char** argv)
     return 2;
   }
 
-  int rows = 0, cols = 0;
+  int rows = 0;
+  int cols = 0;
   int* data = nullptr;
-  static int fixedBuf[10000];
+  static int fixed_buf[laptev::max_fixed_elements];
 
-  if (modeNum == 1) {
+  if (mode_num == 1) {
     if (!(input >> rows >> cols)) {
       std::cerr << "Cannot read matrix sizes\n";
       return 2;
@@ -95,18 +98,18 @@ int main(int argc, char** argv)
       std::cerr << "Invalid matrix sizes\n";
       return 2;
     }
-    long long total = static_cast< long long >(rows) * cols;
-    if (total > 10000) {
+    const long long total = static_cast< long long >(rows) * cols;
+    if (total > laptev::max_fixed_elements) {
       std::cerr << "Matrix too large for fixed mode\n";
       return 2;
     }
     for (long long k = 0; k < total; ++k) {
-      if (!(input >> fixedBuf[k])) {
+      if (!(input >> fixed_buf[k])) {
         std::cerr << "Cannot read matrix element\n";
         return 2;
       }
     }
-    data = fixedBuf;
+    data = fixed_buf;
   } else {
     if (!(input >> rows >> cols)) {
       std::cerr << "Cannot read matrix sizes\n";
@@ -116,7 +119,7 @@ int main(int argc, char** argv)
       std::cerr << "Invalid matrix sizes\n";
       return 2;
     }
-    long long total = static_cast< long long >(rows) * cols;
+    const long long total = static_cast< long long >(rows) * cols;
     if (total > 0) {
       data = new int[total];
       for (long long k = 0; k < total; ++k) {
@@ -129,13 +132,13 @@ int main(int argc, char** argv)
     }
   }
 
-  int r12 = laptev::numRowLsr(data, rows, cols);
-  int r18 = laptev::cntNzrDig(data, rows, cols);
+  const int r12 = laptev::numRowLsr(data, rows, cols);
+  const int r18 = laptev::cntNzrDig(data, rows, cols);
 
   output << r12 << '\n';
   output << r18 << '\n';
 
-  if (modeNum == 2 && data != nullptr) {
+  if (mode_num == 2 && data != nullptr) {
     delete[] data;
   }
 
