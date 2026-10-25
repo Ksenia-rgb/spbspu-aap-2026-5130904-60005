@@ -4,6 +4,10 @@
 #include <limits>
 #include <new>
 
+const int all_is_good = 0;
+const int invalid_arguments = 1;
+const int invalid_input_file = 2;
+
 namespace novoydarskiy {
 
   bool mode(const char* s, int& mode)
@@ -25,7 +29,7 @@ namespace novoydarskiy {
     return false;
   }
 
-  long long longest_cols_series(const long long* data, size_t rows, size_t cols)
+  long long longestColsSeries(const long long* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
@@ -53,7 +57,7 @@ namespace novoydarskiy {
     return best_col;
   }
 
-  long long longest_rows_series(const long long* data, size_t rows, size_t cols)
+  long long longestRowsSeries(const long long* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
@@ -81,7 +85,7 @@ namespace novoydarskiy {
     return best_row;
   }
 
-  bool read_sizes(std::istream& in, size_t& rows, size_t& cols)
+  bool readSizes(std::istream& in, size_t& rows, size_t& cols)
   {
     long long r = 0, c = 0;
     if (!(in >> r >> c)) {
@@ -95,18 +99,18 @@ namespace novoydarskiy {
     return true;
   }
 
-  bool write_results(std::ostream& out, const long long* data, size_t rows, size_t cols)
+  bool writeResults(std::ostream& out, const long long* data, size_t rows, size_t cols)
   {
-    long long res11 = longest_cols_series(data, rows, cols);
-    long long res12 = longest_rows_series(data, rows, cols);
+    const long long res11 = longestColsSeries(data, rows, cols);
+    const long long res12 = longestRowsSeries(data, rows, cols);
     out << res12 << '\n' << res11 << '\n';
     return out.good();
   }
 
-  bool fixed_massiv(std::istream& in, std::ostream& out)
+  bool fixedMassiv(std::istream& in, std::ostream& out)
   {
     size_t rows = 0, cols = 0;
-    if (!read_sizes(in, rows, cols)) {
+    if (!readSizes(in, rows, cols)) {
       return false;
     }
 
@@ -129,19 +133,19 @@ namespace novoydarskiy {
       return false;
     }
 
-    return write_results(out, buffer, rows, cols);
+    return writeResults(out, buffer, rows, cols);
   }
 
-  bool dynamic_massiv(std::istream& in, std::ostream& out)
+  bool dynamicMassiv(std::istream& in, std::ostream& out)
   {
     size_t rows = 0, cols = 0;
-    if (!read_sizes(in, rows, cols)) {
+    if (!readSizes(in, rows, cols)) {
       return false;
     }
     if (rows != 0 && cols > std::numeric_limits< size_t >::max() / rows) {
       return false;
     }
-    size_t total = rows * cols;
+    const size_t total = rows * cols;
     long long* buffer = nullptr;
     if (total > 0) {
       buffer = new (std::nothrow) long long[total];
@@ -162,7 +166,7 @@ namespace novoydarskiy {
       return false;
     }
 
-    bool res_of_func = write_results(out, buffer, rows, cols);
+    const bool res_of_func = writeResults(out, buffer, rows, cols);
     delete[] buffer;
     return res_of_func;
   }
@@ -172,41 +176,41 @@ int main(int argc, char** argv)
 {
   if (argc != 4) {
     std::cerr << "Ошибка: требуется 3 аргумента\n";
-    return 1;
+    return invalid_arguments;
   }
 
   int mode = 0;
   if (!novoydarskiy::mode(argv[1], mode)) {
-    std::cerr << "Ошибка: первый параметр - 1 или 2\n";
-    return 1;
+    std::cerr << "Ошибка: первый аргумент - 1 или 2\n";
+    return invalid_arguments;
   }
 
-  const char* input_path = argv[2];
-  const char* output_path = argv[3];
+  const char* const input_path = argv[2];
+  const char* const output_path = argv[3];
 
   std::ifstream input{input_path};
   if (!input) {
     std::cerr << "Ошибка: не получается открыть входной файл\n";
-    return 2;
+    return invalid_input_file;
   }
 
   std::ofstream output{output_path};
   if (!output) {
     std::cerr << "Ошибка: не получается открыть выходной файл\n";
-    return 2;
+    return invalid_input_file;
   }
 
   bool completed = false;
   if (mode == 1) {
-    completed = novoydarskiy::fixed_massiv(input, output);
+    completed = novoydarskiy::fixedMassiv(input, output);
   } else {
-    completed = novoydarskiy::dynamic_massiv(input, output);
+    completed = novoydarskiy::dynamicMassiv(input, output);
   }
 
   if (!completed) {
     std::cerr << "Ошибка чтения входного файла\n";
-    return 2;
+    return invalid_input_file;
   }
 
-  return 0;
+  return all_is_good;
 }
