@@ -189,6 +189,7 @@ namespace yasko
     return true;
   }
 }
+int main(int argc, char **argv)
 {
   const int input_arguments_ex1 = 1;
   const int input_values_ex2 = 2;
