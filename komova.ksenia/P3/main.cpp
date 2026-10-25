@@ -132,7 +132,7 @@ int main(int argc, char** argv)
       std::cerr << "Ошибка выделения памяти" << std::endl;
       return invalid_input_or_output;
     } catch (std::invalid_argument& e) {
-      delete matrix;
+      delete[] matrix;
       std::cerr << "Ошибка чтения элементов матрицы" << std::endl;
       return invalid_input_or_output;
     }
