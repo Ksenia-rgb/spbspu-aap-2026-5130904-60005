@@ -6,7 +6,7 @@
 
 namespace novoydarskiy {
 
-  bool Mode(const char* s, int& mode)
+  bool mode(const char* s, int& mode)
   {
     if (s == nullptr) {
       return false;
@@ -176,7 +176,7 @@ int main(int argc, char** argv)
   }
 
   int mode = 0;
-  if (!novoydarskiy::Mode(argv[1], mode)) {
+  if (!novoydarskiy::mode(argv[1], mode)) {
     std::cerr << "Ошибка: первый параметр - 1 или 2\n";
     return 1;
   }
