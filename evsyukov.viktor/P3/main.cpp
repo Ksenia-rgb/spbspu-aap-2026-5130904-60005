@@ -21,7 +21,7 @@ namespace evsyukov {
     return min_arg;
   }
 
-  int count_local_max(const int* a, long long rows, long long cols)
+  int countLocalMax(const int* a, long long rows, long long cols)
   {
     int count = 0;
     for (long long i = 1; i + 1 < rows; ++i) {
@@ -46,7 +46,7 @@ namespace evsyukov {
     return count;
   }
 
-  bool fill_inc_wav(int* a, long long rows, long long cols)
+  bool fillIncWav(int* a, long long rows, long long cols)
   {
     long long layer = 0;
     for (long long i = 0; i < rows; ++i) {
@@ -74,13 +74,13 @@ namespace evsyukov {
       std::cerr << "Error arguments matrix\n";
       return k_data_error;
     }
-    int count = count_local_max(a, rows, cols);
+    const int count = countLocalMax(a, rows, cols);
     std::ofstream out(out_name);
     if (!out) {
       std::cerr << "Cannot open output\n";
       return k_data_error;
     }
-    bool is_overflow = !fill_inc_wav(a, rows, cols);
+    const bool is_overflow = !fillIncWav(a, rows, cols);
     if (is_overflow) {
       std::cerr << "FLL-INC-WAV error\n";
     } else {
@@ -103,12 +103,12 @@ namespace evsyukov {
       std::cerr << "Invalid_input\n";
       return k_arg_error;
     }
-    const char* num_arg = argv[1];
+    const char* const num_arg = argv[1];
     if (num_arg[0] == '\0' || num_arg[1] != '\0' || (num_arg[0] != '1' && num_arg[0] != '2')) {
       std::cerr << "Error first parameter\n";
       return k_arg_error;
     }
-    int num = num_arg[0] - '0';
+    const int num = num_arg[0] - '0';
     std::ifstream in(argv[2]);
     if (!in) {
       std::cerr << "Invalid_file\n";
@@ -142,7 +142,7 @@ namespace evsyukov {
         return k_data_error;
       }
     }
-    int code = process(in, matrix, rows, cols, argv[3]);
+    const int code = process(in, matrix, rows, cols, argv[3]);
     if (num == 2) {
       delete[] matrix;
     }
