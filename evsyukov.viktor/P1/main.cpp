@@ -2,41 +2,32 @@
 
 int main()
 {
-  const int zero = 0;
+  const int invalid_input_code = 1;
 
-  int count = 1;
-  int count_pr = 0;
-  int count_pos = 0;
-  int cnt1 = 0;
-  int cnt2 = 0;
-  bool has_pr = false;
+  int current = 0;
+  int previous = 0;
+  bool has_previous = false;
+  int increases = 0;
+  int sign_changes = 0;
 
-  while (count != zero) {
-    std::cin >> count;
-    if (std::cin.fail()) {
-      std::cerr << "Invalid input\n";
-      return 1;
-    }
-
-    if (has_pr) {
-      count_pr = count_pos;
-    }
-
-    if (count != zero) {
-      count_pos = count;
-      has_pr = true;
-    }
-
-    if (count_pos != zero && count_pr != zero) {
-      if (count_pos > count_pr) {
-        cnt1++;
+  while ((std::cin >> current) && current != 0) {
+    if (has_previous) {
+      if (current > previous) {
+        ++increases;
       }
-      if ((count_pr < zero && count_pos > zero) || (count_pr > zero && count_pos < zero)) {
-        cnt2++;
+      if ((previous < 0 && current > 0) || (previous > 0 && current < 0)) {
+        ++sign_changes;
       }
     }
+    previous = current;
+    has_previous = true;
   }
 
-  std::cout << cnt1 << "\n" << cnt2 << "\n";
+  if (std::cin.fail()) {
+    std::cerr << "Invalid input\n";
+    return invalid_input_code;
+  }
+
+  std::cout << increases << "\n" << sign_changes << "\n";
   return 0;
 }
