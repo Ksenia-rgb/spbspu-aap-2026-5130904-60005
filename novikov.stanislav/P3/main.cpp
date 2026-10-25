@@ -239,12 +239,10 @@ namespace novikov
   static bool countZeroFreeDiagonals(const int* matrix, std::size_t rows, std::size_t cols, std::size_t& count)
   {
     count = 0;
-    
     if ((rows == 0) || (cols == 0))
     {
       return true;
     }
-
     std::size_t row = size_unit;
     while (row < rows)
     {
