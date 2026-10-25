@@ -31,18 +31,18 @@ namespace isaev
 
   static void readMatrixSize(std::istream &input, std::size_t &rows, std::size_t &cols)
   {
-    int intRows = 0;
-    int intCols = 0;
-    if (!(input >> intRows >> intCols))
+    int int_rows = 0;
+    int int_cols = 0;
+    if (!(input >> int_rows >> int_cols))
     {
       throw std::runtime_error("matrix size is missing or is not a pair of integers");
     }
-    if ((intRows < 0) || (intCols < 0))
+    if ((int_rows < 0) || (int_cols < 0))
     {
       throw std::runtime_error("matrix size must not be negative");
     }
-    rows = static_cast< std::size_t >(intRows);
-    cols = static_cast< std::size_t >(intCols);
+    rows = static_cast< std::size_t >(int_rows);
+    cols = static_cast< std::size_t >(int_cols);
     if ((cols != 0) && (rows > (std::numeric_limits< std::size_t >::max() / cols)))
     {
       throw std::runtime_error("matrix is too large");
@@ -78,8 +78,8 @@ namespace isaev
     return false;
   }
 
-  static long long sumMinorDiagonal(const int *elements, std::size_t rows, std::size_t cols,
-      std::size_t row, std::size_t col)
+  static long long sumMinorDiagonal(
+      const int *elements, std::size_t rows, std::size_t cols, std::size_t row, std::size_t col)
   {
     long long sum = 0;
     for (std::size_t step = 0; ((row + step) < rows) && (step <= col); ++step)
@@ -117,26 +117,26 @@ namespace isaev
     }
     const std::size_t lastCol = cols - lastIndexOffset;
     const long long noSum = std::numeric_limits< long long >::min();
-    long long maxSum = noSum;
+    long long max_sum = noSum;
     for (std::size_t col = 0; col < lastCol; ++col)
     {
-      maxSum = std::max(maxSum, sumMinorDiagonal(elements, rows, cols, 0, col));
+      max_sum = std::max(max_sum, sumMinorDiagonal(elements, rows, cols, 0, col));
     }
     for (std::size_t row = 0; row < rows; ++row)
     {
       if (row != 0)
       {
-        maxSum = std::max(maxSum, sumMinorDiagonal(elements, rows, cols, row, lastCol));
+        max_sum = std::max(max_sum, sumMinorDiagonal(elements, rows, cols, row, lastCol));
       }
     }
-    return (maxSum == noSum) ? 0 : maxSum;
+    return (max_sum == noSum) ? 0 : max_sum;
   }
 
-  static void writeResults(const char *outputName, const int *elements, size_t rows, size_t cols)
+  static void writeResults(const char *output_name, const int *elements, std::size_t rows, std::size_t cols)
   {
     const std::size_t nonZeroDiagonals = countNonZeroDiagonals(elements, rows, cols);
     const long long maxDiagonalSum = findMaxMinorDiagonalSum(elements, rows, cols);
-    std::ofstream output(outputName);
+    std::ofstream output(output_name);
     if (!output)
     {
       throw std::runtime_error("cannot open the output file");
@@ -150,7 +150,7 @@ namespace isaev
     }
   }
 
-  static void processFixedArray(std::istream &input, const char *outputName)
+  static void processFixedArray(std::istream &input, const char *output_name)
   {
     std::size_t rows = 0;
     std::size_t cols = 0;
@@ -161,19 +161,19 @@ namespace isaev
     }
     int elements[fixedCapacity] = {};
     readMatrixElements(input, elements, rows, cols);
-    writeResults(outputName, elements, rows, cols);
+    writeResults(output_name, elements, rows, cols);
   }
 
-  static void processDynamicArray(std::istream &input, const char *outputName)
+  static void processDynamicArray(std::istream &input, const char *output_name)
   {
     std::size_t rows = 0;
     std::size_t cols = 0;
     readMatrixSize(input, rows, cols);
-    int *elements = new int[rows * cols]();
+    int *const elements = new int[rows * cols]();
     try
     {
       readMatrixElements(input, elements, rows, cols);
-      writeResults(outputName, elements, rows, cols);
+      writeResults(output_name, elements, rows, cols);
     }
     catch (...)
     {
@@ -209,12 +209,17 @@ int main(int argc, char **argv)
   }
   catch (const std::invalid_argument &error)
   {
-    std::cerr << "Error:" << error.what() << '\n';
+    std::cerr << "Error: " << error.what() << '\n';
     return isaev::badArgumentsCode;
   }
-  catch (const std::exception &error)
+  catch (const std::runtime_error &error)
   {
-    std::cerr << "Error" << error.what() << '\n';
+    std::cerr << "Error: " << error.what() << '\n';
+    return isaev::badDataCode;
+  }
+  catch (...)
+  {
+    std::cerr << "Error: unexpected failure (possibly not enough memory)\n";
     return isaev::badDataCode;
   }
   return 0;
