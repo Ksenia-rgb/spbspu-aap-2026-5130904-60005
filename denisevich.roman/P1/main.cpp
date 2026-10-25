@@ -52,14 +52,12 @@ int main()
     std::cout << result << "\n";
   } catch (int k) {
     if (k == input_error) {
-      const int error1 = 1;
       std::cerr << "Error" << "\n";
-      return error1;
+      return input_error;
     }
     if (k == invalid_size) {
-      const int eror2 = 2;
       std::cerr << "The lenght is incorrect";
-      return eror2;
+      return invalid_size;
     }
   }
   return end;
