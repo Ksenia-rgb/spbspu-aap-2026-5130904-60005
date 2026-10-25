@@ -36,7 +36,7 @@ namespace usmanov
 
   void matrixInput(int arr[], std::size_t rows, std::size_t cols, std::istream &input)
   {
-    std::size_t total = rows * cols;
+    const std::size_t total = rows * cols;
     for (std::size_t i = 0; i < total; i++)
     {
       if (!(input >> arr[i]))
@@ -71,33 +71,33 @@ namespace usmanov
     {
       return;
     }
-    long long total = static_cast<long long>(rows * cols);
+    const long long total = static_cast< long long >(rows * cols);
     long long top = 0;
-    long long bottom = static_cast<long long>(rows) - 1;
+    long long bottom = static_cast< long long >(rows) - 1;
     long long left = 0;
-    long long right = static_cast<long long>(cols) - 1;
+    long long right = static_cast< long long >(cols) - 1;
     long long counter = 1;
 
     while (counter <= total)
     {
       for (long long i = left; i <= right && counter <= total; ++i)
       {
-        arr[top * static_cast<long long>(cols) + i] -= counter++;
+        arr[top * static_cast< long long >(cols) + i] -= counter++;
       }
       top++;
       for (long long i = top; i <= bottom && counter <= total; ++i)
       {
-        arr[i * static_cast<long long>(cols) + right] -= counter++;
+        arr[i * static_cast< long long >(cols) + right] -= counter++;
       }
       right--;
       for (long long i = right; i >= left && counter <= total; --i)
       {
-        arr[bottom * static_cast<long long>(cols) + i] -= counter++;
+        arr[bottom * static_cast< long long >(cols) + i] -= counter++;
       }
       bottom--;
       for (long long i = bottom; i >= top && counter <= total; --i)
       {
-        arr[i * static_cast<long long>(cols) + left] -= counter++;
+        arr[i * static_cast< long long >(cols) + left] -= counter++;
       }
       left++;
     }
@@ -107,7 +107,7 @@ namespace usmanov
   {
     output << (isUpperTriangular(arr, rows, cols) ? "true" : "false") << '\n';
 
-    int* temp_arr = const_cast<int*>(arr);
+    int * const temp_arr = const_cast< int * >(arr);
     transformLeftTopClockwise(temp_arr, rows, cols);
 
     output << rows << " " << cols;
