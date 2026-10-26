@@ -92,17 +92,21 @@ namespace udalcova {
     }
     if (!good) {
       std::cerr << "Ошибка: содержимое не является матрицей\n";
+      if (dynamic) {
+        delete[] a;
+      }
+      return error_input;
     }
     if (!(good = process(a, r, c, out))) {
       std::cerr << "Ошибка: не удалось записать результат\n";
-    }
-    if (dynamic) {
-      delete[] a;
+      if (dynamic) {
+        delete[] a;
+      }
+      return error_input;
     }
     if (good) {
       return 0;
     }
-    return error_input;
   }
 }
 
