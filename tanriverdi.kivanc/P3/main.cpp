@@ -1,93 +1,249 @@
-
+#include <cstring>
+#include <fstream>
 #include <iostream>
-#include <cstddef>
+#include <limits>
+#include <new>
 
 namespace tanriverdikivanc
 {
-  const int input_error = 1;
-  const int calculation_error = 2;
+  const int argument_error = 1;
+  const int input_error = 2;
+  const int max_fixed_elements = 10000;
 
-  int run()
+  bool readMatrix(std::istream & input, long long * matrix, long long count)
   {
-    int value = 0;
-    int previous = 0;
-    int previous_previous = 0;
-
-    std::size_t count = 0;
-    std::size_t current_length = 0;
-    std::size_t max_length = 0;
-    std::size_t sum_dup_count = 0;
-
-    bool has_previous = false;
-    bool has_previous_previous = false;
-    bool zero_found = false;
-
-    while (std::cin >> value)
+    for (long long i = 0; i < count; ++i)
     {
-      if (value == 0)
+      if (!(input >> matrix[i]))
       {
-        zero_found = true;
-        break;
+        return false;
       }
+    }
 
-      ++count;
+    char extra = '\0';
+    if (input >> extra)
+    {
+      return false;
+    }
 
-      if (!has_previous)
+    return true;
+  }
+
+  void transformMatrix(long long * matrix, long long rows, long long cols)
+  {
+    long long top = 0;
+    long long bottom = rows - 1;
+    long long left = 0;
+    long long right = cols - 1;
+    long long step = 1;
+
+    while (top <= bottom && left <= right)
+    {
+      for (long long col = left; col <= right; ++col)
       {
-        current_length = 1;
+        matrix[top * cols + col] -= step++;
       }
-      else if (value <= previous)
-      {
-        ++current_length;
-      }
-      else
-      {
-        current_length = 1;
-      }
+      ++top;
 
-      if (current_length > max_length)
+      for (long long row = top; row <= bottom; ++row)
       {
-        max_length = current_length;
+        matrix[row * cols + right] -= step++;
       }
+      --right;
 
-      if (has_previous && has_previous_previous)
+      if (top <= bottom)
       {
-        const long long sum =
-          static_cast<long long>(previous_previous) + previous;
-
-        if (static_cast<long long>(value) == sum)
+        for (long long col = right; col >= left; --col)
         {
-          ++sum_dup_count;
+          matrix[bottom * cols + col] -= step++;
+        }
+        --bottom;
+      }
+
+      if (left <= right)
+      {
+        for (long long row = bottom; row >= top; --row)
+        {
+          matrix[row * cols + left] -= step++;
+        }
+        ++left;
+      }
+    }
+  }
+
+  long long minSecondaryParallelSum(
+      const long long * matrix, long long rows, long long cols)
+  {
+    if (rows == 0 || cols == 0)
+    {
+      return 0;
+    }
+
+    bool has_result = false;
+    long long minimum = 0;
+
+    for (long long diagonal = 0; diagonal <= rows + cols - 2; ++diagonal)
+    {
+      if (diagonal == cols - 1)
+      {
+        continue;
+      }
+
+      long long sum = 0;
+
+      for (long long row = 0; row < rows; ++row)
+      {
+        const long long col = diagonal - row;
+
+        if (col >= 0 && col < cols)
+        {
+          sum += matrix[row * cols + col];
         }
       }
 
-      previous_previous = previous;
-      has_previous_previous = has_previous;
-
-      previous = value;
-      has_previous = true;
+      if (!has_result || sum < minimum)
+      {
+        minimum = sum;
+        has_result = true;
+      }
     }
 
-    if (!zero_found)
+    return has_result ? minimum : 0;
+  }
+
+  bool writeResults(
+      std::ostream & output,
+      const long long * original,
+      long long rows,
+      long long cols,
+      long long * transformed)
+  {
+    const long long count = rows * cols;
+
+    for (long long i = 0; i < count; ++i)
     {
-      std::cerr << "Invalid input sequence\n";
+      transformed[i] = original[i];
+    }
+
+    transformMatrix(transformed, rows, cols);
+
+    output << rows << ' ' << cols;
+
+    for (long long i = 0; i < count; ++i)
+    {
+      output << ' ' << transformed[i];
+    }
+
+    output << '\n';
+    output << minSecondaryParallelSum(original, rows, cols) << '\n';
+
+    return output.good();
+  }
+
+  int run(int argc, char ** argv)
+  {
+    if (argc != 4)
+    {
+      std::cerr << "Error: expected num, input and output arguments\n";
+      return argument_error;
+    }
+
+    if (std::strcmp(argv[1], "1") != 0 && std::strcmp(argv[1], "2") != 0)
+    {
+      std::cerr << "Error: num must be 1 or 2\n";
+      return argument_error;
+    }
+
+    const bool fixed_mode = std::strcmp(argv[1], "1") == 0;
+
+    std::ifstream input(argv[2]);
+    if (!input)
+    {
+      std::cerr << "Error: cannot open input file\n";
+      return argument_error;
+    }
+
+    std::ofstream output(argv[3]);
+    if (!output)
+    {
+      std::cerr << "Error: cannot open output file\n";
+      return argument_error;
+    }
+
+    long long rows = 0;
+    long long cols = 0;
+
+    if (!(input >> rows >> cols) || rows < 0 || cols < 0 ||
+        ((rows == 0) != (cols == 0)) ||
+        (cols != 0 && rows > std::numeric_limits<long long>::max() / cols))
+    {
+      std::cerr << "Error: invalid matrix dimensions\n";
       return input_error;
     }
 
-    std::cout << max_length << '\n';
+    const long long count = rows * cols;
 
-    if (count < 3)
+    if (fixed_mode && count > max_fixed_elements)
     {
-      std::cerr << "Not enough elements for SUM-DUP\n";
-      return calculation_error;
+      std::cerr << "Error: matrix is too large for fixed mode\n";
+      return input_error;
     }
 
-    std::cout << sum_dup_count << '\n';
+    if (fixed_mode)
+    {
+      long long matrix[max_fixed_elements];
+      long long transformed[max_fixed_elements];
+
+      if (!readMatrix(input, matrix, count))
+      {
+        std::cerr << "Error: invalid matrix data\n";
+        return input_error;
+      }
+
+      if (!writeResults(output, matrix, rows, cols, transformed))
+      {
+        std::cerr << "Error: cannot write output\n";
+        return argument_error;
+      }
+    }
+    else
+    {
+      long long *const matrix = new (std::nothrow) long long[count];
+      long long *const transformed = new (std::nothrow) long long[count];
+
+      if (count > 0 && (matrix == nullptr || transformed == nullptr))
+      {
+        delete[] matrix;
+        delete[] transformed;
+        std::cerr << "Error: memory allocation failed\n";
+        return input_error;
+      }
+
+      if (!readMatrix(input, matrix, count))
+      {
+        delete[] matrix;
+        delete[] transformed;
+        std::cerr << "Error: invalid matrix data\n";
+        return input_error;
+      }
+
+      const bool written = writeResults(output, matrix, rows, cols, transformed);
+
+      delete[] matrix;
+      delete[] transformed;
+
+      if (!written)
+      {
+        std::cerr << "Error: cannot write output\n";
+        return argument_error;
+      }
+    }
+
     return 0;
   }
 }
 
-int main()
+int main(int argc, char ** argv)
 {
-  return tanriverdikivanc::run();
+  return tanriverdikivanc::run(argc, argv);
 }
