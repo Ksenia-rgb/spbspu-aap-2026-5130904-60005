@@ -158,10 +158,8 @@ int main(int argc, char* argv[])
 
         std::ifstream in(argv[2]);
         if (!in.is_open()) throw 3;
-
         std::ofstream out(argv[3]);
         if (!out.is_open()) throw 3;
-
         if (num == 1)
             runFixed(in, out);
         else
