@@ -7,7 +7,7 @@ namespace nekhorukov
 {
   const int MAX = 10000;
 
-  bool upperTri(const long long * m, int r, int c)
+  bool upper_tri(const long long * const m, int r, int c)
   {
     int n = r < c ? r : c;
     for (int i = 0; i < n; ++i)
@@ -23,7 +23,7 @@ namespace nekhorukov
     return true;
   }
 
-  int rowsNoSame(const long long * m, int r, int c)
+  int rows_no_same(const long long * const m, int r, int c)
   {
     int res = 0;
     for (int i = 0; i < r; ++i)
@@ -45,7 +45,7 @@ namespace nekhorukov
     return res;
   }
 
-  int run(const std::string & num, const std::string & inName, const std::string & outName)
+  int run(const std::string & num, const std::string & in_name, const std::string & out_name)
   {
     if (num != "1" && num != "2")
     {
@@ -53,7 +53,7 @@ namespace nekhorukov
       return 1;
     }
 
-    std::ifstream fin(inName);
+    std::ifstream fin(in_name);
     if (!fin)
     {
       std::cerr << "can't open input\n";
@@ -70,7 +70,7 @@ namespace nekhorukov
 
     if (r == 0 || c == 0)
     {
-      std::ofstream fout(outName);
+      std::ofstream fout(out_name);
       if (!fout)
       {
         std::cerr << "can't open output\n";
@@ -81,7 +81,7 @@ namespace nekhorukov
       return 0;
     }
 
-    int total = r * c;
+    const int total = r * c;
 
     if (num == "1")
     {
@@ -90,6 +90,7 @@ namespace nekhorukov
         std::cerr << "too big\n";
         return 2;
       }
+      
       long long buf[MAX];
       for (int i = 0; i < total; ++i)
       {
@@ -99,14 +100,15 @@ namespace nekhorukov
           return 2;
         }
       }
-      std::ofstream fout(outName);
+      
+      std::ofstream fout(out_name);
       if (!fout)
       {
         std::cerr << "can't open output\n";
         return 2;
       }
-      fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
-      fout << rowsNoSame(buf, r, c) << "\n";
+      fout << (upper_tri(buf, r, c) ? "true" : "false") << "\n";
+      fout << rows_no_same(buf, r, c) << "\n";
       return 0;
     }
 
@@ -134,15 +136,15 @@ namespace nekhorukov
       return 2;
     }
 
-    std::ofstream fout(outName);
+    std::ofstream fout(out_name);
     if (!fout)
     {
       delete[] buf;
       std::cerr << "can't open output\n";
       return 2;
     }
-    fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
-    fout << rowsNoSame(buf, r, c) << "\n";
+    fout << (upper_tri(buf, r, c) ? "true" : "false") << "\n";
+    fout << rows_no_same(buf, r, c) << "\n";
     delete[] buf;
     return 0;
   }
