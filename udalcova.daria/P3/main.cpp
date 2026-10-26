@@ -3,7 +3,6 @@
 #include <cstddef>
 
 namespace udalcova {
-
   const int error_args = 1;
   const int error_input = 2;
   const size_t max_size = 10000;
