@@ -104,9 +104,7 @@ namespace udalcova {
       }
       return error_input;
     }
-    if (good) {
-      return 0;
-    }
+    return 0;
   }
 }
 
