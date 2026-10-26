@@ -115,7 +115,7 @@ int main(int argc, char** argv)
     return error_input;
   }
 
-  const char* num = argv[1];
+  const char* const num = argv[1];
   if ((num[0] != '1' && num[0] != '2') || num[1] != '\0') {
     std::cerr << "Ошибка: первый параметр должен быть 1 или 2\n";
     return error_args;
