@@ -1,9 +1,10 @@
 #include <iostream>
 #include <climits>
+#include <cstdlib>
 
 namespace nekhorukov
 {
-  int readSequence(std::istream & in)
+  int read_sequence(std::istream & in)
   {
     int prev = 0;
     int curr = 0;
@@ -11,11 +12,11 @@ namespace nekhorukov
     bool any = false;
     bool bad = false;
 
-    int minVal = INT_MAX;
-    int minCount = 0;
+    int min_val = INT_MAX;
+    int min_count = 0;
 
-    int curLen = 0;
-    int bestLen = 0;
+    int cur_len = 0;
+    int best_len = 0;
 
     while (in >> curr)
     {
@@ -26,33 +27,33 @@ namespace nekhorukov
 
       any = true;
 
-      if (curr < minVal)
+      if (curr < min_val)
       {
-        minVal = curr;
-        minCount = 1;
+        min_val = curr;
+        min_count = 1;
       }
-      else if (curr == minVal)
+      else if (curr == min_val)
       {
-        ++minCount;
+        ++min_count;
       }
 
       if (first)
       {
-        curLen = 1;
-        bestLen = 1;
+        cur_len = 1;
+        best_len = 1;
         first = false;
       }
       else if (curr >= prev)
       {
-        ++curLen;
-        if (curLen > bestLen)
+        ++cur_len;
+        if (cur_len > best_len)
         {
-          bestLen = curLen;
+          best_len = cur_len;
         }
       }
       else
       {
-        curLen = 1;
+        cur_len = 1;
       }
 
       prev = curr;
@@ -76,13 +77,13 @@ namespace nekhorukov
       return 0;
     }
 
-    std::cout << bestLen << "\n";
-    std::cout << minCount << "\n";
+    std::cout << best_len << "\n";
+    std::cout << min_count << "\n";
     return 0;
   }
 }
 
 int main()
 {
-  return nekhorukov::readSequence(std::cin);
+  return nekhorukov::read_sequence(std::cin);
 }
