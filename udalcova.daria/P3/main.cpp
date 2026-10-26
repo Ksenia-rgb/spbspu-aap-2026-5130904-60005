@@ -104,6 +104,9 @@ namespace udalcova {
       }
       return error_input;
     }
+    if (dynamic) {
+      delete[] a;
+    }
     return 0;
   }
 }
