@@ -10,12 +10,12 @@ namespace udalcova {
   bool good(const int* a, size_t r, size_t c, size_t i, size_t j)
   {
     size_t len = 0;
-    for (i < r && j < c; ++i; ++j; ++len) {
+    for (; i < r && j < c; ++i; ++j; ++len) {
       if (a[i * c + j] == 0) {
         return false;
       }
     }
-    retuen len >= 2;
+    return len >= 2;
   }
 
   size_t count(const int* a, size_t r, size_t c)
