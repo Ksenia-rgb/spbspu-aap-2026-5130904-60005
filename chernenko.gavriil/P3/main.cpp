@@ -98,6 +98,9 @@ void chernenko::runStack(std::istream& input, std::ostream& out)
     if (cols != 0 && rows > max_elements / cols) {
       throw std::runtime_error("Incorrect file content");
     }
+    if (rows * cols == 0 && rows != cols) {
+      throw std::runtime_error("Incorrect file content");
+    }
     int matrix[max_elements]{};
     chernenko::readMatrix(input, matrix, rows * cols);
     spec1 = chernenko::countColumnsNotsame(rows, cols, matrix);
@@ -124,6 +127,9 @@ void chernenko::runDynamic(std::istream& input, std::ostream& out)
     std::size_t spec1 = 0;
     int spec2 = 0;
     if (cols != 0 && rows > max_sizet / cols) {
+      throw std::runtime_error("Incorrect file content");
+    }
+    if (rows * cols == 0 && rows != cols) {
       throw std::runtime_error("Incorrect file content");
     }
     int* const matrix = new int[rows * cols]{};
