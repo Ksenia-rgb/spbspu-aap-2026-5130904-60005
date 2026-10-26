@@ -4,7 +4,6 @@ int main()
 {
   const int end = 0;
   const int input_error = 1;
-  const int noterror_justresult = 0;
   const int invalid_size = 2;
   try {
     int result = 0;
@@ -19,7 +18,7 @@ int main()
     }
     if (a == 0) {
       std::cout << 0 << "\n" << 0 << "\n";
-      return noterror_justresult;
+      return end;
     }
     int c = a;
     while (a != 0) {
