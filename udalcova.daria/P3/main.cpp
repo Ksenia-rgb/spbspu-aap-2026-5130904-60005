@@ -10,7 +10,7 @@ namespace udalcova {
   bool good(const int* a, size_t r, size_t c, size_t i, size_t j)
   {
     size_t len = 0;
-    for (; i < r && j < c; ++i; ++j; ++len) {
+    for (; i < r && j < c; ++i, ++j, ++len) {
       if (a[i * c + j] == 0) {
         return false;
       }
@@ -36,7 +36,7 @@ namespace udalcova {
     int k = 1;
     while (top < bot && left < right) {
       for (size_t i = top; i < bot; ++i) {
-        a[i * c + left] += ++k;
+        a[i * c + left] += k++;
       }
       ++left;
       for (size_t j = left; j < right; j++) {
@@ -79,7 +79,7 @@ namespace udalcova {
     }
     int fixed[max_size];
     int* a = fixed;
-    if (denamic) {
+    if (dynamic) {
       a = new int[r * c];
     }
     if (c != 0 && r > max_size / c) {
@@ -96,7 +96,7 @@ namespace udalcova {
     if (!(good = process(a, r, c, out))) {
       std::cerr << "Ошибка: не удалось записать результат\n";
     }
-    if (denamic) {
+    if (dynamic) {
       delete[] a;
     }
     if (good) {
