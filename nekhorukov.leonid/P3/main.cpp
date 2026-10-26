@@ -7,7 +7,7 @@ namespace nekhorukov
 {
   const int MAX = 10000;
 
-  bool upper_tri(const long long * const m, int r, int c)
+  bool upperTri(const long long * const m, int r, int c)
   {
     int n = r < c ? r : c;
     for (int i = 0; i < n; ++i)
@@ -23,7 +23,7 @@ namespace nekhorukov
     return true;
   }
 
-  int rows_no_same(const long long * const m, int r, int c)
+  int rowsNoSame(const long long * const m, int r, int c)
   {
     int res = 0;
     for (int i = 0; i < r; ++i)
@@ -107,8 +107,8 @@ namespace nekhorukov
         std::cerr << "can't open output\n";
         return 2;
       }
-      fout << (upper_tri(buf, r, c) ? "true" : "false") << "\n";
-      fout << rows_no_same(buf, r, c) << "\n";
+      fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
+      fout << rowsNoSame(buf, r, c) << "\n";
       return 0;
     }
 
@@ -143,8 +143,8 @@ namespace nekhorukov
       std::cerr << "can't open output\n";
       return 2;
     }
-    fout << (upper_tri(buf, r, c) ? "true" : "false") << "\n";
-    fout << rows_no_same(buf, r, c) << "\n";
+    fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
+    fout << rowsNoSame(buf, r, c) << "\n";
     delete[] buf;
     return 0;
   }
