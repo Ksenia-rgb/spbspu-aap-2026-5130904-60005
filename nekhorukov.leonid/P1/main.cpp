@@ -4,7 +4,7 @@
 
 namespace nekhorukov
 {
-  int read_sequence(std::istream & in)
+  int readSequence(std::istream & in)
   {
     int prev = 0;
     int curr = 0;
@@ -85,5 +85,5 @@ namespace nekhorukov
 
 int main()
 {
-  return nekhorukov::read_sequence(std::cin);
+  return nekhorukov::readSequence(std::cin);
 }
