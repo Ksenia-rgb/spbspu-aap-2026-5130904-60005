@@ -1,18 +1,23 @@
 #include <iostream>
-#include <climits>
-#include <cstdlib>
+#include <limits>
 
 namespace nekhorukov
 {
+  enum ErrorCode
+  {
+    kSuccess = 0,
+    kInputError = 1,
+    kCalcError = 2
+  };
+
   int readSequence(std::istream & in)
   {
     int prev = 0;
     int curr = 0;
+    
     bool first = true;
-    bool any = false;
-    bool bad = false;
-
-    int min_val = INT_MAX;
+    
+    int min_val = std::numeric_limits<int>::max();
     int min_count = 0;
 
     int cur_len = 0;
@@ -25,7 +30,27 @@ namespace nekhorukov
         break;
       }
 
-      any = true;
+      if (first)
+      {
+        cur_len = 1;
+        best_len = 1;
+        first = false;
+      }
+      else
+      {
+        if (curr >= prev)
+        {
+          ++cur_len;
+          if (cur_len > best_len)
+          {
+            best_len = cur_len;
+          }
+        }
+        else
+        {
+          cur_len = 1;
+        }
+      }
 
       if (curr < min_val)
       {
@@ -37,49 +62,25 @@ namespace nekhorukov
         ++min_count;
       }
 
-      if (first)
-      {
-        cur_len = 1;
-        best_len = 1;
-        first = false;
-      }
-      else if (curr >= prev)
-      {
-        ++cur_len;
-        if (cur_len > best_len)
-        {
-          best_len = cur_len;
-        }
-      }
-      else
-      {
-        cur_len = 1;
-      }
-
       prev = curr;
     }
 
-    if (in.fail() && !in.eof())
-    {
-      bad = true;
-    }
-
-    if (bad)
+    if (in.fail())
     {
       std::cerr << "bad input\n";
-      return 1;
+      return kInputError;
     }
 
-    if (!any)
+    if (first)
     {
       std::cout << "0\n";
       std::cout << "0\n";
-      return 0;
+      return kSuccess;
     }
 
     std::cout << best_len << "\n";
     std::cout << min_count << "\n";
-    return 0;
+    return kSuccess;
   }
 }
 
