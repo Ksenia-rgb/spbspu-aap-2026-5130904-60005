@@ -14,9 +14,9 @@ namespace nekhorukov
   {
     int prev = 0;
     int curr = 0;
-    
+
     bool first = true;
-    
+
     int min_val = std::numeric_limits<int>::max();
     int min_count = 0;
 
