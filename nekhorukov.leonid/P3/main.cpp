@@ -1,11 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstdlib>
 
 namespace nekhorukov
 {
-  const int MAX = 10000;
+  enum ErrorCode
+  {
+    kSuccess = 0,
+    kArgsError = 1,
+    kFileError = 2
+  };
+
+  const int kMaxSize = 10000;
 
   bool upperTri(const long long * const m, int r, int c)
   {
@@ -50,14 +56,14 @@ namespace nekhorukov
     if (num != "1" && num != "2")
     {
       std::cerr << "bad first arg\n";
-      return 1;
+      return kArgsError;
     }
 
     std::ifstream fin(in_name);
     if (!fin)
     {
       std::cerr << "can't open input\n";
-      return 2;
+      return kFileError;
     }
 
     int r = 0;
@@ -65,75 +71,68 @@ namespace nekhorukov
     if (!(fin >> r >> c) || r < 0 || c < 0)
     {
       std::cerr << "bad header\n";
-      return 2;
+      return kFileError;
     }
 
-    if (r == 0 || c == 0)
+    const int total = r * c;
+
+    if (total == 0)
     {
       std::ofstream fout(out_name);
       if (!fout)
       {
         std::cerr << "can't open output\n";
-        return 2;
+        return kFileError;
       }
       fout << "false\n";
       fout << 0 << "\n";
-      return 0;
+      return kSuccess;
     }
-
-    const int total = r * c;
 
     if (num == "1")
     {
-      if (total > MAX)
+      if (total > kMaxSize)
       {
         std::cerr << "too big\n";
-        return 2;
+        return kFileError;
       }
-      
-      long long buf[MAX];
+
+      long long buf[kMaxSize];
       for (int i = 0; i < total; ++i)
       {
         if (!(fin >> buf[i]))
         {
           std::cerr << "bad data\n";
-          return 2;
+          return kFileError;
         }
       }
-      
+
       std::ofstream fout(out_name);
       if (!fout)
       {
         std::cerr << "can't open output\n";
-        return 2;
+        return kFileError;
       }
       fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
       fout << rowsNoSame(buf, r, c) << "\n";
-      return 0;
+      return kSuccess;
     }
 
     long long * buf = new (std::nothrow) long long[total];
     if (buf == nullptr)
     {
       std::cerr << "no memory\n";
-      return 2;
+      return kFileError;
     }
 
-    bool ok = true;
     for (int i = 0; i < total; ++i)
     {
       if (!(fin >> buf[i]))
       {
-        ok = false;
-        break;
+        delete[] buf;
+        std::cerr << "bad data\n";
+        return kFileError;
       }
-    }
-
-    if (!ok)
-    {
-      delete[] buf;
-      std::cerr << "bad data\n";
-      return 2;
     }
 
     std::ofstream fout(out_name);
@@ -141,12 +140,12 @@ namespace nekhorukov
     {
       delete[] buf;
       std::cerr << "can't open output\n";
-      return 2;
+      return kFileError;
     }
     fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
     fout << rowsNoSame(buf, r, c) << "\n";
     delete[] buf;
-    return 0;
+    return kSuccess;
   }
 }
 
@@ -155,7 +154,7 @@ int main(int argc, char * argv[])
   if (argc != 4)
   {
     std::cerr << "need 3 args\n";
-    return 1;
+    return nekhorukov::kArgsError;
   }
   return nekhorukov::run(argv[1], argv[2], argv[3]);
 }
