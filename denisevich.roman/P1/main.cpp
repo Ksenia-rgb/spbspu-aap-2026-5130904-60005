@@ -5,13 +5,14 @@ int main()
   const int end = 0;
   const int input_error = 1;
   const int invalid_size = 2;
+  int i = 0;
   try {
+    int error_indicator = 0;
     int result = 0;
     int counter = 0;
     const int max_val = std::numeric_limits< int >::max();
     int previous = max_val;
     int a = 0;
-    int i = 0;
     if (!(std::cin >> a)) {
       throw input_error;
     }
@@ -30,9 +31,10 @@ int main()
       }
       if (a <= previous) {
         if (counter == max_val) {
-		throw invalid_size;
-	}
-	counter++;
+          error_indicator = 1;
+          counter = 0;
+        }
+        counter++;
       }
       if (a > previous) {
         counter = 1;
@@ -45,6 +47,9 @@ int main()
         throw input_error;
       }
     }
+    if (error_indicator == 1) {
+      throw invalid_size;
+    }
     std::cout << i << "\n";
     std::cout << result << "\n";
   } catch (int k) {
@@ -53,6 +58,7 @@ int main()
       return input_error;
     }
     if (k == invalid_size) {
+      std::cout << i << "\n";
       std::cerr << "The lenght is incorrect";
       return invalid_size;
     }
