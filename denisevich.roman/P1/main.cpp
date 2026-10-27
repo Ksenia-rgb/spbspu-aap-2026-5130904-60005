@@ -6,9 +6,10 @@ int main()
   const int input_error = 1;
   const int invalid_size = 2;
   int i = 0;
+  int result = 0;
+  int error_indicator = 0;
+  int indicator_error_i = 0;
   try {
-    int error_indicator = 0;
-    int result = 0;
     int counter = 0;
     const int max_val = std::numeric_limits< int >::max();
     int previous = max_val;
@@ -24,9 +25,13 @@ int main()
     while (a != 0) {
       if (a < c) {
         c = a;
-        i = 0;
-        i++;
+        i = 1;
       } else if (a == c) {
+        if (i == max_val) {
+          indicator_error_i = 1;
+          i = 0;
+        }
+
         i++;
       }
       if (a <= previous) {
@@ -47,7 +52,7 @@ int main()
         throw input_error;
       }
     }
-    if (error_indicator == 1) {
+    if (error_indicator == 1 || indicator_error_i == 1) {
       throw invalid_size;
     }
     std::cout << i << "\n";
@@ -58,8 +63,15 @@ int main()
       return input_error;
     }
     if (k == invalid_size) {
-      std::cout << i << "\n";
-      std::cerr << "The lenght is incorrect";
+      if (error_indicator == 1 && indicator_error_i == 1) {
+        std::cerr << "The length is incorrect" << "\n";
+      } else if (error_indicator == 1 && indicator_error_i == 0) {
+        std::cout << i << "\n";
+        std::cerr << "Number 2 cant be calculated" << "\n";
+      } else {
+        std::cout << result << "\n";
+        std::cerr << "Number 1 cant be calculated" << "\n";
+      }
       return invalid_size;
     }
   }
