@@ -11,7 +11,6 @@ int main()
     const int max_val = std::numeric_limits< int >::max();
     int previous = max_val;
     int a = 0;
-    int count = 1;
     int i = 0;
     if (!(std::cin >> a)) {
       throw input_error;
@@ -29,12 +28,11 @@ int main()
       } else if (a == c) {
         i++;
       }
-      count++;
-      if (count == max_val) {
-        throw invalid_size;
-      }
       if (a <= previous) {
-        counter++;
+        if (counter == max_val) {
+		throw invalid_size;
+	}
+	counter++;
       }
       if (a > previous) {
         counter = 1;
