@@ -25,7 +25,7 @@ int main()
     while (a != 0) {
       if (a < c) {
         c = a;
-	indicator_error_i = false;
+        indicator_error_i = false;
         i = 1;
       } else if (a == c) {
         if (i == max_val) {
