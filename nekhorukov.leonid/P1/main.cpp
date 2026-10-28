@@ -1,5 +1,6 @@
 #include <iostream>
 #include <limits>
+#include <cstddef>
 
 namespace nekhorukov
 {
@@ -18,10 +19,10 @@ namespace nekhorukov
     bool first = true;
 
     int min_val = std::numeric_limits< int >::max();
-    int min_count = 0;
+    std::size_t min_count = 0;
 
-    int cur_len = 0;
-    int best_len = 0;
+    std::size_t cur_len = 0;
+    std::size_t best_len = 0;
 
     while (in >> curr)
     {
@@ -40,6 +41,11 @@ namespace nekhorukov
       {
         if (curr >= prev)
         {
+          if (cur_len == std::numeric_limits< std::size_t >::max())
+          {
+            std::cerr << "overflow\n";
+            return kCalcError;
+          }
           ++cur_len;
           if (cur_len > best_len)
           {
@@ -59,6 +65,11 @@ namespace nekhorukov
       }
       else if (curr == min_val)
       {
+        if (min_count == std::numeric_limits< std::size_t >::max())
+        {
+          std::cerr << "overflow\n";
+          return kCalcError;
+        }
         ++min_count;
       }
 
