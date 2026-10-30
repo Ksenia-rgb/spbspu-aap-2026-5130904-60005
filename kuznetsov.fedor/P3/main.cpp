@@ -60,7 +60,6 @@ void stec_data_cp (std::istream& input, int* matrix, size_t k_row, size_t k_colu
         {
             throw std::invalid_argument("invalid arg\n");
         }
-        std::cout<<"matrix[" << i << "] = " << matrix[i] << std::endl;
     }
 }
 int num_row_lsr_stec(int* matrix, size_t k_row, size_t k_colomn)
