@@ -17,7 +17,7 @@ namespace kuznetsov
     try
     {
       matrix = new int*[k_rows];
-      for (int i = 0; i < k_rows; ++i)
+      for (size_t i = 0; i < k_rows; ++i)
       {
         int* rows = new int[k_colomn];
         matrix[i] = rows;
@@ -29,7 +29,7 @@ namespace kuznetsov
     catch (const std::bad_alloc&)
     {
       std::cerr << "bad_alloc" << "\n";
-      for (int i = 0; i < accept_rows; ++i)
+      for (size_t i = 0; i < accept_rows; ++i)
       {
         delete[] matrix[i];
       }
@@ -189,7 +189,7 @@ namespace kuznetsov
     }
     int res = std::numeric_limits< int >::max();
 
-    for (int i = 0; i < k_colomn; i++)
+    for (size_t i = 0; i < k_colomn; i++)
     {
       int d_sum = 0;
 
@@ -208,7 +208,7 @@ namespace kuznetsov
       }
     }
 
-    for (int i = 1; i < k_rows; ++i)
+    for (size_t i = 1; i < k_rows; ++i)
     {
       int d_sum = 0;
       size_t col = 0, row = i;
@@ -258,44 +258,44 @@ int main(int argc, char** argv)
 
     switch (mode[0])
     {
+    case '1':
+    {
+      input >> k_rows >> k_colomn;
+      std::ofstream output(outputPath);
+
+      int arg_1 = 0, arg_2 = 0;
       {
-        input >> k_rows >> k_colomn;
-        std::ofstream output(outputPath);
-
-        int arg_1 = 0, arg_2 = 0;
-
-        if ((k_rows == 0 && k_colomn == 0) || k_rows < 0 || k_colomn < 0)
-        {
-          return 2;
-        }
-        int matrix[10000] = {};
-        try
-        {
-          input.clear();
-          kuznetsov::stec_data_cp(input, matrix, k_rows, k_colomn);
-        }
-        catch (...)
-        {
-          std::cerr << "invalid arg in stec_data_cp" << "\n";
-          return 2;
-        }
-        try
-        {
-          arg_1 = kuznetsov::num_row_lsr_stec(matrix, k_rows, k_colomn);
-          arg_2 = kuznetsov::min_sum_sdg_stec(matrix, k_rows, k_colomn);
-        }
-        catch (...)
-        {
-          arg_1 = kuznetsov::num_row_lsr_stec(matrix, k_rows, k_colomn);
-          std::cerr << "unreal min_sum_sdg_stec" << "\n";
-          output << arg_1 << "\n";
-          return 2;
-        }
-        output << arg_1 << "\n";
-        output << arg_2 << "\n";
-
-        break;
+        return 2;
       }
+      int matrix[10000] = {};
+      try
+      {
+        input.clear();
+        kuznetsov::stec_data_cp(input, matrix, k_rows, k_colomn);
+      }
+      catch (...)
+      {
+        std::cerr << "invalid arg in stec_data_cp" << "\n";
+        return 2;
+      }
+      try
+      {
+        arg_1 = kuznetsov::num_row_lsr_stec(matrix, k_rows, k_colomn);
+        arg_2 = kuznetsov::min_sum_sdg_stec(matrix, k_rows, k_colomn);
+      }
+      catch (...)
+      {
+        arg_1 = kuznetsov::num_row_lsr_stec(matrix, k_rows, k_colomn);
+        std::cerr << "unreal min_sum_sdg_stec" << "\n";
+        output << arg_1 << "\n";
+        return 2;
+      }
+      output << arg_1 << "\n";
+      output << arg_2 << "\n";
+
+      break;
+    }
+      case '2';
       {
         input >> k_rows >> k_colomn;
         if (!input)
