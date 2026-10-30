@@ -237,12 +237,12 @@ int main(int argc, char** argv)
   if (argc < 4)
   {
     std::cerr << "Not enough arguments" << "\n";
-    return 1;
+    return arg_err_in_term;
   }
   if (argc > 4)
   {
     std::cerr << "Too many arguments" << "\n";
-    return 1;
+    return arg_err_in_term;
   }
   const char* mode = argv[1];
   const char* inputPath = argv[2];
@@ -253,7 +253,7 @@ int main(int argc, char** argv)
     std::ifstream input{inputPath};
     if (!input)
     {
-      return 2;
+      return arg_err_in_f;
     }
 
     switch (mode[0])
@@ -265,7 +265,7 @@ int main(int argc, char** argv)
 
       int arg_1 = 0, arg_2 = 0;
       {
-        return 2;
+        return arg_err_in_f;
       }
       int matrix[10000] = {};
       try
@@ -276,7 +276,7 @@ int main(int argc, char** argv)
       catch (...)
       {
         std::cerr << "invalid arg in stec_data_cp" << "\n";
-        return 2;
+        return arg_err_in_f;
       }
       try
       {
@@ -288,7 +288,7 @@ int main(int argc, char** argv)
         arg_1 = kuznetsov::num_row_lsr_stec(matrix, k_rows, k_colomn);
         std::cerr << "unreal min_sum_sdg_stec" << "\n";
         output << arg_1 << "\n";
-        return 2;
+        return arg_err_in_f;
       }
       output << arg_1 << "\n";
       output << arg_2 << "\n";
@@ -301,7 +301,7 @@ int main(int argc, char** argv)
         if (!input)
         {
           std::cerr << "invalid arg\n";
-          return 2;
+          return arg_err_in_f;
         }
         std::ofstream output(outputPath);
 
@@ -315,7 +315,7 @@ int main(int argc, char** argv)
         catch (...)
         {
           std::cerr << "invalid arg in FS_data_cp" << "\n";
-          return 2;
+          return arg_err_in_f;
         }
         arg_1 = kuznetsov::num_row_lsr_fs(matrix_fs, k_rows, k_colomn);
         try
@@ -338,7 +338,7 @@ int main(int argc, char** argv)
   else
   {
     std::cerr << "Uncorrect mode argument" << "\n";
-    return 1;
+    return arg_err_in_term;
   }
   return 0;
 }
