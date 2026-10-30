@@ -295,44 +295,44 @@ int main(int argc, char** argv)
 
       break;
     }
-      case '2';
+    case '2':
+    {
+      input >> k_rows >> k_colomn;
+      if (!input)
       {
-        input >> k_rows >> k_colomn;
-        if (!input)
-        {
-          std::cerr << "invalid arg\n";
-          return arg_err_in_f;
-        }
-        std::ofstream output(outputPath);
-
-        int arg_1 = 0, arg_2 = 0;
-
-        int** matrix_fs = kuznetsov::fs_for_matrix(k_rows, k_colomn);
-        try
-        {
-          kuznetsov::FS_data_cp(matrix_fs, input, k_rows, k_colomn);
-        }
-        catch (...)
-        {
-          std::cerr << "invalid arg in FS_data_cp" << "\n";
-          return arg_err_in_f;
-        }
-        arg_1 = kuznetsov::num_row_lsr_fs(matrix_fs, k_rows, k_colomn);
-        try
-        {
-          arg_2 = kuznetsov::min_sum_sdg_fs(matrix_fs, k_rows, k_colomn);
-        }
-        catch (...)
-        {
-          output << arg_1 << "\n";
-          std::cerr << "invalid arg in min_sum_sdg_fs\n";
-        }
-
-        output << arg_1 << "\n";
-        output << arg_2 << "\n";
-
-        break;
+        std::cerr << "invalid arg\n";
+        return arg_err_in_f;
       }
+      std::ofstream output(outputPath);
+
+      int arg_1 = 0, arg_2 = 0;
+
+      int** matrix_fs = kuznetsov::fs_for_matrix(k_rows, k_colomn);
+      try
+      {
+        kuznetsov::FS_data_cp(matrix_fs, input, k_rows, k_colomn);
+      }
+      catch (...)
+      {
+        std::cerr << "invalid arg in FS_data_cp" << "\n";
+        return arg_err_in_f;
+      }
+      arg_1 = kuznetsov::num_row_lsr_fs(matrix_fs, k_rows, k_colomn);
+      try
+      {
+        arg_2 = kuznetsov::min_sum_sdg_fs(matrix_fs, k_rows, k_colomn);
+      }
+      catch (...)
+      {
+        output << arg_1 << "\n";
+        std::cerr << "invalid arg in min_sum_sdg_fs\n";
+      }
+
+      output << arg_1 << "\n";
+      output << arg_2 << "\n";
+
+      break;
+    }
     }
   }
   else
