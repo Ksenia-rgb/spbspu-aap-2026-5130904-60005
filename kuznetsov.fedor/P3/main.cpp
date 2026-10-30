@@ -48,7 +48,6 @@ void FS_data_cp(int** matrix, std::istream& input, size_t k_rows, size_t k_colom
         {
             throw std::invalid_argument("invalid arg in f\n");
         }
-        std::cout<<"matrix[" << i <<"] = " << matrix[i][v] << std::endl;
       }
   }
 }
