@@ -318,6 +318,11 @@ int main(int argc, char** argv)
       catch (...)
       {
         std::cerr << "invalid arg in FS_data_cp" << "\n";
+        for (size_t i = 0; i < k_rows; i++)
+        {
+          delete[] matrix_fs[i];
+        }
+        delete[] matrix_fs;
         return arg_err_in_f;
       }
       arg_1 = kuznetsov::num_row_lsr_fs(matrix_fs, k_rows, k_colomn);
@@ -329,10 +334,26 @@ int main(int argc, char** argv)
       {
         output << arg_1 << "\n";
         std::cerr << "invalid arg in min_sum_sdg_fs\n";
+        for (size_t i = 0; i < k_rows; i++)
+        {
+          delete[] matrix_fs[i];
+        }
+        delete[] matrix_fs;
+        return arg_err_in_f;
       }
 
       output << arg_1 << "\n";
       output << arg_2 << "\n";
+
+      if (matrix_fs != nullptr)
+      {
+        for (size_t i = 0; i < k_rows; i++)
+        {
+          delete[] matrix_fs[i];
+        }
+
+        delete[] matrix_fs;
+      }
 
       break;
     }
