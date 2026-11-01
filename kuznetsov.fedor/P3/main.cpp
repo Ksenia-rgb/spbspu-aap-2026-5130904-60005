@@ -8,6 +8,7 @@ namespace kuznetsov
 
   int** fs_for_matrix(size_t k_rows, size_t k_colomn)
   {
+    if (k_rows == 0 || k_colomn == 0)
     {
       throw(std::invalid_argument("invalid_argument\n"));
     }
