@@ -19,7 +19,7 @@ namespace kuznetsov
       matrix = new int*[k_rows];
       for (size_t i = 0; i < k_rows; ++i)
       {
-        int* rows = new int[k_colomn];
+        int* const rows = new int[k_colomn];
         matrix[i] = rows;
         accept_rows++;
       }
@@ -317,7 +317,7 @@ int main(int argc, char** argv)
 
       int arg_1 = 0, arg_2 = 0;
 
-      int** matrix_fs = kuznetsov::fsForMatrix(k_rows, k_colomn);
+      int** const matrix_fs = kuznetsov::fsForMatrix(k_rows, k_colomn);
       try
       {
         kuznetsov::fsDataCp(matrix_fs, input, k_rows, k_colomn);
