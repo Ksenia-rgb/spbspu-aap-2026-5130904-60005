@@ -263,11 +263,9 @@ int main(int argc, char** argv)
       if (!(input >> k_rows >> k_colomn))
       {
         return arg_err_in_f;
-        ;
       }
       if (k_rows == 0 || k_colomn == 0)
       {
-        std::cerr << "invalid arg in f\n";
         return 0;
       }
       std::ofstream output(outputPath);
@@ -311,7 +309,6 @@ int main(int argc, char** argv)
 
       if (k_colomn == 0 || k_rows == 0)
       {
-        std::cerr << "invalid arg\n";
         return 0;
       }
       std::ofstream output(outputPath);
