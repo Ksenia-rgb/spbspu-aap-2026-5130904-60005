@@ -17,30 +17,27 @@ namespace belykov {
     if (rows == 0 || cols == 0) {
       return 0;
     }
-    int max_series_len = 0;
-    int best_col_index = 1;
-    for (size_t c = 0; c < cols; ++c) {
-      int current_series_len = 1;
-      int max_in_this_col = 1;
-      for (size_t r = 1; r < rows; ++r) {
-        if (matrix[r * cols + c] == matrix[(r - 1) * cols + c]) {
-          current_series_len++;
+    size_t max_len = 1;
+    size_t best_col_index = 1;
+    for (size_t col = 0; col < cols; ++col) {
+      size_t equal_cnt = 1;
+      for (size_t row = 0; row < rows - 1; ++row) {
+        if (matrix[row * cols + col] == matrix[(row + 1) * cols + col]) {
+          equal_cnt++;
         } else {
-          if (current_series_len > max_in_this_col) {
-            max_in_this_col = current_series_len;
+          if (equal_cnt > max_len) {
+            max_len = equal_cnt;
+            best_col_index = col + 1;
           }
-          current_series_len = 1;
+          equal_cnt = 1;
         }
       }
-      if (current_series_len > max_in_this_col) {
-        max_in_this_col = current_series_len;
-      }
-      if (max_in_this_col > max_series_len) {
-        max_series_len = max_in_this_col;
-        best_col_index = static_cast< int >(c + 1);
+      if (equal_cnt > max_len) {
+        max_len = equal_cnt;
+        best_col_index = col + 1;
       }
     }
-    return best_col_index;
+    return static_cast< int >(best_col_index);
   }
   int maxSumMdg(const int* matrix, size_t rows, size_t cols)
   {
@@ -49,18 +46,17 @@ namespace belykov {
     }
     int max_sum = std::numeric_limits< int >::min();
     bool has_parallel = false;
-    const long long r_max = static_cast< long long >(rows);
-    const long long c_max = static_cast< long long >(cols);
-    for (long long k = 0; k <= r_max + c_max - diagonal_offset; ++k) {
-      if (k == c_max - 1) {
+    const size_t main_diagonal_index = cols - 1;
+    for (size_t k = 0; k < (rows + cols - 1); ++k) {
+      if (k == main_diagonal_index) {
         continue;
       }
       int current_diagonal_sum = 0;
       bool contains_elements = false;
       for (size_t r = 0; r < rows; ++r) {
-        const long long c = k - static_cast< long long >(r);
-        if (c >= 0 && c < c_max) {
-          const int val = matrix[r * cols + static_cast< size_t >(c)];
+        if (k >= r && (k - r) < cols) {
+          const size_t c = k - r;
+          const int val = matrix[r * cols + c];
           if ((val > 0 && current_diagonal_sum > std::numeric_limits< int >::max() - val)
               || (val < 0 && current_diagonal_sum < std::numeric_limits< int >::min() - val)) {
             throw std::overflow_error("MAX-SUM-MDG error");
@@ -76,7 +72,6 @@ namespace belykov {
         }
       }
     }
-
     return has_parallel ? max_sum : 0;
   }
   int run(std::istream& input, std::ostream& output, int mode)
@@ -118,7 +113,7 @@ namespace belykov {
     }
     int extra = 0;
     if (input >> extra) {
-      std::cerr << "Error: Extra data found in file.\n";
+      std::cerr << "Error: Invalid data.\n";
       if (mode == mode_dynamic) {
         delete[] matrix;
       }
@@ -158,11 +153,11 @@ int main(int argc, char** argv)
     return belykov::input_error_code;
   }
   const char* const mode_str = argv[arg_index_mode];
-  if (mode_str == nullptr || mode_str[0] == '\0' || mode_str[1] != '\0' || (mode_str[0] != '1' && mode_str[0] != '2')) {
+  if (mode_str == nullptr || *mode_str == '\0' || *(mode_str + 1) != '\0' || (*mode_str != '1' && *mode_str != '2')) {
     std::cerr << "Error: Invalid first parameter (must be 1 or 2).\n";
     return belykov::input_error_code;
   }
-  const int mode = mode_str[0] - '0';
+  const int mode = *mode_str - '0';
   const char* const input_path = argv[arg_index_input];
   const char* const output_path = argv[arg_index_output];
   std::ifstream input{input_path};
