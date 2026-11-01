@@ -62,7 +62,7 @@ namespace kuznetsov
       }
     }
   }
-  int numRowLsrStec(int* const matrix, size_t k_row, size_t k_colomn)
+  int numRowLsrStec(const int* matrix, size_t k_row, size_t k_colomn)
   {
     int max_ser = 0, row_res = 0;
     for (size_t r = 0; r < k_row; ++r)
