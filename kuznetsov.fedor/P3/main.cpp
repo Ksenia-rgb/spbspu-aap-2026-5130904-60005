@@ -6,7 +6,7 @@
 namespace kuznetsov
 {
 
-  int** fs_for_matrix(size_t k_rows, size_t k_colomn)
+  int** fsForMatrix(size_t k_rows, size_t k_colomn)
   {
     if (k_rows == 0 || k_colomn == 0)
     {
@@ -19,7 +19,7 @@ namespace kuznetsov
       matrix = new int*[k_rows];
       for (size_t i = 0; i < k_rows; ++i)
       {
-        int* rows = new int[k_colomn];
+        const int* rows = new int[k_colomn];
         matrix[i] = rows;
         accept_rows++;
       }
@@ -38,7 +38,7 @@ namespace kuznetsov
     }
   }
 
-  void FS_data_cp(int** matrix, std::istream& input, size_t k_rows, size_t k_colomn)
+  void fsDataCp(int** matrix, std::istream& input, size_t k_rows, size_t k_colomn)
   {
     for (size_t i = 0; i < k_rows; ++i)
     {
@@ -52,7 +52,7 @@ namespace kuznetsov
     }
   }
 
-  void stec_data_cp(std::istream& input, int* matrix, size_t k_row, size_t k_column)
+  void stecDataCp(std::istream& input, int* matrix, size_t k_row, size_t k_column)
   {
     for (size_t i = 0; i < k_row * k_column; ++i)
     {
@@ -62,7 +62,7 @@ namespace kuznetsov
       }
     }
   }
-  int num_row_lsr_stec(int* matrix, size_t k_row, size_t k_colomn)
+  int numRowLsrStec(int* const matrix, size_t k_row, size_t k_colomn)
   {
     int max_ser = 0, row_res = 0;
     for (size_t r = 0; r < k_row; ++r)
@@ -71,8 +71,8 @@ namespace kuznetsov
       int max_res = 1;
       for (size_t c = 1; c < k_colomn; ++c)
       {
-        size_t i_el_now = r * k_colomn + c;
-        size_t i_prev_el = r * k_colomn + (c - 1);
+        const size_t i_el_now = r * k_colomn + c;
+        const size_t i_prev_el = r * k_colomn + (c - 1);
 
         if (matrix[i_el_now] == matrix[i_prev_el])
         {
@@ -103,7 +103,7 @@ namespace kuznetsov
     return row_res + 1;
   }
 
-  int num_row_lsr_fs(int** matrix, size_t k_row, size_t k_colomn)
+  int numRowLsrFs(int** matrix, size_t k_row, size_t k_colomn)
   {
     int max_ser = 0, row_res = 0;
     for (size_t i = 0; i < k_row; ++i)
@@ -137,11 +137,11 @@ namespace kuznetsov
     return row_res + 1;
   }
 
-  int min_sum_sdg_stec(int* const matrix, size_t k_row, size_t k_colomn)
+  int minSumSdgStec(const int* matrix, size_t k_row, size_t k_colomn)
   {
     if (matrix == nullptr)
     {
-      throw std::invalid_argument("invalid arg in min_sum_sdg_stec");
+      throw std::invalid_argument("invalid arg in minSumSdgStec");
     }
     int res = std::numeric_limits< int >::max();
     for (size_t i = 0; i < k_colomn; i++)
@@ -181,7 +181,7 @@ namespace kuznetsov
     return res;
   }
 
-  int min_sum_sdg_fs(int** const matrix, size_t k_rows, size_t k_colomn)
+  int minSumSdgFs(int** const matrix, size_t k_rows, size_t k_colomn)
   {
     if (matrix == nullptr)
     {
@@ -234,6 +234,8 @@ int main(int argc, char** argv)
   const int arg_err_in_f = 2, arg_err_in_term = 1;
   size_t k_rows = 0, k_colomn = 0;
 
+  const size_t size_stec = 10000;
+
   if (argc < 4)
   {
     std::cerr << "Not enough arguments" << "\n";
@@ -244,13 +246,13 @@ int main(int argc, char** argv)
     std::cerr << "Too many arguments" << "\n";
     return arg_err_in_term;
   }
-  const char* mode = argv[1];
-  const char* inputPath = argv[2];
-  const char* outputPath = argv[3];
+  const char* const mode = argv[1];
+  const char* const input_path = argv[2];
+  const char* const output_path = argv[3];
 
   if ((mode[0] == '1' || mode[0] == '2') && mode[1] == '\0')
   {
-    std::ifstream input{inputPath};
+    std::ifstream input{input_path};
     if (!input)
     {
       return arg_err_in_f;
@@ -268,28 +270,28 @@ int main(int argc, char** argv)
       {
         return 0;
       }
-      std::ofstream output(outputPath);
+      std::ofstream output(output_path);
 
       int arg_1 = 0, arg_2 = 0;
-      int matrix[10000] = {};
+      int matrix[size_stec] = {};
       try
       {
-        kuznetsov::stec_data_cp(input, matrix, k_rows, k_colomn);
+        kuznetsov::stecDataCp(input, matrix, k_rows, k_colomn);
       }
       catch (...)
       {
-        std::cerr << "invalid arg in stec_data_cp" << "\n";
+        std::cerr << "invalid arg in stecDataCp" << "\n";
         return arg_err_in_f;
       }
       try
       {
-        arg_1 = kuznetsov::num_row_lsr_stec(matrix, k_rows, k_colomn);
-        arg_2 = kuznetsov::min_sum_sdg_stec(matrix, k_rows, k_colomn);
+        arg_1 = kuznetsov::numRowLsrStec(matrix, k_rows, k_colomn);
+        arg_2 = kuznetsov::minSumSdgStec(matrix, k_rows, k_colomn);
       }
       catch (...)
       {
-        arg_1 = kuznetsov::num_row_lsr_stec(matrix, k_rows, k_colomn);
-        std::cerr << "unreal min_sum_sdg_stec" << "\n";
+        arg_1 = kuznetsov::numRowLsrStec(matrix, k_rows, k_colomn);
+        std::cerr << "unreal minSumSdgStec" << "\n";
         output << arg_1 << "\n";
         return arg_err_in_f;
       }
@@ -311,18 +313,18 @@ int main(int argc, char** argv)
       {
         return 0;
       }
-      std::ofstream output(outputPath);
+      std::ofstream output(output_path);
 
       int arg_1 = 0, arg_2 = 0;
 
-      int** matrix_fs = kuznetsov::fs_for_matrix(k_rows, k_colomn);
+      const int** matrix_fs = kuznetsov::fsForMatrix(k_rows, k_colomn);
       try
       {
-        kuznetsov::FS_data_cp(matrix_fs, input, k_rows, k_colomn);
+        kuznetsov::fsDataCp(matrix_fs, input, k_rows, k_colomn);
       }
       catch (...)
       {
-        std::cerr << "invalid arg in FS_data_cp" << "\n";
+        std::cerr << "invalid arg in fsDataCp" << "\n";
         for (size_t i = 0; i < k_rows; i++)
         {
           delete[] matrix_fs[i];
@@ -330,15 +332,15 @@ int main(int argc, char** argv)
         delete[] matrix_fs;
         return arg_err_in_f;
       }
-      arg_1 = kuznetsov::num_row_lsr_fs(matrix_fs, k_rows, k_colomn);
+      arg_1 = kuznetsov::numRowLsrFs(matrix_fs, k_rows, k_colomn);
       try
       {
-        arg_2 = kuznetsov::min_sum_sdg_fs(matrix_fs, k_rows, k_colomn);
+        arg_2 = kuznetsov::minSumSdgFs(matrix_fs, k_rows, k_colomn);
       }
       catch (...)
       {
         output << arg_1 << "\n";
-        std::cerr << "invalid arg in min_sum_sdg_fs\n";
+        std::cerr << "invalid arg in minSumSdgFs\n";
         for (size_t i = 0; i < k_rows; i++)
         {
           delete[] matrix_fs[i];
