@@ -8,7 +8,6 @@ namespace kuznetsov
 
   int** fs_for_matrix(size_t k_rows, size_t k_colomn)
   {
-    if (k_rows == 0 && k_colomn == 0)
     {
       throw(std::invalid_argument("invalid_argument\n"));
     }
@@ -260,17 +259,20 @@ int main(int argc, char** argv)
     {
     case '1':
     {
-      input >> k_rows >> k_colomn;
+      if (!(input >> k_rows >> k_colomn))
+      {
+        return 0;
+      }
+      if (k_rows == 0 || k_colomn == 0)
+      {
+        std::cerr << "invalid arg in f\n";
+      }
       std::ofstream output(outputPath);
 
       int arg_1 = 0, arg_2 = 0;
-      {
-        return arg_err_in_f;
-      }
       int matrix[10000] = {};
       try
       {
-        input.clear();
         kuznetsov::stec_data_cp(input, matrix, k_rows, k_colomn);
       }
       catch (...)
