@@ -140,7 +140,6 @@ int chernenko::run(std::istream& input, std::ostream& out, std::ostream& err)
     chernenko::formMissingLetters(reader.getData(), noincl_str);
     out << noincl_str << std::endl;
     std::free(noincl_str);
-
   } catch (const std::bad_alloc& e) {
     err << "Alloc error" << std::endl;
     return error_ec;
