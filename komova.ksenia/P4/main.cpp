@@ -76,6 +76,10 @@ namespace komova {
       str[real_len++] = c;
     }
     str[real_len] = '\0';
+    if (real_len == 0) {
+      delete[] str;
+      throw std::invalid_argument("");
+    }
     return str;
   }
 }
@@ -84,6 +88,7 @@ int main()
 {
   const int bad_alloc = 1;
   const int overflow_error = 1;
+  const int empty_imput = 1;
   try {
     const char* const str = komova::readStr();
     komova::latTwo(str, "def ghk");
@@ -94,5 +99,7 @@ int main()
     return bad_alloc;
   } catch (std::overflow_error&) {
     return overflow_error;
+  } catch (std::invalid_argument&) {
+    return empty_imput;
   }
 }
