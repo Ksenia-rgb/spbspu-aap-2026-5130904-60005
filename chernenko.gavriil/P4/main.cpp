@@ -10,7 +10,7 @@ namespace chernenko {
   const int good_ec = 0;
 
   const std::size_t min_read_buffer_size = 67;
-  const char const * roman_alphabet = "abcdefghijklmnopqrstuvwxyz";
+  const char* const roman_alphabet = "abcdefghijklmnopqrstuvwxyz";
   const std::size_t roman_alp_size = 27;
   const std::size_t max_sizet_v = std::numeric_limits< std::size_t >::max();
   const int true_out_v = 1;
