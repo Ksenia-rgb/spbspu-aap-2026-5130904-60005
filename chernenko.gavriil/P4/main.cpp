@@ -143,7 +143,7 @@ int chernenko::run(std::istream& input, std::ostream& out, std::ostream& err)
     char missing_letters[roman_alp_size];
     chernenko::formMissingLetters(reader.getData(), missing_letters);
     out << missing_letters << std::endl;
-  } catch (const std::bad_alloc& e) {
+  } catch (const std::bad_alloc&) {
     err << "Alloc error" << std::endl;
     return error_ec;
   }
