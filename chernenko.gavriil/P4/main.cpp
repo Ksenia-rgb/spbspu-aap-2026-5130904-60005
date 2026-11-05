@@ -10,7 +10,7 @@ namespace chernenko {
   const int good_ec = 0;
 
   const std::size_t min_read_buffer_size = 67;
-  const char* roman_alphabet = "abcdefghijklmnopqrstuvwxyz";
+  const char const * roman_alphabet = "abcdefghijklmnopqrstuvwxyz";
   const std::size_t roman_alp_size = 27;
   const std::size_t max_sizet_v = std::numeric_limits< std::size_t >::max();
   const int true_out_v = 1;
@@ -32,7 +32,7 @@ namespace chernenko {
     void extendBuffer();
   };
 
-  char* allocBuffer(std::size_t size);
+  char* const allocBuffer(std::size_t size);
   int hasRepeat(const char* str) noexcept;
   void formMissingLetters(const char* str, char* buf) noexcept;
   int run(std::istream& input, std::ostream& out, std::ostream& err);
@@ -78,7 +78,7 @@ void chernenko::Reader::extendBuffer()
     throw std::bad_alloc();
   }
   alloc_size_ += min_read_buffer_size;
-  char* new_data = allocBuffer(alloc_size_);
+  char* const new_data = allocBuffer(alloc_size_);
   for (std::size_t i = 0; i < size_; i++) {
     new_data[i] = data_[i];
   }
@@ -86,9 +86,9 @@ void chernenko::Reader::extendBuffer()
   data_ = new_data;
 }
 
-char* chernenko::allocBuffer(std::size_t size)
+char* const chernenko::allocBuffer(std::size_t size)
 {
-  char* res = static_cast< char* >(std::malloc(size * sizeof(char)));
+  char* const res = static_cast< char* >(std::malloc(size * sizeof(char)));
   if (res == nullptr) {
     throw std::bad_alloc();
   }
@@ -136,7 +136,7 @@ int chernenko::run(std::istream& input, std::ostream& out, std::ostream& err)
 
     out << chernenko::hasRepeat(reader.getData()) << std::endl;
 
-    char* noincl_str = chernenko::allocBuffer(roman_alp_size);
+    char* const noincl_str = chernenko::allocBuffer(roman_alp_size);
     chernenko::formMissingLetters(reader.getData(), noincl_str);
     out << noincl_str << std::endl;
     std::free(noincl_str);
