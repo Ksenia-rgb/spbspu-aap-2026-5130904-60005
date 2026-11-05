@@ -79,7 +79,7 @@ void chernenko::Reader::extendBuffer()
     throw std::bad_alloc();
   }
   alloc_size_ += min_read_buffer_size;
-  char* new_data = allocBuffer(alloc_size_);
+  char* const new_data = allocBuffer(alloc_size_);
   for (std::size_t i = 0; i < size_; i++) {
     new_data[i] = data_[i];
   }
@@ -92,7 +92,7 @@ char* chernenko::allocBuffer(std::size_t size)
   if (size > max_sizet_v / char_size_v) {
     throw std::bad_alloc();
   }
-  char* res = static_cast< char* >(std::malloc(size * sizeof(char)));
+  char* const res = static_cast< char* >(std::malloc(size * sizeof(char)));
   if (res == nullptr) {
     throw std::bad_alloc();
   }
