@@ -92,7 +92,7 @@ char* chernenko::allocBuffer(std::size_t size)
   if (size > max_sizet_v / char_size_v) {
     throw std::bad_alloc();
   }
-  char* const res = static_cast< char* >(std::malloc(size * sizeof(char)));
+  char* const res = static_cast< char* >(std::malloc(size * char_size_v));
   if (res == nullptr) {
     throw std::bad_alloc();
   }
@@ -135,6 +135,10 @@ int chernenko::run(std::istream& input, std::ostream& out, std::ostream& err)
     char c = 0;
     while (input.get(c) && c != '\n') {
       reader.readChar(c);
+    }
+    if (!input) {
+      err << "Read error" << std::endl;
+      return error_ec;
     }
     reader.endRead();
 
