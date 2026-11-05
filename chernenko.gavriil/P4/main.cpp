@@ -140,10 +140,9 @@ int chernenko::run(std::istream& input, std::ostream& out, std::ostream& err)
 
     out << chernenko::hasRepeat(reader.getData()) << std::endl;
 
-    char* noincl_str = chernenko::allocBuffer(roman_alp_size);
-    chernenko::formMissingLetters(reader.getData(), noincl_str);
-    out << noincl_str << std::endl;
-    std::free(noincl_str);
+    char missing_letters[roman_alp_size];
+    chernenko::formMissingLetters(reader.getData(), missing_letters);
+    out << missing_letters << std::endl;
   } catch (const std::bad_alloc& e) {
     err << "Alloc error" << std::endl;
     return error_ec;
