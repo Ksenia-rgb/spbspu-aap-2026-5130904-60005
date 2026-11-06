@@ -5,6 +5,7 @@
 
 namespace andrijchuk {
   const int memory_error_exitcode1 = 1;
+  const int error_exitcode2 = 2;
   const char rpl_sym1 = 'c';
   const char rpl_sym2 = 'b';
 
@@ -89,6 +90,13 @@ int main()
   try {
     cstr = ad::readStr();
     cstr_len = ad::strLen(cstr);
+    
+    if (cstr_len == 0) {
+        std::cerr << "Empty input";
+        std::free(cstr);
+        return ad::error_exitcode2;
+    }
+
     rpl_cstr = ad::strForRplSym(cstr_len);
     ad::rplSym(rpl_cstr, cstr, ad::rpl_sym1, ad::rpl_sym2);
     seq_sym_flag = ad::seqSym(cstr);
