@@ -90,11 +90,11 @@ int main()
   try {
     cstr = ad::readStr();
     cstr_len = ad::strLen(cstr);
-    
+
     if (cstr_len == 0) {
-        std::cerr << "Empty input";
-        std::free(cstr);
-        return ad::error_exitcode2;
+      std::cerr << "Empty input";
+      std::free(cstr);
+      return ad::error_exitcode2;
     }
 
     rpl_cstr = ad::strForRplSym(cstr_len);
