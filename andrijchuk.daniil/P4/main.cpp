@@ -23,7 +23,7 @@ namespace andrijchuk {
     char c = 0;
     char *cstr = nullptr;
     while (std::cin.get(c) && c != '\n') {
-      char *temp = (char *)std::malloc(cstr_len + 2);
+      char *temp = static_cast< char * >(std::malloc(cstr_len + 2));
       if (temp == nullptr) {
         std::free(cstr);
         throw std::bad_alloc();
@@ -36,7 +36,7 @@ namespace andrijchuk {
       cstr[cstr_len++] = c;
     }
     if (cstr == nullptr) {
-      cstr = (char *)std::malloc(1);
+      cstr = static_cast< char * >(std::malloc(1));
       if (cstr == nullptr) {
         throw std::bad_alloc();
       }
@@ -47,7 +47,7 @@ namespace andrijchuk {
 
   char *strForRplSym(std::size_t cstr_len)
   {
-    char *rpl_cstr = (char *)std::malloc(cstr_len + 1);
+    char *rpl_cstr = static_cast< char * >(std::malloc(cstr_len + 1));
     if (rpl_cstr == nullptr) {
       throw std::bad_alloc();
     }
