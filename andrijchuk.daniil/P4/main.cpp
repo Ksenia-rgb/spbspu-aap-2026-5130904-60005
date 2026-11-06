@@ -3,7 +3,9 @@
 #include <cstddef>
 #include <new>
 
-namespace andrijchuk {
+namespace andrijchuk
+
+{
   const int memory_error_exitcode1 = 1;
   const int error_exitcode2 = 2;
   const char rpl_sym1 = 'c';
