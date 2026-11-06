@@ -5,10 +5,10 @@ namespace andrijchuk
 {
   using l_l = long long int;
 
-  class locMinCnt
+  class LocMinCnt
   {
   public:
-    void next_n(const l_l n) noexcept
+    void nextN(const l_l n) noexcept
     {
       if (k_ >= 2 && pr_prev_n_ > prev_n_ && prev_n_ < n)
       {
@@ -19,14 +19,14 @@ namespace andrijchuk
       k_++;
     }
 
-    bool is_valid() const noexcept
+    bool isValid() const noexcept
     {
       return k_ >= 1;
     }
 
     void print(std::ostream &out, std::ostream &err) const noexcept
     {
-      if (is_valid())
+      if (isValid())
       {
         out << count_ << "\n";
       }
@@ -43,10 +43,10 @@ namespace andrijchuk
     std::size_t k_ = 0;
   };
 
-  class sumDupCnt
+  class SumDupCnt
   {
   public:
-    void next_n(const l_l n) noexcept
+    void nextN(const l_l n) noexcept
     {
       if (k_ >= 2 && n == pr_prev_n_ + prev_n_)
       {
@@ -57,14 +57,14 @@ namespace andrijchuk
       k_++;
     }
 
-    bool is_valid() const noexcept
+    bool isValid() const noexcept
     {
       return k_ >= 3;
     }
 
     void print(std::ostream &out, std::ostream &err) const noexcept
     {
-      if (is_valid())
+      if (isValid())
       {
         out << count_ << "\n";
       }
@@ -85,13 +85,13 @@ namespace andrijchuk
   {
     const int inp_err_exitcode1 = 1;
     const int seq_err_exitcode2 = 2;
-    locMinCnt loc_min;
-    sumDupCnt sum_dup;
+    LocMinCnt loc_min;
+    SumDupCnt sum_dup;
     l_l n = 0;
     while (in >> n && n != 0)
     {
-      loc_min.next_n(n);
-      sum_dup.next_n(n);
+      loc_min.nextN(n);
+      sum_dup.nextN(n);
     }
     if (!in)
     {
@@ -100,7 +100,7 @@ namespace andrijchuk
     }
     loc_min.print(out, err);
     sum_dup.print(out, err);
-    if (!loc_min.is_valid() || !sum_dup.is_valid())
+    if (!loc_min.isValid() || !sum_dup.isValid())
     {
       return seq_err_exitcode2;
     }
