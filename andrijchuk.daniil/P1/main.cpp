@@ -92,8 +92,9 @@ namespace andrijchuk {
     }
     return 0;
   }
+}
 
-  int main()
-  {
-    return andrijchuk::process(std::cin, std::cout, std::cerr);
-  }
+int main()
+{
+  return andrijchuk::process(std::cin, std::cout, std::cerr);
+}
