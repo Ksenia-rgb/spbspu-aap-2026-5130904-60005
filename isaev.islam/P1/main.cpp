@@ -21,7 +21,7 @@ namespace isaev {
     int numbers_count_ = 0;
     int current_length_ = 0;
     int max_length_ = 0;
-    int between_count_ = 0;
+    int between_count_ = 0;я
     bool length_overflow_ = false;
     bool count_overflow_ = false;
 
