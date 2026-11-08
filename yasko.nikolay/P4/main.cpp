@@ -36,7 +36,7 @@ char *yasko::readString(std::istream &inp, std::size_t &len)
                 std::free(s_buf);
                 return nullptr;
             }
-            std::size_t new_capacity = capacity + 10;
+            const std::size_t new_capacity = capacity + 10;
             char *new_buf = static_cast<char *>(std::malloc(new_capacity));
             if (new_buf == nullptr)
             {
@@ -77,7 +77,7 @@ int yasko::repeatingDigits(char *data)
     {
         if (std::isdigit(static_cast<unsigned char>(data[i])))
         {
-            int num = static_cast<int>(data[i] - '0');
+            const int num = static_cast<int>(data[i] - '0');
             count_num[num]++;
             if (count_num[num] > 1)
             {
@@ -111,7 +111,7 @@ int main() // 11 17
     }
     yasko::newStringLower(data, new_data);
     std::cout << "[UPP-LOW] = " << new_data << std::endl;
-    int repeat_digits = yasko::repeatingDigits(data);
+    const int repeat_digits = yasko::repeatingDigits(data);
     if (repeat_digits == 1)
     {
         std::cout << "[REP-DGT] = " << 1 << std::endl;
