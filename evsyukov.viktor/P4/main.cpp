@@ -6,24 +6,24 @@
 #include <stdexcept>
 
 namespace evsyukov {
-
   const int k_error_exit_code = 1;
   const std::size_t k_alphabet_size = 26;
   const std::size_t k_table_size = static_cast< std::size_t >(std::numeric_limits< unsigned char >::max()) + 1;
-  const std::size_t k_top_buffer_size = 4;
-  const std::size_t k_missing_buffer_size = 27;
   const std::size_t k_top_count = 3;
+  const std::size_t k_top_buffer_size = k_top_count + 1;
+  const std::size_t k_missing_buffer_size = k_alphabet_size + 1;
   const std::size_t k_start_capacity = 16;
 
-  char * FrequentTopThree(const char * src, char * dest) noexcept
+  char * frequentTopThree(const char * src, char * dest) noexcept
   {
     std::size_t counts[k_table_size] = {};
     for (const char * p = src; *p != '\0'; ++p) {
-      unsigned char code = static_cast< unsigned char >(*p);
+      const unsigned char code = static_cast< unsigned char >(*p);
       if (!std::isspace(code)) {
         counts[code] += 1;
       }
     }
+
     unsigned char chosen[k_table_size] = {};
     for (std::size_t round = 0; round < k_top_count; ++round) {
       std::size_t best_count = 0;
@@ -52,11 +52,11 @@ namespace evsyukov {
     return dest;
   }
 
-  char * MissingLetters(const char * src, char * dest) noexcept
+  char * missingLetters(const char * src, char * dest) noexcept
   {
     unsigned char seen[k_alphabet_size] = {};
     for (const char * p = src; *p != '\0'; ++p) {
-      int lower_char = std::tolower(static_cast< unsigned char >(*p));
+      const int lower_char = std::tolower(static_cast< unsigned char >(*p));
       if (lower_char >= 'a' && lower_char <= 'z') {
         seen[lower_char - 'a'] = 1;
       }
@@ -73,13 +73,13 @@ namespace evsyukov {
     return dest;
   }
 
-  void Grow(char *& buf, std::size_t & capacity, const std::size_t size)
+  void grow(char *& buf, std::size_t & capacity, const std::size_t size)
   {
     if (capacity > std::numeric_limits< std::size_t >::max() / 2) {
-      throw std::runtime_error("runtime_error");
+      throw std::runtime_error("buffer size overflow");
     }
-    std::size_t new_capacity = capacity * 2;
-    char * tmp = new char[new_capacity];
+    const std::size_t new_capacity = capacity * 2;
+    char * const tmp = new char[new_capacity];
     for (std::size_t i = 0; i < size; ++i) {
       tmp[i] = buf[i];
     }
@@ -88,18 +88,21 @@ namespace evsyukov {
     capacity = new_capacity;
   }
 
-  char * ReadLine()
+  char * readLine()
   {
-    char ch;
+    char ch = 0;
     std::size_t capacity = k_start_capacity;
     std::size_t size = 0;
     char * buf = new char[capacity];
     try {
       while (std::cin.get(ch) && ch != '\n') {
         if (size + 1 >= capacity) {
-          Grow(buf, capacity, size);
+          grow(buf, capacity, size);
         }
         buf[size++] = ch;
+      }
+      if (size == 0 && std::cin.eof()) {
+        throw std::runtime_error("empty input");
       }
       buf[size] = '\0';
     } catch (...) {
@@ -109,16 +112,16 @@ namespace evsyukov {
     return buf;
   }
 
-  int Run()
+  int run()
   {
     int exit_code = 0;
     char * line = nullptr;
     char top_result[k_top_buffer_size];
     char missing_result[k_missing_buffer_size];
     try {
-      line = ReadLine();
-      std::cout << FrequentTopThree(line, top_result) << '\n';
-      std::cout << MissingLetters(line, missing_result) << '\n';
+      line = readLine();
+      std::cout << frequentTopThree(line, top_result) << '\n';
+      std::cout << missingLetters(line, missing_result) << '\n';
     } catch (const std::exception & e) {
       std::cerr << e.what() << '\n';
       exit_code = k_error_exit_code;
@@ -126,10 +129,9 @@ namespace evsyukov {
     delete[] line;
     return exit_code;
   }
-
 }
 
 int main()
 {
-  return evsyukov::Run();
+  return evsyukov::run();
 }

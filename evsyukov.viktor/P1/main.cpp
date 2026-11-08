@@ -10,7 +10,7 @@ const int calculation_error_code = 2;
 
 class SequenceCharacteristics {
 public:
-  void next_n(const int n) noexcept
+  void nextN(const int n) noexcept
   {
     if (has_previous_) {
       if (n > previous_) {
@@ -38,7 +38,7 @@ public:
     }
   }
 
-  bool has_error() const noexcept
+  bool hasError() const noexcept
   {
     return is_err_increases_ || is_err_sign_changes_;
   }
@@ -66,14 +66,14 @@ int process(std::istream &in, std::ostream &out, std::ostream &err)
   SequenceCharacteristics c;
   int n = 0;
   while (in >> n && n != 0) {
-    c.next_n(n);
+    c.nextN(n);
   }
   if (!in) {
     err << "Invalid input\n";
     return input_error_code;
   }
   c.print(out, err);
-  if (c.has_error()) {
+  if (c.hasError()) {
     return calculation_error_code;
   }
   return 0;
