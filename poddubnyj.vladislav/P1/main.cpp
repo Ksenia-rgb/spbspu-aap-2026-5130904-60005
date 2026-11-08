@@ -19,7 +19,8 @@ namespace poddubnyj {
     }
 
     if (x == 0) {
-      std::cerr << "error: empty sequence" << "\n";
+      std::cout << 0;
+      std::cerr << "error_maxi: empty sequence" << "\n";
       return IMPOSE_CALC;
     }
 
