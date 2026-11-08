@@ -87,6 +87,7 @@ int yasko::repeatingDigits(char *data)
   }
   return 0;
 }
+int main()
 {
   std::size_t len = 0;
   char *const data = yasko::readString(std::cin, len);
