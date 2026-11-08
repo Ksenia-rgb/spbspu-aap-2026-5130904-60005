@@ -101,6 +101,11 @@ int main()
     std::cerr << "Error: not enough memory\n";
     return 1;
   }
+  if (std::cin.fail() && (length == 0)) {
+    std::free(input);
+    std::cerr << "Error: input is empty\n";
+    return 1;
+  }
 
   std::cout << novikov::countDifferentLatin(input) << '\n';
 
