@@ -54,6 +54,7 @@ namespace novikov {
     return buffer;
   }
 
+  static char* removeDigits(const char* src, char* dst) noexcept
   {
     std::size_t length = 0;
     for (std::size_t i = 0; src[i] != '\0'; ++i) {
