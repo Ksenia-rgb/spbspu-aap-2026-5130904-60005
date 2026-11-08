@@ -1,117 +1,133 @@
+#include <cstddef>
 #include <iostream>
+#include <istream>
 #include <limits>
+#include <ostream>
+#include <stdexcept>
 
 namespace isaev {
-  const int max_int = std::numeric_limits< int >::max();
-  const int single_length = 1;
+  const std::size_t max_size = std::numeric_limits< std::size_t >::max();
+  const std::size_t single_length = 1;
   const int required_count = 2;
   const int error_exit_code = 1;
   const int overflow_exit_code = 2;
 
-  class SequenceStats {
+  class IncreasingRunCounter {
   public:
-    void addNumber(long long int number) noexcept;
-    void print(std::ostream& out, std::ostream& err) const noexcept;
-    bool hasOverflow() const noexcept;
-    int getNumbersCount() const noexcept;
+    IncreasingRunCounter();
+    void operator()(long long int next);
+    std::size_t operator()() const noexcept;
 
   private:
-    long long int previous_ = 0;
-    long long int current_ = 0;
-    int numbers_count_ = 0;
-    int current_length_ = 0;
-    int max_length_ = 0;
-    int between_count_ = 0;
-    bool length_overflow_ = false;
-    bool count_overflow_ = false;
+    long long int previous_;
+    std::size_t current_length_;
+    std::size_t max_length_;
+    bool has_previous_;
+  };
 
-    static bool isIncreasing(long long int current, long long int next) noexcept;
+  class BetweenCounter {
+  public:
+    BetweenCounter();
+    void operator()(long long int next);
+    std::size_t operator()() const noexcept;
+
+  private:
+    long long int previous_;
+    long long int current_;
+    std::size_t count_;
+    int numbers_count_;
+
     static bool isBetween(long long int previous, long long int current, long long int next) noexcept;
   };
 
   int process(std::istream& in, std::ostream& out, std::ostream& err);
 }
 
-bool isaev::SequenceStats::isIncreasing(long long int current, long long int next) noexcept
+isaev::IncreasingRunCounter::IncreasingRunCounter():
+  previous_(0),
+  current_length_(0),
+  max_length_(0),
+  has_previous_(false)
+{}
+
+void isaev::IncreasingRunCounter::operator()(long long int next)
 {
-  return next >= current;
+  if (has_previous_ && (next >= previous_)) {
+    if (current_length_ == isaev::max_size) {
+      throw std::overflow_error("Length of the increasing run overflow");
+    }
+    ++current_length_;
+  } else {
+    current_length_ = isaev::single_length;
+  }
+
+  if (current_length_ > max_length_) {
+    max_length_ = current_length_;
+  }
+  previous_ = next;
+  has_previous_ = true;
 }
 
-bool isaev::SequenceStats::isBetween(long long int previous, long long int current, long long int next) noexcept
+std::size_t isaev::IncreasingRunCounter::operator()() const noexcept
+{
+  return max_length_;
+}
+
+isaev::BetweenCounter::BetweenCounter():
+  previous_(0),
+  current_(0),
+  count_(0),
+  numbers_count_(0)
+{}
+
+bool isaev::BetweenCounter::isBetween(long long int previous, long long int current, long long int next) noexcept
 {
   return (current < previous) && (current > next);
 }
 
-void isaev::SequenceStats::addNumber(long long int number) noexcept
+void isaev::BetweenCounter::operator()(long long int next)
 {
-  if (numbers_count_ == 0) {
-    current_length_ = isaev::single_length;
-    max_length_ = isaev::single_length;
-  } else {
-    if (isIncreasing(current_, number)) {
-      if (current_length_ == isaev::max_int) {
-        length_overflow_ = true;
-      } else {
-        ++current_length_;
-      }
-    } else {
-      current_length_ = isaev::single_length;
+  if ((numbers_count_ == isaev::required_count) && isBetween(previous_, current_, next)) {
+    if (count_ == isaev::max_size) {
+      throw std::overflow_error("Count of the elements overflow");
     }
-
-    if (current_length_ > max_length_) {
-      max_length_ = current_length_;
-    }
-
-    if ((numbers_count_ == isaev::required_count) && isBetween(previous_, current_, number)) {
-      if (between_count_ == isaev::max_int) {
-        count_overflow_ = true;
-      } else {
-        ++between_count_;
-      }
-    }
+    ++count_;
   }
 
   previous_ = current_;
-  current_ = number;
+  current_ = next;
   if (numbers_count_ < isaev::required_count) {
     ++numbers_count_;
   }
 }
 
-void isaev::SequenceStats::print(std::ostream& out, std::ostream& err) const noexcept
+std::size_t isaev::BetweenCounter::operator()() const noexcept
 {
-  if (length_overflow_) {
-    err << "overflow" << std::endl;
-  } else {
-    out << max_length_ << std::endl;
-  }
-  if (count_overflow_) {
-    err << "overflow" << std::endl;
-  } else {
-    out << between_count_ << std::endl;
-  }
-}
-
-bool isaev::SequenceStats::hasOverflow() const noexcept
-{
-  return length_overflow_ || count_overflow_;
-}
-
-int isaev::SequenceStats::getNumbersCount() const noexcept
-{
-  return numbers_count_;
+  return count_;
 }
 
 int isaev::process(std::istream& in, std::ostream& out, std::ostream& err)
 {
-  isaev::SequenceStats stats;
+  isaev::IncreasingRunCounter run_counter;
+  isaev::BetweenCounter between_counter;
+  int read_count = 0;
   long long int number = 0;
-  while ((in >> number) && (number != 0)) {
-    stats.addNumber(number);
+
+  try {
+    while ((in >> number) && (number != 0)) {
+      run_counter(number);
+      between_counter(number);
+      if (read_count < isaev::required_count) {
+        ++read_count;
+      }
+    }
+  } catch (const std::overflow_error&) {
+    err << "overflow" << std::endl;
+    return isaev::overflow_exit_code;
   }
 
   if (!in) {
-    if (stats.getNumbersCount() < isaev::required_count) {
+    if (read_count < isaev::required_count) {
       err << "uncorrect data format" << std::endl;
     } else {
       err << "uncorrect symbols" << std::endl;
@@ -119,10 +135,8 @@ int isaev::process(std::istream& in, std::ostream& out, std::ostream& err)
     return isaev::error_exit_code;
   }
 
-  stats.print(out, err);
-  if (stats.hasOverflow()) {
-    return isaev::overflow_exit_code;
-  }
+  out << run_counter() << std::endl;
+  out << between_counter() << std::endl;
   return 0;
 }
 
