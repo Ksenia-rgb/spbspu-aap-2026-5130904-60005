@@ -37,7 +37,7 @@ char *yasko::readString(std::istream &inp, std::size_t &len)
         return nullptr;
       }
       const std::size_t new_capacity = capacity + 10;
-      char *new_buf = static_cast< char * >(std::malloc(new_capacity));
+      char *const new_buf = static_cast< char * >(std::malloc(new_capacity));
       if (new_buf == nullptr)
       {
         std::free(s_buf);
@@ -102,7 +102,7 @@ int main()
     std::cerr << "Invalid input\n";
     return yasko::invalid_input_ec;
   }
-  char *new_data = static_cast< char * >(std::malloc(len + 1));
+  char *const new_data = static_cast< char * >(std::malloc(len + 1));
   if (new_data == nullptr)
   {
     std::cerr << "Memory error\n";
