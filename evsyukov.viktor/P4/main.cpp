@@ -9,17 +9,17 @@ namespace evsyukov {
 
   const int k_error_exit_code = 1;
   const std::size_t k_alphabet_size = 26;
-  const std::size_t k_table_size =
-      static_cast<std::size_t>(std::numeric_limits<unsigned char>::max()) + 1;
+  const std::size_t k_table_size = static_cast< std::size_t >(std::numeric_limits< unsigned char >::max()) + 1;
   const std::size_t k_top_buffer_size = 4;
   const std::size_t k_missing_buffer_size = 27;
   const std::size_t k_top_count = 3;
   const std::size_t k_start_capacity = 16;
 
-  char * FrequentTopThree(const char * src, char * dest) noexcept {
+  char * FrequentTopThree(const char * src, char * dest) noexcept
+  {
     std::size_t counts[k_table_size] = {};
     for (const char * p = src; *p != '\0'; ++p) {
-      unsigned char code = static_cast<unsigned char>(*p);
+      unsigned char code = static_cast< unsigned char >(*p);
       if (!std::isspace(code)) {
         counts[code] += 1;
       }
@@ -44,7 +44,7 @@ namespace evsyukov {
     std::size_t dest_size = 0;
     for (std::size_t k = 0; k < k_table_size; ++k) {
       if (chosen[k] != 0) {
-        dest[dest_size] = static_cast<char>(k);
+        dest[dest_size] = static_cast< char >(k);
         ++dest_size;
       }
     }
@@ -52,10 +52,11 @@ namespace evsyukov {
     return dest;
   }
 
-  char * MissingLetters(const char * src, char * dest) noexcept {
+  char * MissingLetters(const char * src, char * dest) noexcept
+  {
     unsigned char seen[k_alphabet_size] = {};
     for (const char * p = src; *p != '\0'; ++p) {
-      int lower_char = std::tolower(static_cast<unsigned char>(*p));
+      int lower_char = std::tolower(static_cast< unsigned char >(*p));
       if (lower_char >= 'a' && lower_char <= 'z') {
         seen[lower_char - 'a'] = 1;
       }
@@ -64,7 +65,7 @@ namespace evsyukov {
     std::size_t dest_size = 0;
     for (std::size_t i = 0; i < k_alphabet_size; ++i) {
       if (seen[i] == 0) {
-        dest[dest_size] = static_cast<char>('a' + i);
+        dest[dest_size] = static_cast< char >('a' + i);
         ++dest_size;
       }
     }
@@ -72,8 +73,9 @@ namespace evsyukov {
     return dest;
   }
 
-  void Grow(char *& buf, std::size_t & capacity, const std::size_t size) {
-    if (capacity > std::numeric_limits<std::size_t>::max() / 2) {
+  void Grow(char *& buf, std::size_t & capacity, const std::size_t size)
+  {
+    if (capacity > std::numeric_limits< std::size_t >::max() / 2) {
       throw std::runtime_error("runtime_error");
     }
     std::size_t new_capacity = capacity * 2;
@@ -86,7 +88,8 @@ namespace evsyukov {
     capacity = new_capacity;
   }
 
-  char * ReadLine() {
+  char * ReadLine()
+  {
     char ch;
     std::size_t capacity = k_start_capacity;
     std::size_t size = 0;
@@ -106,7 +109,8 @@ namespace evsyukov {
     return buf;
   }
 
-  int Run() {
+  int Run()
+  {
     int exit_code = 0;
     char * line = nullptr;
     char top_result[k_top_buffer_size];
@@ -125,6 +129,7 @@ namespace evsyukov {
 
 }
 
-int main() {
+int main()
+{
   return evsyukov::Run();
 }
