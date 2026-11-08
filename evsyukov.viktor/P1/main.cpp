@@ -4,13 +4,13 @@
 #include <ostream>
 
 namespace {
-const int input_error_code = 1;
-const int calculation_error_code = 2;
+  const int input_error_code = 1;
+  const int calculation_error_code = 2;
 }
 
 class SequenceCharacteristics {
 public:
-  void nextN(const int n) noexcept
+  void next_n(const int n) noexcept
   {
     if (has_previous_) {
       if (n > previous_) {
@@ -38,7 +38,7 @@ public:
     }
   }
 
-  bool hasError() const noexcept
+  bool has_error() const noexcept
   {
     return is_err_increases_ || is_err_sign_changes_;
   }
@@ -46,7 +46,7 @@ public:
 private:
   static void increment(int &counter, bool &is_err) noexcept
   {
-    if (counter == std::numeric_limits<int>::max()) {
+    if (counter == std::numeric_limits< int >::max()) {
       is_err = true;
     } else {
       ++counter;
@@ -66,14 +66,14 @@ int process(std::istream &in, std::ostream &out, std::ostream &err)
   SequenceCharacteristics c;
   int n = 0;
   while (in >> n && n != 0) {
-    c.nextN(n);
+    c.next_n(n);
   }
   if (!in) {
     err << "Invalid input\n";
     return input_error_code;
   }
   c.print(out, err);
-  if (c.hasError()) {
+  if (c.has_error()) {
     return calculation_error_code;
   }
   return 0;
