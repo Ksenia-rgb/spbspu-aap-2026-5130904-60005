@@ -62,7 +62,6 @@ namespace novikov
     return buffer;
   }
 
-  // [DEC-RMV] Сформировать новую строку, удалив из исходной все десятичные цифры
   static char* removeDigits(const char* src, char* dst) noexcept
   {
     std::size_t length = 0;
@@ -78,7 +77,6 @@ namespace novikov
     return dst;
   }
 
-  // [DIF-LAT] Определить, сколько различных букв латинского алфавита в исходной строке
   static std::size_t countDifferentLatin(const char* src) noexcept
   {
     const std::size_t latin_letters_count = 26;
