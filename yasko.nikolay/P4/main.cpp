@@ -9,7 +9,7 @@ namespace yasko
 {
     const int succes_ec = 0;
     const int memory_ec = 1;
-    const int invalid_input_ec = 2;
+    const int invalid_input_ec = 1;
     const std::size_t initial_capacity = 16;
     char *readString(std::istream &inp, std::size_t &len);
     char *newStringLower(char *data, char *new_data);
