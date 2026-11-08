@@ -30,6 +30,10 @@ char* isaev::readLine(std::istream& in)
   try
   {
     int next = in.get();
+    if (next == endOfFile)
+    {
+      throw std::runtime_error("Input is empty");
+    }
     while ((next != endOfFile) && (next != '\n'))
     {
       const char symbol = static_cast< char >(next);
@@ -102,8 +106,8 @@ std::size_t isaev::getLength(const char* str) noexcept
   return length;
 }
 
-std::size_t isaev::appendMissingSymbols(
-    char* result, std::size_t length, const char* source, const char* other) noexcept
+std::size_t isaev::appendMissingSymbols(char* result, std::size_t length, const char* source,
+    const char* other) noexcept
 {
   for (std::size_t i = 0; source[i] != '\0'; ++i)
   {
@@ -164,7 +168,7 @@ int main()
   }
   catch (const std::exception& error)
   {
-    std::cerr << "Error:" << error.what() << '\n';
+    std::cerr << "Error: " << error.what() << '\n';
     status = isaev::errorCode;
   }
   delete[] uncommon;
