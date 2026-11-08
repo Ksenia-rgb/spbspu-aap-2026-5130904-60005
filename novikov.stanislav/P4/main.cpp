@@ -4,20 +4,24 @@
 #include <iostream>
 #include <limits>
 
-namespace novikov {
+namespace novikov
+{
   static char* expandBuffer(char* old_buffer, std::size_t& capacity)
   {
     const std::size_t growth_factor = 2;
     const std::size_t max_capacity = std::numeric_limits< std::size_t >::max() / growth_factor;
-    if (capacity > max_capacity) {
+    if (capacity > max_capacity)
+    {
       return nullptr;
     }
     const std::size_t new_capacity = capacity * growth_factor;
     char* const new_buffer = static_cast< char* >(std::malloc(new_capacity));
-    if (new_buffer == nullptr) {
+    if (new_buffer == nullptr)
+    {
       return nullptr;
     }
-    for (std::size_t i = 0; i < capacity; ++i) {
+    for (std::size_t i = 0; i < capacity; ++i)
+    {
       new_buffer[i] = old_buffer[i];
     }
     std::free(old_buffer);
@@ -33,15 +37,19 @@ namespace novikov {
     length = 0;
     std::size_t capacity = initial_capacity;
     char* buffer = static_cast< char* >(std::malloc(capacity));
-    if (buffer == nullptr) {
+    if (buffer == nullptr)
+    {
       return nullptr;
     }
 
     char symbol = '\0';
-    while (input.get(symbol) && (symbol != '\n')) {
-      if (length == (capacity - terminator_size)) {
+    while (input.get(symbol) && (symbol != '\n'))
+    {
+      if (length == (capacity - terminator_size))
+      {
         char* const expanded_buffer = expandBuffer(buffer, capacity);
-        if (expanded_buffer == nullptr) {
+        if (expanded_buffer == nullptr)
+        {
           std::free(buffer);
           return nullptr;
         }
@@ -54,11 +62,14 @@ namespace novikov {
     return buffer;
   }
 
+  // [DEC-RMV] Сформировать новую строку, удалив из исходной все десятичные цифры
   static char* removeDigits(const char* src, char* dst) noexcept
   {
     std::size_t length = 0;
-    for (std::size_t i = 0; src[i] != '\0'; ++i) {
-      if (!std::isdigit(static_cast< unsigned char >(src[i]))) {
+    for (std::size_t i = 0; src[i] != '\0'; ++i)
+    {
+      if (!std::isdigit(static_cast< unsigned char >(src[i])))
+      {
         dst[length] = src[i];
         ++length;
       }
@@ -67,21 +78,26 @@ namespace novikov {
     return dst;
   }
 
+  // [DIF-LAT] Определить, сколько различных букв латинского алфавита в исходной строке
   static std::size_t countDifferentLatin(const char* src) noexcept
   {
     const std::size_t latin_letters_count = 26;
 
     char found[latin_letters_count] = {};
     std::size_t count = 0;
-    for (std::size_t i = 0; src[i] != '\0'; ++i) {
+    for (std::size_t i = 0; src[i] != '\0'; ++i)
+    {
       const unsigned char symbol = static_cast< unsigned char >(src[i]);
-      if (std::isalpha(symbol)) {
+      if (std::isalpha(symbol))
+      {
         const char letter = static_cast< char >(std::tolower(symbol));
         std::size_t j = 0;
-        while ((j < count) && (found[j] != letter)) {
+        while ((j < count) && (found[j] != letter))
+        {
           ++j;
         }
-        if (j == count) {
+        if (j == count)
+        {
           found[count] = letter;
           ++count;
         }
@@ -97,11 +113,13 @@ int main()
 
   std::size_t length = 0;
   char* const input = novikov::readString(std::cin, length);
-  if (input == nullptr) {
+  if (input == nullptr)
+  {
     std::cerr << "Error: not enough memory\n";
     return 1;
   }
-  if (std::cin.fail() && (length == 0)) {
+  if (std::cin.fail() && (length == 0))
+  {
     std::free(input);
     std::cerr << "Error: input is empty\n";
     return 1;
@@ -112,10 +130,13 @@ int main()
   int code = 0;
 
   char* const digitless = static_cast< char* >(std::malloc(length + terminator_size));
-  if (digitless == nullptr) {
+  if (digitless == nullptr)
+  {
     std::cerr << "Error: not enough memory\n";
     code = 1;
-  } else {
+  }
+  else
+  {
     novikov::removeDigits(input, digitless);
     std::cout << digitless << '\n';
     std::free(digitless);
