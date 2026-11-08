@@ -37,8 +37,8 @@ namespace belykov {
 
 int main()
 {
-  const size_t max_len = 100;
-  const size_t max_len_output = 200;
+  const size_t max_len = 10000;
+  const size_t max_len_output = 20000;
   const char* const second = "g1h2k";
 
   char* const input = new char[max_len];
