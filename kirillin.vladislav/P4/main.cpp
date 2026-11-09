@@ -10,7 +10,8 @@ namespace kirillin
 
   char *readDynamicString()
   {
-    size_t capacity = 16;
+    const size_t min_capacity = 16;
+    size_t capacity = min_capacity;
     size_t len = 0;
     char *buffer = new (std::nothrow) char[capacity];
     if (buffer == nullptr)
@@ -18,18 +19,19 @@ namespace kirillin
       return nullptr;
     }
 
-    char c = 0;
+    char c = '\0';
     while (std::cin.get(c) && c != '\n')
     {
       if (len + 1 >= capacity)
       {
         capacity *= 2;
-        char *new_buffer = new (std::nothrow) char[capacity];
+        const char *new_buffer = new (std::nothrow) char[capacity];
         if (new_buffer == nullptr)
         {
           delete[] buffer;
           return nullptr;
         }
+        buffer[len] = '\0';
         std::strcpy(new_buffer, buffer);
         delete[] buffer;
         buffer = new_buffer;
@@ -42,7 +44,7 @@ namespace kirillin
 
   void variant3(const char *src, char *res)
   {
-    if (!src || !res)
+    if (src == nullptr || res == nullptr)
     {
       return;
     }
@@ -83,16 +85,16 @@ namespace kirillin
   int variant7(const char *src)
   {
     int count = 0;
-    if (!src)
+    if (src == nullptr)
     {
       return count;
     }
 
     const unsigned char ascii_size = 128;
-    const size_t ascii_size_expend = 256;
+    const size_t ascii_size_expand = 256;
     const size_t diff = 32;
 
-    int seen[ascii_size_expend] = {0};
+    int seen[ascii_size_expand] = {0};
 
     for (size_t i = 0; src[i] != '\0'; ++i)
     {
@@ -118,15 +120,20 @@ namespace kirillin
 int main()
 {
   const char *str = kirillin::readDynamicString();
-  if (!str)
+  if (str[0] == '\0')
+  {
+    std::cerr << "Empty input" << std::endl;
+    return kirillin::ret_data_error;
+  }
+  if (str == nullptr)
   {
     std::cerr << "Memory allocation failed" << std::endl;
     return kirillin::ret_data_error;
   }
 
   const size_t len = std::strlen(str);
-  char *var3res = new (std::nothrow) char[len + 1];
-  if (!var3res)
+  const char *var3res = new (std::nothrow) char[len + 1];
+  if (var3res == nullptr)
   {
     std::cerr << "Memory allocation failed" << std::endl;
     delete[] str;
