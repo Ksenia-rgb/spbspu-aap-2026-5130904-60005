@@ -8,8 +8,8 @@ namespace udalcova {
   {
     size_t k = 0;
     for (size_t i = 0; first[i] != '\0'; ++i) {
-      if (std::strchr(second, *first) == nullptr) {
-        dst[i] = first[i];
+      if (std::strchr(second, first[i]) == nullptr) {
+        dst[k] = first[i];
         ++k;
       }
     }
@@ -18,7 +18,6 @@ namespace udalcova {
 
   void upper(const char *src, char *dst) noexcept
   {
-    size_t i = 0;
     for (size_t i = 0; src[i] != '\0'; ++i) {
       dst[i] = static_cast< char >(std::tolower(static_cast< unsigned char >(src[i])));
     }
@@ -27,13 +26,14 @@ namespace udalcova {
 
   char *read_line(std::istream &in)
   {
-    size_t cap = 16, len = 0;
+    size_t cap = 16;
+    size_t len = 0;
     char *buf = static_cast< char * >(std::malloc(cap));
     char c = 0;
     for (; buf != nullptr && in.get(c) && c != '\n';) {
       if (len + 1 == cap) {
         cap *= 2;
-        char *tmp = static_cast< char * >(std::realloc(buf, cap));
+        char *const tmp = static_cast< char * >(std::realloc(buf, cap));
         if (tmp == nullptr) {
           std::free(buf);
           return nullptr;
@@ -51,6 +51,10 @@ namespace udalcova {
 
   int process(std::istream &in, std::ostream &out, std::ostream &err)
   {
+    if (in.peek() == std::istream::traits_type::eof()) {
+      err << "Входные данные не предоставлены\n";
+      return 1;
+    }
     char *src = read_line(in);
     char *res = nullptr;
     if (src != nullptr) {
