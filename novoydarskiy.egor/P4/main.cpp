@@ -61,7 +61,7 @@ int main()
     if (len == buffer_size) {
       buffer_size *= 2;
       char* temp = static_cast< char* >(std::realloc(input_str, buffer_size * sizeof(char)));
-      if (!temp) {
+      if (temp == nullptr) {
         std::cerr << "Memory allocation error" << std::endl;
         std::free(input_str);
         return 1;
