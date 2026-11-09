@@ -38,7 +38,7 @@ namespace denisevich {
   char* reading(std::size_t& size)
   {
     std::size_t capacity = 1;
-    char* buf = new char[capacity];
+    char* buff = new char[capacity];
     char c = 0;
     while (std::cin.get(c) && c != '\n') {
       if (size + 1 == capacity) {
@@ -47,20 +47,20 @@ namespace denisevich {
         try {
           tmp = new char[newCap];
         } catch (const std::bad_alloc&) {
-          delete[] buf;
+          delete[] buff;
           throw;
         }
         for (std::size_t k = 0; k < size; ++k) {
-          tmp[k] = buf[k];
+          tmp[k] = buff[k];
         }
-        delete[] buf;
-        buf = tmp;
+        delete[] buff;
+        buff = tmp;
         capacity = newCap;
       }
-      buf[size++] = c;
+      buff[size++] = c;
     }
-    buf[size] = '\0';
-    return buf;
+    buff[size] = '\0';
+    return buff;
   }
 }
 
