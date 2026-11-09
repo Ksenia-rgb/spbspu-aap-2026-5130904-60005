@@ -4,7 +4,7 @@
 #include <limits>
 
 namespace cheberiak {
-  static int has_rep(const char *const text, const std::size_t length)
+  static int hasRep(const char *const text, const std::size_t length)
   {
     if (length == 0) {
       return 0;
@@ -19,7 +19,7 @@ namespace cheberiak {
     return 0;
   }
 
-  static int seq_sym(const char *const text, const std::size_t length)
+  static int seqSym(const char *const text, const std::size_t length)
   {
     if (length == 0) {
       return 0;
@@ -58,7 +58,7 @@ int main()
         return exit_code_memory_error;
       }
       const std::size_t new_capacity = capacity * growth_factor;
-      char *temp = static_cast< char * >(std::realloc(text, new_capacity));
+      char *const temp = static_cast< char * >(std::realloc(text, new_capacity));
       if (temp == nullptr) {
         std::cerr << "Error: memory reallocation failed.\n";
         std::free(text);
@@ -76,7 +76,7 @@ int main()
     std::free(text);
     return exit_code_input_error;
   }
-  std::cout << cheberiak::seq_sym(text, length) << std::endl << cheberiak::has_rep(text, length) << std::endl;
+  std::cout << cheberiak::seqSym(text, length) << std::endl << cheberiak::hasRep(text, length) << std::endl;
   std::free(text);
   return exit_code_success;
 }
