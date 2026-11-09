@@ -8,16 +8,14 @@ namespace shcherbakov
 {
   const int error_failure = 1;
 
-  char * convertToLower(const char * src, char * dst) noexcept
+  char * convertToLower(const char * src, char * const dst) noexcept
   {
-    char * const target = dst;
     char * current = dst;
     while (*src != '\0')
     {
-      const unsigned char ch = static_cast< unsigned char >(*src);
-      if (std::isupper(ch))
+      if (std::isupper(*src))
       {
-        *current = static_cast< char >(std::tolower(ch));
+        *current = std::tolower(*src);
       }
       else
       {
@@ -27,17 +25,15 @@ namespace shcherbakov
       ++current;
     }
     *current = '\0';
-    return target;
+    return dst;
   }
 
-  char * removeLatinLetters(const char * src, char * dst) noexcept
+  char * removeLatinLetters(const char * src, char * const dst) noexcept
   {
-    char * const target = dst;
     char * current = dst;
     while (*src != '\0')
     {
-      const unsigned char ch = static_cast< unsigned char >(*src);
-      if (!std::isalpha(ch))
+      if (!std::isalpha(*src))
       {
         *current = *src;
         ++current;
@@ -45,10 +41,10 @@ namespace shcherbakov
       ++src;
     }
     *current = '\0';
-    return target;
+    return dst;
   }
 
-  char * readLine(std::istream & in, std::size_t * out_length)
+  char * readLine(std::istream & in, std::size_t * const out_length)
   {
     const std::size_t initial_capacity = 32;
     const std::size_t growth_factor = 2;
@@ -109,7 +105,7 @@ namespace shcherbakov
 int main()
 {
   std::size_t length = 0;
-  char * const input_line = shcherbakov::readLine(std::cin, &length);
+  const char * const input_line = shcherbakov::readLine(std::cin, &length);
   if (input_line == nullptr)
   {
     std::cerr << "Cannot read line or memory error\n";
