@@ -8,9 +8,10 @@ namespace uzun {
 
   const int alloc_error_code = 1;
 
-  char * read_line(std::istream & in)
+  char * readLine(std::istream & in)
   {
-    std::size_t capacity = 16;
+    const std::size_t initial_capacity = 16;
+    std::size_t capacity = initial_capacity;
     std::size_t length = 0;
     char * buffer = static_cast< char * >(std::malloc(capacity));
     if (buffer == nullptr) {
@@ -19,8 +20,8 @@ namespace uzun {
     char symbol = 0;
     while (in.get(symbol) && symbol != '\n') {
       if (length + 1 >= capacity) {
-        std::size_t new_capacity = capacity * 2;
-        char * tmp = static_cast< char * >(std::realloc(buffer, new_capacity));
+        const std::size_t new_capacity = capacity * 2;
+        char * const tmp = static_cast< char * >(std::realloc(buffer, new_capacity));
         if (tmp == nullptr) {
           std::free(buffer);
           return nullptr;
@@ -30,11 +31,15 @@ namespace uzun {
       }
       buffer[length++] = symbol;
     }
+    if (length == 0 && !in) {
+      std::free(buffer);
+      return nullptr;
+    }
     buffer[length] = '\0';
     return buffer;
   }
 
-  char * unite_two(const char * first, const char * second, char * out) noexcept
+  char * uniteTwo(const char * first, const char * second, char * out) noexcept
   {
     std::size_t i = 0;
     std::size_t j = 0;
@@ -53,7 +58,7 @@ namespace uzun {
     return out;
   }
 
-  char * remove_digits(const char * src, char * out) noexcept
+  char * removeDigits(const char * src, char * out) noexcept
   {
     std::size_t k = 0;
     for (std::size_t i = 0; src[i] != '\0'; ++i) {
@@ -71,15 +76,15 @@ int main()
 {
   const char second[] = "def ";
 
-  char * input = uzun::read_line(std::cin);
+  char * const input = uzun::readLine(std::cin);
   if (input == nullptr) {
     std::cerr << "memory allocation error\n";
     return uzun::alloc_error_code;
   }
 
-  std::size_t united_size = std::strlen(input) + std::strlen(second) + 1;
-  char * united = static_cast< char * >(std::malloc(united_size));
-  char * no_digits = static_cast< char * >(std::malloc(std::strlen(input) + 1));
+  const std::size_t united_size = std::strlen(input) + std::strlen(second) + 1;
+  char * const united = static_cast< char * >(std::malloc(united_size));
+  char * const no_digits = static_cast< char * >(std::malloc(std::strlen(input) + 1));
   if (united == nullptr || no_digits == nullptr) {
     std::cerr << "memory allocation error\n";
     std::free(input);
@@ -88,8 +93,8 @@ int main()
     return uzun::alloc_error_code;
   }
 
-  std::cout << uzun::unite_two(input, second, united) << '\n';
-  std::cout << uzun::remove_digits(input, no_digits) << '\n';
+  std::cout << uzun::uniteTwo(input, second, united) << '\n';
+  std::cout << uzun::removeDigits(input, no_digits) << '\n';
 
   std::free(input);
   std::free(united);
