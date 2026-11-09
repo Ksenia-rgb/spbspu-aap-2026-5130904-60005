@@ -27,7 +27,8 @@ namespace udalcova {
 
   char *read_line(std::istream &in)
   {
-    size_t cap = 16;
+    constexpr size_t cfpfcity = 16;
+    size_t cap = cfpfcity;
     size_t len = 0;
     char *buf = static_cast< char * >(std::malloc(cap));
     char c = 0;
