@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 namespace udalcova {
-  void exclude_second(const char *first, const char *second, char *dst) noexcept
+  void exclude(const char *first, const char *second, char *dst) noexcept
   {
     size_t k = 0;
     for (size_t i = 0; first[i] != '\0'; ++i) {
@@ -25,7 +25,7 @@ namespace udalcova {
     dst[i] = '\0';
   }
 
-  char *read_line(std::istream &in)
+  char *read(std::istream &in)
   {
     constexpr size_t cfpfcity = 16;
     size_t cap = cfpfcity;
