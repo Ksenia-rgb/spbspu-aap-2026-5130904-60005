@@ -64,7 +64,7 @@ namespace udalcova {
     }
     if (res == nullptr) {
       err << "не удалось выделить памят\n";
-      std::free(src);
+      std::free(const_cast< char * >(src));
       return 1;
     }
     exclude_second(src, "abc", res);
@@ -73,7 +73,7 @@ namespace udalcova {
     out << res << "\n";
 
     std::free(res);
-    std::free(src);
+    std::free(const_cast< char * >(src));
     return 0;
   }
 }
