@@ -57,7 +57,7 @@ namespace udalcova {
       err << "Входные данные не предоставлены\n";
       return 1;
     }
-    const char *src = read_line(in);
+    const char *src = read(in);
     char *res = nullptr;
     if (src != nullptr) {
       res = static_cast< char * >(std::malloc(std::strlen(src) + 1));
@@ -67,7 +67,7 @@ namespace udalcova {
       std::free(const_cast< char * >(src));
       return 1;
     }
-    exclude_second(src, "abc", res);
+    exclude(src, "abc", res);
     out << res << "\n";
     upper(src, res);
     out << res << "\n";
