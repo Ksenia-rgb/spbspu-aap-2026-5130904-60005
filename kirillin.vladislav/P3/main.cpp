@@ -19,6 +19,7 @@ namespace kirillin
     {
       return a;
     }
+
     else
     {
       return b;
