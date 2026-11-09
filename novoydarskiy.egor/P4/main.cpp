@@ -3,7 +3,7 @@
 #include <cctype>
 #include <cstdlib>
 
-size_t sharedSymbols(const char* src, char* dest)
+size_t sharedSymbols(const char* src, char* res)
 {
   const size_t BUFF_CAP = 256;
   bool present[BUFF_CAP] = {false};
@@ -19,14 +19,14 @@ size_t sharedSymbols(const char* src, char* dest)
   size_t i = 0;
   for (int c = 'a'; c <= 'z'; ++c) {
     if (!present[c]) {
-      dest[i++] = static_cast< char >(c);
+      res[i++] = static_cast< char >(c);
     }
   }
-  dest[i] = '\0';
+  res[i] = '\0';
   return i;
 }
 
-size_t excludeSecond(const char* s1, const char* s2, char* dest)
+size_t excludeSecond(const char* s1, const char* s2, char* res)
 {
   const size_t BUFF_CAP = 256;
   bool in_second[BUFF_CAP] = {false};
@@ -38,18 +38,19 @@ size_t excludeSecond(const char* s1, const char* s2, char* dest)
   size_t i = 0;
   for (const char* p = s1; *p; ++p) {
     if (!in_second[static_cast< unsigned char >(*p)]) {
-      dest[i++] = *p;
+      res[i++] = *p;
     }
   }
-  dest[i] = '\0';
+  res[i] = '\0';
   return i;
 }
 
 int main()
 {
   const char* const second_str = "abc";
+  const size_t BUFF_CAP = 256;
 
-  size_t buffer_size = 256;
+  size_t buffer_size = BUFF_CAP;
   char* input_str = static_cast< char* >(std::malloc(buffer_size * sizeof(char)));
   if (!input_str) {
     std::cerr << "Memory allocation error" << std::endl;
