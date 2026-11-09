@@ -4,7 +4,7 @@
 #include <cctype>
 
 namespace denisevich {
-  char* Latrmv(const char* string, char* buffer)
+  char* removelatin(const char* string, char* buffer)
   {
     std::size_t j = 0;
     for (std::size_t i = 0; string[i] != '\0'; ++i) {
@@ -24,7 +24,7 @@ namespace denisevich {
     }
     return 0;
   }
-  char* Lattwo(const char* str1, const char* str2, char* buffer)
+  char* unitelatin(const char* str1, const char* str2, char* buffer)
   {
     std::size_t j = 0;
     for (char a = 'a'; a <= 'z'; ++a) {
@@ -83,8 +83,15 @@ int main()
     delete[] result2;
     return 1;
   }
-  result = denisevich::Lattwo(line, defline, result);
-  result2 = denisevich::Latrmv(line, result2);
+  if (line[0] == '\0' && std::cin.eof()) {
+    std::cerr << "Input is empty\n";
+    delete[] line;
+    delete[] result;
+    delete[] result2;
+    return 1;
+  }
+  result = denisevich::unitelatin(line, defline, result);
+  result2 = denisevich::removelatin(line, result2);
   std::cout << result << "\n" << result2 << "\n";
   delete[] line;
   delete[] result;
