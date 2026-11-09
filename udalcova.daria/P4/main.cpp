@@ -19,7 +19,7 @@ namespace udalcova {
   void upper(const char *src, char *dst) noexcept
   {
     size_t i = 0;
-    for (; stc[i] != '\0'; ++i) {
+    for (size_t i = 0; stc[i] != '\0'; ++i) {
       dst[i] = static_cast< char >(std::tolower(static_cast< unsigned char >(src[i])));
     }
     dst[i] = '\0';
@@ -57,7 +57,7 @@ namespace udalcova {
       res = static_cast< char * >(std::malloc(std::strlen(src) + 1));
     }
     if (res == nullptr) {
-      std::err << "не удалось выделить памят\n";
+      err << "не удалось выделить памят\n";
       std::free(src);
       return 1;
     }
@@ -73,7 +73,7 @@ namespace udalcova {
 }
 
 int main()
-
-    return udalcova::process(std::cin, std::cout, std::cerr);
+{
+  return udalcova::process(std::cin, std::cout, std::cerr);
 }
 
