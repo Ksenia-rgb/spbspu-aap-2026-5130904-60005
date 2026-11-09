@@ -40,27 +40,47 @@ namespace kirillin
     return buffer;
   }
 
-  void Variant3(const char *src, char *res)
+  void variant3(const char *src, char *res)
   {
     if (!src || !res)
     {
       return;
     }
+    const unsigned char ascii_size = 128;
     size_t j = 0;
 
     for (size_t i = 0; src[i] != '\0'; ++i)
     {
-      unsigned char uc = static_cast< unsigned char >(src[i]);
+      const unsigned char uc = static_cast< unsigned char >(src[i]);
 
-      if (!std::isalpha(uc))
+      if (!std::isalpha(uc) && uc < ascii_size)
       {
-        res[j++] = src[i];
+        if (src[i] == ' ')
+        {
+          if (j == 0 || res[j - 1] == ' ')
+          {
+            continue;
+          }
+          else
+          {
+            res[j++] = src[i];
+          }
+        }
+        else
+        {
+          res[j++] = src[i];
+        }
       }
     }
+    if (j > 0 && res[j - 1] == ' ')
+    {
+      j--;
+    }
+
     res[j] = '\0';
   }
 
-  int Variant7(const char *src)
+  int variant7(const char *src)
   {
     int count = 0;
     if (!src)
@@ -68,19 +88,24 @@ namespace kirillin
       return count;
     }
 
-    int seen[256] = {0};
+    const unsigned char ascii_size = 128;
+    const size_t ascii_size_expend = 256;
+    const size_t diff = 32;
+
+    int seen[ascii_size_expend] = {0};
 
     for (size_t i = 0; src[i] != '\0'; ++i)
     {
-      unsigned char uc = static_cast< unsigned char >(src[i]);
+      const unsigned char uc = static_cast< unsigned char >(src[i]);
 
       if (std::isalpha(uc))
       {
-        if (uc < 128)
+        if (uc < ascii_size)
         {
-          if (seen[uc] == 0)
+          if (seen[static_cast< size_t >(uc)] == 0 && seen[static_cast< size_t >(uc) + diff] == 0)
           {
-            seen[uc] = 1;
+            seen[static_cast< size_t >(uc)] = 1;
+            seen[static_cast< size_t >(uc) + diff] = 1;
             count++;
           }
         }
@@ -92,14 +117,14 @@ namespace kirillin
 
 int main()
 {
-  char *str = kirillin::readDynamicString();
+  const char *str = kirillin::readDynamicString();
   if (!str)
   {
     std::cerr << "Memory allocation failed" << std::endl;
     return kirillin::ret_data_error;
   }
 
-  size_t len = std::strlen(str);
+  const size_t len = std::strlen(str);
   char *var3res = new (std::nothrow) char[len + 1];
   if (!var3res)
   {
@@ -108,11 +133,11 @@ int main()
     return kirillin::ret_data_error;
   }
 
-  kirillin::Variant3(str, var3res);
+  kirillin::variant3(str, var3res);
   std::cout << var3res << std::endl;
   delete[] var3res;
 
-  int var7res = kirillin::Variant7(str);
+  const int var7res = kirillin::variant7(str);
   std::cout << var7res << std::endl;
 
   delete[] str;
