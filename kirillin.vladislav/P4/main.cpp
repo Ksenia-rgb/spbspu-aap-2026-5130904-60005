@@ -22,6 +22,11 @@ namespace kirillin
     char c = '\0';
     while (std::cin.get(c) && c != '\n')
     {
+      if (c == '\r')
+      {
+        continue;
+      }
+
       if (len + 1 >= capacity)
       {
         capacity *= 2;
@@ -31,8 +36,7 @@ namespace kirillin
           delete[] buffer;
           return nullptr;
         }
-        buffer[len] = '\0';
-        std::strcpy(new_buffer, buffer);
+        std::memcpy(new_buffer, buffer, len);
         delete[] buffer;
         buffer = new_buffer;
       }
@@ -48,6 +52,7 @@ namespace kirillin
     {
       return;
     }
+
     const unsigned char ascii_size = 128;
     size_t j = 0;
 
@@ -74,6 +79,7 @@ namespace kirillin
         }
       }
     }
+
     if (j > 0 && res[j - 1] == ' ')
     {
       j--;
@@ -89,45 +95,44 @@ namespace kirillin
     {
       return count;
     }
-
     const unsigned char ascii_size = 128;
     const size_t ascii_size_expand = 256;
-    const size_t diff = 32;
-
     int seen[ascii_size_expand] = {0};
 
     for (size_t i = 0; src[i] != '\0'; ++i)
     {
       const unsigned char uc = static_cast< unsigned char >(src[i]);
 
-      if (std::isalpha(uc))
+      if (std::isalpha(uc) && uc < ascii_size)
       {
-        if (uc < ascii_size)
+        const unsigned char key = static_cast< unsigned char >(std::tolower(uc));
+
+        if (seen[key] == 0)
         {
-          if (seen[static_cast< size_t >(uc)] == 0 && seen[static_cast< size_t >(uc) + diff] == 0)
-          {
-            seen[static_cast< size_t >(uc)] = 1;
-            seen[static_cast< size_t >(uc) + diff] = 1;
-            count++;
-          }
+          seen[key] = 1;
+          count++;
         }
       }
     }
+
     return count;
   }
 }
 
 int main()
 {
-  const char *str = kirillin::readDynamicString();
-  if (str[0] == '\0')
-  {
-    std::cerr << "Empty input" << std::endl;
-    return kirillin::ret_data_error;
-  }
+  char *str = kirillin::readDynamicString();
+
   if (str == nullptr)
   {
     std::cerr << "Memory allocation failed" << std::endl;
+    return kirillin::ret_data_error;
+  }
+
+  if (str[0] == '\0')
+  {
+    std::cerr << "Empty input" << std::endl;
+    delete[] str;
     return kirillin::ret_data_error;
   }
 
