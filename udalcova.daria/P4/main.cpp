@@ -51,13 +51,13 @@ namespace udalcova {
 
   int process(std::istream &in, std::ostream &out, std::ostream &err)
   {
-    char *stc = read_line(in);
+    char *src = read_line(in);
     char *res = nullptr;
     if (src != nullptr) {
       res = static_cast< char * >(std::malloc(std::strlen(src) + 1));
     }
     if (res == nullptr) {
-      err << "не удалось выделить памят\n";
+      std::err << "не удалось выделить памят\n";
       std::free(src);
       return 1;
     }
@@ -73,7 +73,7 @@ namespace udalcova {
 }
 
 int main()
-{
-  return udalcova::process(std::cin, std::cout, std::cerr);
+
+    return udalcova::process(std::cin, std::cout, std::cerr);
 }
 
