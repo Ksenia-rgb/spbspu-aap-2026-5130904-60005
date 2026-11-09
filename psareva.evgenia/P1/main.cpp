@@ -1,51 +1,147 @@
+#include <cstddef>
 #include <iostream>
 #include <limits>
-#include <cstddef>
+#include <stdexcept>
+
+namespace psareva {
+  class CountMax {
+  public:
+    CountMax();
+    void operator()(int val);
+    std::size_t operator()() const;
+  private:
+    int max_value_;
+    std::size_t count_;
+  };
+
+  class MonDec {
+  public:
+    MonDec();
+    void operator()(int val);
+    std::size_t operator()() const noexcept;
+  private:
+    int prev_value_;
+    std::size_t current_len_;
+    std::size_t max_len_;
+    bool has_data_;
+  };
+
+  int process(std::istream& in, std::ostream& out, std::ostream& err);
+}
+
+psareva::CountMax::CountMax():
+  max_value_(0),
+  count_(0)
+{}
+
+void psareva::CountMax::operator()(int val)
+{
+  if (count_ == 0 || val > max_value_) {
+    max_value_ = val;
+    count_ = 1;
+  } else if (val == max_value_) {
+    if (count_ == std::numeric_limits< std::size_t >::max()) {
+      throw std::overflow_error("Counter overflow");
+    }
+    ++count_;
+  }
+}
+
+std::size_t psareva::CountMax::operator()() const
+{
+  if (count_ == 0) {
+    throw std::logic_error("Sequence is empty");
+  }
+  return count_;
+}
+
+psareva::MonDec::MonDec():
+  prev_value_(0),
+  current_len_(0),
+  max_len_(0),
+  has_data_(false)
+{}
+
+void psareva::MonDec::operator()(int val)
+{
+  if (!has_data_) {
+    has_data_ = true;
+    current_len_ = 1;
+    max_len_ = 1;
+    prev_value_ = val;
+    return;
+  }
+
+  if (val <= prev_value_) {
+    if (current_len_ == std::numeric_limits< std::size_t >::max()) {
+      throw std::overflow_error("Counter overflow");
+    }
+    ++current_len_;
+  } else {
+    current_len_ = 1;
+  }
+
+  if (current_len_ > max_len_) {
+    max_len_ = current_len_;
+  }
+  prev_value_ = val;
+}
+
+std::size_t psareva::MonDec::operator()() const noexcept
+{
+  return max_len_;
+}
+
+int psareva::process(std::istream& in, std::ostream& out, std::ostream& err)
+{
+  const int error_input = 1;
+  const int error_calc = 2;
+  const int success = 0;
+
+  CountMax count_max;
+  MonDec mon_dec;
+
+  int val = 0;
+  while ((in >> val) && (val != 0)) {
+    try {
+      count_max(val);
+      mon_dec(val);
+    } catch (const std::overflow_error&) {
+      err << "Overflow error\n";
+      return error_calc;
+    }
+  }
+
+  if (!in) {
+    err << "Incorrect input\n";
+    return error_input;
+  }
+
+  bool has_calc_error = false;
+
+  try {
+    out << count_max() << "\n";
+  } catch (const std::exception&) {
+    err << "Too short sequence\n";
+    has_calc_error = true;
+  }
+
+  try {
+    out << mon_dec() << "\n";
+  } catch (const std::exception&) {
+    err << "Calculation error\n";
+    has_calc_error = true;
+  }
+
+  if (has_calc_error) {
+    return error_calc;
+  }
+
+  return success;
+}
 
 int main()
 {
-  const int good = 0;
-  const int incorrect_input = 1;
-  const int short_sequence = 2;
-  int number = 0;
-  int maxx = std::numeric_limits< int >::min();
-  int prev_number = std::numeric_limits< int >::max();
-  std::size_t count_zd3 = 0;
-  std::size_t length_zd5 = 0;
-  std::size_t length_zd5_max = 0;
-  if (!(std::cin >> number)) {
-    std::cerr << "Incorrect input" << std::endl;
-    return incorrect_input;
-  }
-  while (number != 0) {
-    if (number > maxx) {
-      maxx = number;
-      count_zd3 = 0;
-    }
-    if (number == maxx) {
-      count_zd3++;
-    }
-    if (number <= prev_number) {
-      length_zd5++;
-    }
-    if (number > prev_number) {
-      length_zd5 = 0;
-    }
-    prev_number = number;
-    if (length_zd5 > length_zd5_max) {
-      length_zd5_max = length_zd5;
-    }
-    if (!(std::cin >> number)) {
-      std::cerr << "Incorrect input" << std::endl;
-      return incorrect_input;
-    }
-  }
-  if (count_zd3 == 0) {
-    std::cerr << "Too short sequence" << std::endl;
-    std::cout << length_zd5_max << std::endl;
-    return short_sequence;
-  }
-  std::cout << count_zd3 << std::endl;
-  std::cout << length_zd5_max << std::endl;
-  return good;
+  return psareva::process(std::cin, std::cout, std::cerr);
 }
+
