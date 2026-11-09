@@ -25,7 +25,7 @@ namespace kirillin
       if (len + 1 >= capacity)
       {
         capacity *= 2;
-        char *new_buffer = new (std::nothrow) char[capacity];
+        const char *new_buffer = new (std::nothrow) char[capacity];
         if (new_buffer == nullptr)
         {
           delete[] buffer;
@@ -132,7 +132,7 @@ int main()
   }
 
   const size_t len = std::strlen(str);
-  char *var3res = new (std::nothrow) char[len + 1];
+  const char *var3res = new (std::nothrow) char[len + 1];
   if (var3res == nullptr)
   {
     std::cerr << "Memory allocation failed" << std::endl;
