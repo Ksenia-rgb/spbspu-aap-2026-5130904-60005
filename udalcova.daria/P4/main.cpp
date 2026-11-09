@@ -18,7 +18,8 @@ namespace udalcova {
 
   void upper(const char *src, char *dst) noexcept
   {
-    for (size_t i = 0; src[i] != '\0'; ++i) {
+    size_t i = 0;
+    for (; src[i] != '\0'; ++i) {
       dst[i] = static_cast< char >(std::tolower(static_cast< unsigned char >(src[i])));
     }
     dst[i] = '\0';
