@@ -5,7 +5,8 @@
 
 size_t sharedSymbols(const char* src, char* dest)
 {
-  bool present[256] = {false};
+  const size_t BUFF_CAP = 256;
+  bool present[BUFF_CAP] = {false};
 
   for (const char* p = src; *p != '\0'; ++p) {
     unsigned char c = static_cast< unsigned char >(*p);
@@ -27,15 +28,16 @@ size_t sharedSymbols(const char* src, char* dest)
 
 size_t excludeSecond(const char* s1, const char* s2, char* dest)
 {
-  bool inSecond[256] = {false};
+  const size_t BUFF_CAP = 256;
+  bool in_second[BUFF_CAP] = {false};
 
   for (const char* p = s2; *p; ++p) {
-    inSecond[static_cast< unsigned char >(*p)] = true;
+    in_second[static_cast< unsigned char >(*p)] = true;
   }
 
   size_t i = 0;
   for (const char* p = s1; *p; ++p) {
-    if (!inSecond[static_cast< unsigned char >(*p)]) {
+    if (!in_second[static_cast< unsigned char >(*p)]) {
       dest[i++] = *p;
     }
   }
@@ -45,7 +47,7 @@ size_t excludeSecond(const char* s1, const char* s2, char* dest)
 
 int main()
 {
-  const char* second_str = "abc";
+  const char* const second_str = "abc";
 
   size_t buffer_size = 256;
   char* input_str = static_cast< char* >(std::malloc(buffer_size * sizeof(char)));
@@ -55,12 +57,12 @@ int main()
   }
 
   size_t len = 0;
-  char c;
+  char c = '\0';
   while (std::cin.get(c) && c != '\n') {
     input_str[len++] = c;
     if (len == buffer_size) {
       buffer_size *= 2;
-      char* temp = static_cast< char* >(std::realloc(input_str, buffer_size * sizeof(char)));
+      char* const temp = static_cast< char* >(std::realloc(input_str, buffer_size * sizeof(char)));
       if (temp == nullptr) {
         std::cerr << "Memory allocation error" << std::endl;
         std::free(input_str);
@@ -77,14 +79,15 @@ int main()
     return 1;
   }
 
-  char* result_14 = static_cast< char* >(std::malloc(27 * sizeof(char)));
+  const size_t RES_14_SIZE = 27;
+  char* const result_14 = static_cast< char* >(std::malloc(RES_14_SIZE * sizeof(char)));
   int ok_14 = 0;
   if (result_14 != nullptr) {
     sharedSymbols(input_str, result_14);
     ok_14 = 1;
   }
 
-  char* result_15 = static_cast< char* >(std::malloc((len + 1) * sizeof(char)));
+  char* const result_15 = static_cast< char* >(std::malloc((len + 1) * sizeof(char)));
   int ok_15 = 0;
   if (result_15 != nullptr) {
     excludeSecond(input_str, second_str, result_15);
