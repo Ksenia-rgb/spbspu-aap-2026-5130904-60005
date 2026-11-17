@@ -71,6 +71,13 @@ namespace nekhorukov
     return output.good();
   }
 
+  bool writeEmptyResults(std::ostream & output)
+  {
+    output << "false" << '\n';
+    output << 0 << '\n';
+    return output.good();
+  }
+
   int process(const char * mode, const char * input_path, const char * output_path)
   {
     const bool is_fixed = mode[0] == '1' && mode[1] == '\0';
@@ -94,13 +101,27 @@ namespace nekhorukov
     }
     int rows = 0;
     int cols = 0;
-    if (!(input >> rows >> cols) || rows <= 0 || cols <= 0)
+    if (!(input >> rows >> cols) || rows < 0 || cols < 0)
     {
       std::cerr << "invalid matrix dimensions\n";
       return kCalcError;
     }
     const std::size_t row_count = static_cast< std::size_t >(rows);
     const std::size_t col_count = static_cast< std::size_t >(cols);
+    if (row_count == 0 && col_count == 0)
+    {
+      if (!writeEmptyResults(output))
+      {
+        std::cerr << "cannot write results\n";
+        return kCalcError;
+      }
+      return kSuccess;
+    }
+    if (row_count == 0 || col_count == 0)
+    {
+      std::cerr << "invalid matrix dimensions\n";
+      return kCalcError;
+    }
     if (row_count > std::numeric_limits< std::size_t >::max() / col_count)
     {
       std::cerr << "matrix is too large\n";
