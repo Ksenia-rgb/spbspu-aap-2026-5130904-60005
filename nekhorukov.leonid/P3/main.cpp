@@ -1,26 +1,27 @@
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <cstddef>
+#include <limits>
 
 namespace nekhorukov
 {
   enum ErrorCode
   {
     kSuccess = 0,
-    kArgsError = 1,
-    kFileError = 2
+    kInputError = 1,
+    kCalcError = 2
   };
 
-  const int kMaxSize = 10000;
+  const std::size_t kMaxFixedElements = 10000;
 
-  bool upperTri(const long long * const m, int r, int c)
+  bool isUpperTriangular(const long long * data, std::size_t rows, std::size_t cols)
   {
-    int n = r < c ? r : c;
-    for (int i = 0; i < n; ++i)
+    const std::size_t size = rows < cols ? rows : cols;
+    for (std::size_t i = 0; i < size; ++i)
     {
-      for (int j = 0; j < i; ++j)
+      for (std::size_t j = 0; j < i; ++j)
       {
-        if (m[i * c + j] != 0)
+        if (data[i * cols + j] != 0)
         {
           return false;
         }
@@ -29,122 +30,126 @@ namespace nekhorukov
     return true;
   }
 
-  int rowsNoSame(const long long * const m, int r, int c)
+  int countRowsWithoutEqualNeighbors(const long long * data, std::size_t rows, std::size_t cols)
   {
-    int res = 0;
-    for (int i = 0; i < r; ++i)
+    int count = 0;
+    for (std::size_t i = 0; i < rows; ++i)
     {
-      bool same = false;
-      for (int j = 1; j < c; ++j)
+      bool has_equal = false;
+      for (std::size_t j = 1; j < cols; ++j)
       {
-        if (m[i * c + j] == m[i * c + j - 1])
+        if (data[i * cols + j] == data[i * cols + j - 1])
         {
-          same = true;
+          has_equal = true;
           break;
         }
       }
-      if (!same)
+      if (!has_equal)
       {
-        ++res;
+        ++count;
       }
     }
-    return res;
+    return count;
   }
 
-  int run(const std::string & num, const std::string & in_name, const std::string & out_name)
+  bool readMatrix(std::istream & input, long long * data, std::size_t total)
   {
-    if (num != "1" && num != "2")
+    for (std::size_t i = 0; i < total; ++i)
     {
-      std::cerr << "bad first arg\n";
-      return kArgsError;
-    }
-
-    std::ifstream fin(in_name);
-    if (!fin)
-    {
-      std::cerr << "can't open input\n";
-      return kFileError;
-    }
-
-    int r = 0;
-    int c = 0;
-    if (!(fin >> r >> c) || r < 0 || c < 0)
-    {
-      std::cerr << "bad header\n";
-      return kFileError;
-    }
-
-    const int total = r * c;
-
-    if (total == 0)
-    {
-      std::ofstream fout(out_name);
-      if (!fout)
+      if (!(input >> data[i]))
       {
-        std::cerr << "can't open output\n";
-        return kFileError;
+        return false;
       }
-      fout << "false\n";
-      fout << 0 << "\n";
+    }
+    return true;
+  }
+
+  bool writeResults(std::ostream & output, const long long * data, std::size_t rows, std::size_t cols)
+  {
+    output << (isUpperTriangular(data, rows, cols) ? "true" : "false") << '\n';
+    output << countRowsWithoutEqualNeighbors(data, rows, cols) << '\n';
+    return output.good();
+  }
+
+  int process(const char * mode, const char * input_path, const char * output_path)
+  {
+    const bool is_fixed = mode[0] == '1' && mode[1] == '\0';
+    const bool is_dynamic = mode[0] == '2' && mode[1] == '\0';
+    if (!is_fixed && !is_dynamic)
+    {
+      std::cerr << "first argument must be 1 or 2\n";
+      return kInputError;
+    }
+    std::ifstream input(input_path);
+    if (!input)
+    {
+      std::cerr << "cannot open input file\n";
+      return kInputError;
+    }
+    std::ofstream output(output_path);
+    if (!output)
+    {
+      std::cerr << "cannot open output file\n";
+      return kInputError;
+    }
+    int rows = 0;
+    int cols = 0;
+    if (!(input >> rows >> cols) || rows <= 0 || cols <= 0)
+    {
+      std::cerr << "invalid matrix dimensions\n";
+      return kCalcError;
+    }
+    const std::size_t row_count = static_cast< std::size_t >(rows);
+    const std::size_t col_count = static_cast< std::size_t >(cols);
+    if (row_count > std::numeric_limits< std::size_t >::max() / col_count)
+    {
+      std::cerr << "matrix is too large\n";
+      return kCalcError;
+    }
+    const std::size_t total = row_count * col_count;
+    if (is_fixed)
+    {
+      if (total > kMaxFixedElements)
+      {
+        std::cerr << "matrix is too large for fixed storage\n";
+        return kCalcError;
+      }
+      long long buffer[kMaxFixedElements] = {};
+      if (!readMatrix(input, buffer, total))
+      {
+        std::cerr << "invalid matrix data\n";
+        return kCalcError;
+      }
+      if (!writeResults(output, buffer, row_count, col_count))
+      {
+        std::cerr << "cannot write results\n";
+        return kCalcError;
+      }
       return kSuccess;
     }
-
-    if (num == "1")
+    long long * buffer = nullptr;
+    try
     {
-      if (total > kMaxSize)
-      {
-        std::cerr << "too big\n";
-        return kFileError;
-      }
-
-      long long buf[kMaxSize];
-      for (int i = 0; i < total; ++i)
-      {
-        if (!(fin >> buf[i]))
-        {
-          std::cerr << "bad data\n";
-          return kFileError;
-        }
-      }
-
-      std::ofstream fout(out_name);
-      if (!fout)
-      {
-        std::cerr << "can't open output\n";
-        return kFileError;
-      }
-      fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
-      fout << rowsNoSame(buf, r, c) << "\n";
-      return kSuccess;
+      buffer = new long long[total];
     }
-
-    long long * buf = new (std::nothrow) long long[total];
-    if (buf == nullptr)
+    catch (...)
     {
-      std::cerr << "no memory\n";
-      return kFileError;
+      std::cerr << "memory allocation failed\n";
+      return kCalcError;
     }
-
-    for (int i = 0; i < total; ++i)
+    if (!readMatrix(input, buffer, total))
     {
-      if (!(fin >> buf[i]))
-      {
-        delete[] buf;
-        std::cerr << "bad data\n";
-        return kFileError;
-      }
+      delete[] buffer;
+      std::cerr << "invalid matrix data\n";
+      return kCalcError;
     }
-
-    std::ofstream fout(out_name);
-    if (!fout)
+    if (!writeResults(output, buffer, row_count, col_count))
     {
-      delete[] buf;
-      std::cerr << "can't open output\n";
-      return kFileError;
+      delete[] buffer;
+      std::cerr << "cannot write results\n";
+      return kCalcError;
     }
-    fout << (upperTri(buf, r, c) ? "true" : "false") << "\n";
-    fout << rowsNoSame(buf, r, c) << "\n";
-    delete[] buf;
+    delete[] buffer;
     return kSuccess;
   }
 }
@@ -153,8 +158,8 @@ int main(int argc, char * argv[])
 {
   if (argc != 4)
   {
-    std::cerr << "need 3 args\n";
-    return nekhorukov::kArgsError;
+    std::cerr << "expected 3 arguments\n";
+    return nekhorukov::kInputError;
   }
-  return nekhorukov::run(argv[1], argv[2], argv[3]);
+  return nekhorukov::process(argv[1], argv[2], argv[3]);
 }
