@@ -5,7 +5,7 @@
 namespace udalcova {
   const int error_args = 1;
   const int error_input = 2;
-  const int expected_agrs = 4;
+  const int expected_args = 4;
   const size_t max_size = 10000;
 
   bool good(const int* a, size_t r, size_t c, size_t i, size_t j)
