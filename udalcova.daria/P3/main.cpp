@@ -5,6 +5,7 @@
 namespace udalcova {
   const int error_args = 1;
   const int error_input = 2;
+  const int expected_agrs = 4;
   const size_t max_size = 10000;
 
   bool good(const int* a, size_t r, size_t c, size_t i, size_t j)
@@ -70,6 +71,35 @@ namespace udalcova {
     return out.good();
   }
 
+  int solve(std::istream& in, std::ostream& out, int* a, size_t r, size_t c)
+  {
+    for (size_t i = 0; i < r * c; ++i) {
+      if (!(in >> a[i])) {
+        std::cerr << "Ошибка: содержимое не является матрицей\n";
+        return error_input;
+      }
+    }
+    if (!process(a, r, c, out)) {
+      std::cerr << "Ошибка: не удалось записать результат\n";
+      return error_input;
+    }
+    return 0;
+  }
+
+  int runStatic(std::istream& in, std::ostream& out, size_t r, size_t c)
+  {
+    int fixed[max_size];
+    return solve(in, out, fixed, r, c);
+  }
+
+  int runDynamic(std::istream& in, std::ostream& out, size_t r, size_t c)
+  {
+    int* a = new int[r * c];
+    int result = solve(in, out, a, r, c);
+    delete[] a;
+    return result;
+  }
+
   int run(std::istream& in, std::ostream& out, bool dynamic)
   {
     size_t r = 0, c = 0;
@@ -77,37 +107,14 @@ namespace udalcova {
       std::cerr << "Ошибка: не удалось прочитать размер матрицы\n";
       return error_input;
     }
-    int fixed[max_size];
-    int* a = fixed;
-    if (dynamic) {
-      a = new int[r * c];
-    }
     if (c != 0 && r > max_size / c) {
       std::cerr << "Ошибка: матрица слишком большая\n";
       return error_input;
     }
-    bool good = true;
-    for (size_t i = 0; i < r * c && good; ++i) {
-      good = static_cast< bool >(in >> a[i]);
-    }
-    if (!good) {
-      std::cerr << "Ошибка: содержимое не является матрицей\n";
-      if (dynamic) {
-        delete[] a;
-      }
-      return error_input;
-    }
-    if (!(good = process(a, r, c, out))) {
-      std::cerr << "Ошибка: не удалось записать результат\n";
-      if (dynamic) {
-        delete[] a;
-      }
-      return error_input;
-    }
     if (dynamic) {
-      delete[] a;
+      return runDynamic(in, out, r, c);
     }
-    return 0;
+    return runStatic(in, out, r, c);
   }
 }
 
@@ -115,7 +122,7 @@ int main(int argc, char** argv)
 {
   using namespace udalcova;
 
-  if (argc != 4) {
+  if (argc != expected_args) {
     std::cerr << "Ошибка: неверное количество аргументов\n";
     return error_input;
   }
