@@ -9,7 +9,7 @@ namespace andrijchuk
 {
   const int arg_errors_exitcode1 = 1;
   const int arr_errors_exitcode2 = 2;
-  const int other_errors_exitcode3 = 3;
+  const int excepted_quantity = 4;
   const int num_index = 1;
   const char stack_num = '1';
   const char heap_num = '2';
@@ -17,11 +17,11 @@ namespace andrijchuk
 
   void checks(int ac, char **av)
   {
-    if (ac < 4)
+    if (ac < excepted_quantity)
     {
       throw std::runtime_error("Not enough arguments");
     }
-    if (ac > 4)
+    if (ac > excepted_quantity)
     {
       throw std::runtime_error("Too many arguments");
     }
@@ -42,7 +42,7 @@ namespace andrijchuk
     }
   }
 
-  void matrixInput(int arr[], std::size_t rows, std::size_t cols, std::istream &input)
+  void matrixInput(int *arr, std::size_t rows, std::size_t cols, std::istream &input)
   {
     const std::size_t total = rows * cols;
     for (std::size_t i = 0; i < total; i++)
@@ -52,9 +52,15 @@ namespace andrijchuk
         throw std::invalid_argument("Wrong matrix arguments");
       }
     }
+
+    char extra{};
+    if (input >> extra)
+    {
+      throw std::invalid_argument("Extra data after matrix");
+    }
   }
 
-  std::size_t numColLSR(const int arr[], std::size_t rows, std::size_t cols)
+  std::size_t numColLSR(const int *arr, std::size_t rows, std::size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
@@ -85,7 +91,7 @@ namespace andrijchuk
     return result;
   }
 
-  std::size_t cntColNSM(const int arr[], std::size_t rows, std::size_t cols)
+  std::size_t cntColNSM(const int *arr, std::size_t rows, std::size_t cols)
   {
     if (rows == 0 || cols == 0)
     {
@@ -110,7 +116,7 @@ namespace andrijchuk
     return result;
   }
 
-  void results(const int arr[], std::size_t rows, std::size_t cols, std::ostream &output)
+  void results(const int *arr, std::size_t rows, std::size_t cols, std::ostream &output)
   {
     output << numColLSR(arr, rows, cols) << '\n';
     output << cntColNSM(arr, rows, cols) << '\n';
@@ -120,7 +126,6 @@ namespace andrijchuk
 int main(int argc, char **argv)
 {
   namespace ad = andrijchuk;
-  int stack_array[ad::stack_args_count] = {};
   int *heap_array = nullptr;
   try
   {
@@ -134,13 +139,13 @@ int main(int argc, char **argv)
     if (!input)
     {
       std::cerr << "Cannot open input file" << '\n';
-      return ad::other_errors_exitcode3;
+      return ad::arr_errors_exitcode2;
     }
     std::ofstream output{output_path};
     if (!output)
     {
       std::cerr << "Cannot open output file" << '\n';
-      return ad::other_errors_exitcode3;
+      return ad::arr_errors_exitcode2;
     }
 
     int int_rows{};
@@ -155,10 +160,11 @@ int main(int argc, char **argv)
     if (cols != 0 && rows > std::numeric_limits< std::size_t >::max() / cols)
     {
       std::cerr << "Cols * rows is too much" << '\n';
-      return ad::other_errors_exitcode3;
+      return ad::arr_errors_exitcode2;
     }
     if (num[0] == ad::stack_num)
     {
+      int stack_array[ad::stack_args_count] = {};
       ad::matrixInput(stack_array, rows, cols, input);
       ad::results(stack_array, rows, cols, output);
     }
@@ -186,7 +192,7 @@ int main(int argc, char **argv)
   {
     delete[] heap_array;
     std::cerr << e.what() << '\n';
-    return ad::other_errors_exitcode3;
+    return ad::arr_errors_exitcode2;
   }
   return 0;
 }
