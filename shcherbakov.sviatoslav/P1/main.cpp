@@ -5,161 +5,192 @@
 
 namespace shcherbakov
 {
-  struct MonIncCounter
+  class MonIncCounter
   {
-    std::size_t cur_len = 0;
-    std::size_t max_len = 0;
-    int prev_num = 0;
-    bool is_first = true;
+  public:
+    void operator()(int num)
+    {
+      count(num);
+    }
 
     void count(int num)
     {
       const std::size_t max_size = std::numeric_limits< std::size_t >::max();
-      if (cur_len == max_size)
+      if (cur_len_ == max_size)
       {
         throw std::overflow_error("Sequence is too long");
       }
 
-      if (is_first)
+      if (is_first_)
       {
-        cur_len = 1;
-        max_len = 1;
-        prev_num = num;
-        is_first = false;
+        cur_len_ = 1;
+        max_len_ = 1;
+        prev_num_ = num;
+        is_first_ = false;
         return;
       }
 
-      if (num >= prev_num)
+      if (num >= prev_num_)
       {
-        ++cur_len;
+        ++cur_len_;
       }
       else
       {
-        cur_len = 1;
+        cur_len_ = 1;
       }
 
-      if (cur_len > max_len)
+      if (cur_len_ > max_len_)
       {
-        max_len = cur_len;
+        max_len_ = cur_len_;
       }
-      prev_num = num;
+      prev_num_ = num;
     }
 
-    std::size_t getResult() const
+    std::size_t getResult() const noexcept
     {
-      return max_len;
+      return max_len_;
     }
+
+  private:
+    std::size_t cur_len_ = 0;
+    std::size_t max_len_ = 0;
+    int prev_num_ = 0;
+    bool is_first_ = true;
   };
 
-  struct EvenCountCounter
+  class EvenCountCounter
   {
-    std::size_t cur_count = 0;
-    std::size_t max_count = 0;
+  public:
+    void operator()(int num)
+    {
+      count(num);
+    }
 
     void count(int num)
     {
       const std::size_t max_size = std::numeric_limits< std::size_t >::max();
-      if (cur_count == max_size)
+      if (cur_count_ == max_size)
       {
         throw std::overflow_error("Sequence is too long");
       }
 
       const int even_divisor = 2;
-      if (num % even_divisor == 0)
+      if (num % even_divisor != 0)
       {
-        ++cur_count;
-        if (cur_count > max_count)
-        {
-          max_count = cur_count;
-        }
+        cur_count_ = 0;
+        return;
       }
-      else
+
+      ++cur_count_;
+      if (cur_count_ > max_count_)
       {
-        cur_count = 0;
+        max_count_ = cur_count_;
       }
     }
 
-    std::size_t getResult() const
+    std::size_t getResult() const noexcept
     {
-      return max_count;
+      return max_count_;
     }
+
+  private:
+    std::size_t cur_count_ = 0;
+    std::size_t max_count_ = 0;
   };
+
+  class SequenceAnalyzer
+  {
+  public:
+    void operator()(int num)
+    {
+      nextN(num);
+    }
+
+    void nextN(int num)
+    {
+      if (is_mon_ok_)
+      {
+        try
+        {
+          mon_inc_(num);
+        }
+        catch (const std::overflow_error &)
+        {
+          is_mon_ok_ = false;
+        }
+      }
+
+      if (is_evn_ok_)
+      {
+        try
+        {
+          evn_cnt_(num);
+        }
+        catch (const std::overflow_error &)
+        {
+          is_evn_ok_ = false;
+        }
+      }
+    }
+
+    int print(std::ostream &out, std::ostream &err) const
+    {
+      const int error_calc = 2;
+      const int success = 0;
+
+      if (!is_mon_ok_)
+      {
+        err << "Calculation error\n";
+      }
+      else
+      {
+        out << mon_inc_.getResult() << "\n";
+      }
+
+      if (!is_evn_ok_)
+      {
+        err << "Calculation error\n";
+      }
+      else
+      {
+        out << evn_cnt_.getResult() << "\n";
+      }
+
+      if (!is_mon_ok_ || !is_evn_ok_)
+      {
+        return error_calc;
+      }
+      return success;
+    }
+
+  private:
+    MonIncCounter mon_inc_;
+    EvenCountCounter evn_cnt_;
+    bool is_mon_ok_ = true;
+    bool is_evn_ok_ = true;
+  };
+
+  int process(std::istream &in, std::ostream &out, std::ostream &err)
+  {
+    const int error_input = 1;
+    SequenceAnalyzer analyzer;
+    int num = 0;
+    while (in >> num && num != 0)
+    {
+      analyzer(num);
+    }
+
+    if (!in || num != 0)
+    {
+      err << "Incorrect input\n";
+      return error_input;
+    }
+
+    return analyzer.print(out, err);
+  }
 }
 
 int main()
 {
-  const int error_input = 1;
-  const int error_calc = 2;
-
-  shcherbakov::MonIncCounter mon_inc;
-  shcherbakov::EvenCountCounter evn_cnt;
-
-  bool is_mon_ok = true;
-  bool is_evn_ok = true;
-
-  int num = 0;
-  while (std::cin >> num)
-  {
-    if (num == 0)
-    {
-      break;
-    }
-
-    if (is_mon_ok)
-    {
-      try
-      {
-        mon_inc.count(num);
-      }
-      catch (const std::overflow_error &)
-      {
-        is_mon_ok = false;
-      }
-    }
-
-    if (is_evn_ok)
-    {
-      try
-      {
-        evn_cnt.count(num);
-      }
-      catch (const std::overflow_error &)
-      {
-        is_evn_ok = false;
-      }
-    }
-  }
-
-  if (!std::cin || num != 0)
-  {
-    std::cerr << "Incorrect input\n";
-    return error_input;
-  }
-
-  if (!is_mon_ok || !is_evn_ok)
-  {
-    if (!is_mon_ok)
-    {
-      std::cerr << "Calculation error\n";
-    }
-    else
-    {
-      std::cout << mon_inc.getResult() << "\n";
-    }
-
-    if (!is_evn_ok)
-    {
-      std::cerr << "Calculation error\n";
-    }
-    else
-    {
-      std::cout << evn_cnt.getResult() << "\n";
-    }
-
-    return error_calc;
-  }
-
-  std::cout << mon_inc.getResult() << "\n";
-  std::cout << evn_cnt.getResult() << "\n";
-  return 0;
+  return shcherbakov::process(std::cin, std::cout, std::cerr);
 }
