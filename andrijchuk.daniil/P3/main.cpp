@@ -139,13 +139,13 @@ int main(int argc, char **argv)
     if (!input)
     {
       std::cerr << "Cannot open input file" << '\n';
-      return ad::arr_errors_exitcode2;
+      return ad::arg_errors_exitcode1;
     }
     std::ofstream output{output_path};
     if (!output)
     {
       std::cerr << "Cannot open output file" << '\n';
-      return ad::arr_errors_exitcode2;
+      return ad::arg_errors_exitcode1;
     }
 
     int int_rows{};
