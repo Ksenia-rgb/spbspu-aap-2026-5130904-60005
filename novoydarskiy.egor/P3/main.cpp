@@ -4,11 +4,12 @@
 #include <limits>
 #include <new>
 
-const int all_is_good = 0;
-const int invalid_arguments = 1;
-const int invalid_input_file = 2;
-
 namespace novoydarskiy {
+
+  const int all_is_good = 0;
+  const int invalid_arguments = 1;
+  const int invalid_input_file = 2;
+  const int arg_count = 4;
 
   bool mode(const char* s, int& mode)
   {
@@ -174,15 +175,15 @@ namespace novoydarskiy {
 
 int main(int argc, char** argv)
 {
-  if (argc != 4) {
+  if (argc != novoydarskiy::arg_count) {
     std::cerr << "Ошибка: требуется 3 аргумента\n";
-    return invalid_arguments;
+    return novoydarskiy::invalid_arguments;
   }
 
   int mode = 0;
   if (!novoydarskiy::mode(argv[1], mode)) {
     std::cerr << "Ошибка: первый аргумент - 1 или 2\n";
-    return invalid_arguments;
+    return novoydarskiy::invalid_arguments;
   }
 
   const char* const input_path = argv[2];
@@ -191,13 +192,13 @@ int main(int argc, char** argv)
   std::ifstream input{input_path};
   if (!input) {
     std::cerr << "Ошибка: не получается открыть входной файл\n";
-    return invalid_input_file;
+    return novoydarskiy::invalid_input_file;
   }
 
   std::ofstream output{output_path};
   if (!output) {
     std::cerr << "Ошибка: не получается открыть выходной файл\n";
-    return invalid_input_file;
+    return novoydarskiy::invalid_input_file;
   }
 
   bool completed = false;
@@ -209,8 +210,8 @@ int main(int argc, char** argv)
 
   if (!completed) {
     std::cerr << "Ошибка чтения входного файла\n";
-    return invalid_input_file;
+    return novoydarskiy::invalid_input_file;
   }
 
-  return all_is_good;
+  return novoydarskiy::all_is_good;
 }
