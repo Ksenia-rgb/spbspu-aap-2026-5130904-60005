@@ -10,6 +10,7 @@ namespace abdullaeva {
   const int data_error_code = 2;
   const int fixed_mode = 1;
   const int dynamic_mode = 2;
+  const int expected_argc = 4;
   const std::size_t fixed_capacity = 10000;
 
   bool parseMode(const char * text, int & mode)
@@ -55,6 +56,13 @@ namespace abdullaeva {
       }
     }
     return true;
+  }
+
+
+  bool isEndOfInput(std::istream & input)
+  {
+    char extra = 0;
+    return !(input >> extra);
   }
 
   bool writeMatrix(std::ostream & output, const int * data, std::size_t rows, std::size_t cols)
@@ -117,7 +125,7 @@ namespace abdullaeva {
 
   int readAndProcess(int * data, std::size_t rows, std::size_t cols, std::istream & input, std::ostream & output)
   {
-    if (!readElements(input, data, rows * cols)) {
+    if (!readElements(input, data, rows * cols) || !isEndOfInput(input)) {
       std::cerr << "Invalid matrix elements\n";
       return data_error_code;
     }
@@ -156,7 +164,7 @@ namespace abdullaeva {
 
 int main(int argc, char ** argv)
 {
-  if (argc != 4) {
+  if (argc != abdullaeva::expected_argc) {
     std::cerr << "Usage: ./lab num input output\n";
     return abdullaeva::arguments_error_code;
   }
