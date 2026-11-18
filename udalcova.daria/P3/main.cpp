@@ -94,8 +94,8 @@ namespace udalcova {
 
   int runDynamic(std::istream& in, std::ostream& out, size_t r, size_t c)
   {
-    int* a = new int[r * c];
-    int result = solve(in, out, a, r, c);
+    int* const a = new int[r * c];
+    const int result = solve(in, out, a, r, c);
     delete[] a;
     return result;
   }
