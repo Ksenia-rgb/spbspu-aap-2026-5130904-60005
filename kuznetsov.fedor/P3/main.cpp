@@ -161,7 +161,7 @@ int main(int argc, char** argv)
       {
         return 0;
       }
-      std::ofstream output(output_path);
+      const std::ofstream output(output_path);
 
       int arg_1 = 0, arg_2 = 0;
       int matrix[size_stec] = {};
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
 
       int arg_1 = 0, arg_2 = 0;
 
-      int* const matrix_fs = kuznetsov::fsForMatrix(k_rows, k_colomn);
+      int* matrix_fs = kuznetsov::fsForMatrix(k_rows, k_colomn);
       try
       {
         kuznetsov::dataCp(input, matrix_fs, k_rows, k_colomn);
