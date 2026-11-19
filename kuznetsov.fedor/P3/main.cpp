@@ -24,7 +24,7 @@ namespace kuznetsov
     }
   }
 
-  void DataCp(std::istream& input, int* matrix, size_t k_row, size_t k_column)
+  void dataCp(std::istream& input, int* matrix, size_t k_row, size_t k_column)
   {
     for (size_t i = 0; i < k_row * k_column; ++i)
     {
@@ -167,11 +167,11 @@ int main(int argc, char** argv)
       int matrix[size_stec] = {};
       try
       {
-        kuznetsov::DataCp(input, matrix, k_rows, k_colomn);
+        kuznetsov::dataCp(input, matrix, k_rows, k_colomn);
       }
       catch (...)
       {
-        std::cerr << "invalid arg in DataCp" << "\n";
+        std::cerr << "invalid arg in dataCp" << "\n";
         return arg_err_in_f;
       }
       try
@@ -219,11 +219,11 @@ int main(int argc, char** argv)
       int* const matrix_fs = kuznetsov::fsForMatrix(k_rows, k_colomn);
       try
       {
-        kuznetsov::DataCp(input, matrix_fs, k_rows, k_colomn);
+        kuznetsov::dataCp(input, matrix_fs, k_rows, k_colomn);
       }
       catch (...)
       {
-        std::cerr << "invalid arg in DataCp" << "\n";
+        std::cerr << "invalid arg in dataCp" << "\n";
 
         delete[] matrix_fs;
         return arg_err_in_f;
