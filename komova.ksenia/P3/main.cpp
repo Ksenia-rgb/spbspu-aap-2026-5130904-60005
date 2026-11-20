@@ -26,8 +26,12 @@ namespace komova {
   {
     for (size_t i = 0; i < rows * cols; i++) {
       if (!(input >> arr[i])) {
-        throw std::invalid_argument("");
+        throw std::invalid_argument("Ошибка чтения элементов матрицы");
       }
+    }
+    char extra = 0;
+    if (input >> extra) {
+      throw std::invalid_argument("В файле содержатся лишние данные");
     }
   }
   void maxSumSdg(const int* arr, const size_t rows, const size_t cols, std::ostream& output)
@@ -111,11 +115,15 @@ int main(int argc, char** argv)
     return invalid_input_or_output;
   }
   if (std::string(argv[first_index]) == "1") {
+    if (rows * cols > max_size_static_matrix) {
+      std::cerr << "Слишком большие размеры матрицы" << std::endl;
+      return invalid_input_or_output;
+    }
     int matrix[max_size_static_matrix];
     try {
       komova::readMatrix(matrix, rows, cols, input);
     } catch (std::invalid_argument& e) {
-      std::cerr << "Ошибка чтения элементов матрицы" << std::endl;
+      std::cerr << e.what() << std::endl;
       return invalid_input_or_output;
     }
     komova::maxSumSdg(matrix, rows, cols, output);
@@ -133,7 +141,7 @@ int main(int argc, char** argv)
       return invalid_input_or_output;
     } catch (std::invalid_argument& e) {
       delete[] matrix;
-      std::cerr << "Ошибка чтения элементов матрицы" << std::endl;
+      std::cerr << e.what() << std::endl;
       return invalid_input_or_output;
     }
     komova::maxSumSdg(matrix, rows, cols, output);
