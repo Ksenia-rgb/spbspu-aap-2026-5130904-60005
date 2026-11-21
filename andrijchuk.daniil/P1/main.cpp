@@ -1,96 +1,100 @@
+#include <cstddef>
 #include <iostream>
-#include <stdexcept>
 
-namespace andrijchuk
-{
+namespace andrijchuk {
   using l_l = long long int;
 
-  void input(l_l &n)
-  {
-    std::cin >> n;
-    if (std::cin.fail())
+  class LocMinCnt {
+  public:
+    void nextN(const l_l n) noexcept
     {
-      throw std::invalid_argument("Incorrect Arguments.\n");
+      if (k_ >= 2 && pr_prev_n_ > prev_n_ && prev_n_ < n) {
+        count_++;
+      }
+      pr_prev_n_ = prev_n_;
+      prev_n_ = n;
+      k_++;
     }
-  }
 
-  l_l locMinCnt(l_l n, l_l prev_n, l_l pr_prev_n, l_l count)
-  {
-    if (pr_prev_n > prev_n && prev_n < n)
+    bool isValid() const noexcept
     {
-      count++;
+      return k_ >= 1;
     }
-    return count;
-  }
 
-  l_l sumDupCnt(l_l n, l_l prev_n, l_l pr_prev_n, l_l count)
-  {
-    if (n == pr_prev_n + prev_n)
+    void print(std::ostream &out, std::ostream &err) const noexcept
     {
-      count++;
+      if (isValid()) {
+        out << count_ << "\n";
+      } else {
+        err << "Incorrect sequence for loc_min.\n";
+      }
     }
-    return count;
+
+  private:
+    l_l count_ = 0;
+    l_l prev_n_ = 0;
+    l_l pr_prev_n_ = 0;
+    std::size_t k_ = 0;
+  };
+
+  class SumDupCnt {
+  public:
+    void nextN(const l_l n) noexcept
+    {
+      if (k_ >= 2 && n == pr_prev_n_ + prev_n_) {
+        count_++;
+      }
+      pr_prev_n_ = prev_n_;
+      prev_n_ = n;
+      k_++;
+    }
+
+    bool isValid() const noexcept
+    {
+      return k_ >= 3;
+    }
+
+    void print(std::ostream &out, std::ostream &err) const noexcept
+    {
+      if (isValid()) {
+        out << count_ << "\n";
+      } else {
+        err << "Incorrect sequence for sum_dup.\n";
+      }
+    }
+
+  private:
+    l_l count_ = 0;
+    l_l prev_n_ = 0;
+    l_l pr_prev_n_ = 0;
+    std::size_t k_ = 0;
+  };
+
+  int process(std::istream &in, std::ostream &out, std::ostream &err)
+  {
+    const int inp_err_exitcode1 = 1;
+    const int seq_err_exitcode2 = 2;
+    LocMinCnt loc_min;
+    SumDupCnt sum_dup;
+    l_l n = 0;
+    while (in >> n && n != 0) {
+      loc_min.nextN(n);
+      sum_dup.nextN(n);
+    }
+    if (!in) {
+      err << "Incorrect Arguments.\n";
+      return inp_err_exitcode1;
+    }
+    loc_min.print(out, err);
+    sum_dup.print(out, err);
+    if (!loc_min.isValid() || !sum_dup.isValid()) {
+      return seq_err_exitcode2;
+    }
+    return 0;
   }
 }
 
 int main()
 {
-  namespace ad = andrijchuk;
-  const int min_arg = 3;
-  const int inp_err_exitcode1 = 1;
-  const int seq_err_exitcode2 = 2;
-  bool sumdup_err = false;
-  ad::l_l n = 0, prev_n = 0, pr_prev_n = 0;
-  ad::l_l count_locmin = 0, count_sumdup = 0;
-  ad::l_l k = 0;
-  try
-  {
-    ad::input(n);
-    if (n == 0)
-    {
-      throw std::runtime_error("Incorrect sequence.\n");
-    }
-    k++;
-    prev_n = n;
-    while (true)
-    {
-      ad::input(n);
-      if (n == 0)
-      {
-        break;
-      }
-      k++;
-      if (k >= min_arg)
-      {
-        count_locmin = ad::locMinCnt(n, prev_n, pr_prev_n, count_locmin);
-        count_sumdup = ad::sumDupCnt(n, prev_n, pr_prev_n, count_sumdup);
-      }
-      pr_prev_n = prev_n;
-      prev_n = n;
-    }
-    if (k < min_arg)
-    {
-      sumdup_err = true;
-      throw std::runtime_error("Incorrect sequence for sum_dup.\n");
-    }
-  }
-  catch (const std::invalid_argument &e)
-  {
-    std::cerr << e.what();
-    return inp_err_exitcode1;
-  }
-  catch (const std::runtime_error &e)
-  {
-    if (sumdup_err == true)
-    {
-      std::cout << count_locmin << "\n";
-      std::cerr << e.what();
-      return seq_err_exitcode2;
-    }
-    std::cerr << e.what();
-    return seq_err_exitcode2;
-  }
-  std::cout << count_locmin << "\n";
-  std::cout << count_sumdup << "\n";
-  return 0;
+  return andrijchuk::process(std::cin, std::cout, std::cerr);
 }
