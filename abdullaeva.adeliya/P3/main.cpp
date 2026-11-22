@@ -58,7 +58,6 @@ namespace abdullaeva {
     return true;
   }
 
-
   bool isEndOfInput(std::istream & input)
   {
     char extra = 0;
