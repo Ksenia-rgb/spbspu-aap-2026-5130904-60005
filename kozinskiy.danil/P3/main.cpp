@@ -11,6 +11,9 @@ namespace kozinskiy {
   const int invalid_file_ec = 2;
   const int good_ec = 0;
 
+  const int required_argc = 4;
+  const int dynamic_mode = 2;
+
   const size_t max_elements = 10000;
   const int max_int = std::numeric_limits< int >::max();
   const int min_int = std::numeric_limits< int >::min();
@@ -121,7 +124,7 @@ namespace kozinskiy {
   {
     size_t rows = 0;
     size_t cols = 0;
-    int stack_matrix[max_elements];
+
     bool is_first = true;
 
     while (true) {
@@ -149,28 +152,26 @@ namespace kozinskiy {
         throw std::runtime_error("Error: invalid file content");
       }
 
-      int* matrix = nullptr;
       if (is_dynamic) {
-        matrix = new int[rows * cols]();
-      } else {
-        matrix = stack_matrix;
-      }
-
-      try {
-        parseMatrixValues(input, matrix, rows * cols);
-        const size_t res1 = countColumnsNoAdjacentEquals(rows, cols, matrix);
-        const int res2 = minSumParallelMainDiagonal(rows, cols, matrix);
-        out << res1 << " " << res2 << "\n";
-      } catch (...) {
-        if (is_dynamic) {
+        int* matrix = new int[rows * cols]();
+        try {
+          parseMatrixValues(input, matrix, rows * cols);
+          const size_t res1 = countColumnsNoAdjacentEquals(rows, cols, matrix);
+          const int res2 = minSumParallelMainDiagonal(rows, cols, matrix);
+          out << res1 << " " << res2 << "\n";
+        } catch (...) {
           delete[] matrix;
+          throw;
         }
-        throw;
+        delete[] matrix;
+      } else {
+        int stack_matrix[max_elements];
+        parseMatrixValues(input, stack_matrix, rows * cols);
+        const size_t res1 = countColumnsNoAdjacentEquals(rows, cols, stack_matrix);
+        const int res2 = minSumParallelMainDiagonal(rows, cols, stack_matrix);
+        out << res1 << " " << res2 << "\n";
       }
 
-      if (is_dynamic) {
-        delete[] matrix;
-      }
       is_first = false;
     }
   }
@@ -181,23 +182,23 @@ int main(int argc, char** argv)
 {
   using namespace kozinskiy;
 
-  if (argc > 4) {
+  if (argc > required_argc) {
     std::cerr << "Error: too many arguments";
     return invalid_argument_ec;
   }
-  if (argc < 4) {
+  if (argc < required_argc) {
     std::cerr << "Error: not enough arguments";
     return invalid_argument_ec;
   }
 
   int mode = 0;
-  if (!parseNum(argv[1], mode) || (mode != 1 && mode != 2)) {
+  if (!parseNum(argv[1], mode) || (mode != 1 && mode != dynamic_mode)) {
     std::cerr << "Error: first parameter is out of range or not a number";
     return invalid_argument_ec;
   }
 
   bool is_dynamic = false;
-  if (mode == 2) {
+  if (mode == dynamic_mode) {
     is_dynamic = true;
   }
 
