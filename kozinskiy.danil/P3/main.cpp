@@ -153,7 +153,7 @@ namespace kozinskiy {
       }
 
       if (is_dynamic) {
-        int* matrix = new int[rows * cols]();
+        int* const matrix = new int[rows * cols]();
         try {
           parseMatrixValues(input, matrix, rows * cols);
           const size_t res1 = countColumnsNoAdjacentEquals(rows, cols, matrix);
