@@ -6,9 +6,9 @@
 
 namespace cheberiak {
 
-  constexpr int success = 0;
-  constexpr int invalid_arguments = 1;
-  constexpr int invalid_input = 2;
+  const int success = 0;
+  const int invalid_arguments = 1;
+  const int invalid_input = 2;
 
   void smoothMatrix(const int *const matrix, double *const result, size_t rows, size_t cols)
   {
@@ -17,24 +17,25 @@ namespace cheberiak {
       return;
     }
 
+    double summ = 0;
+    size_t count = 0;
+
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
-        double summ = 0;
-        size_t count = 0;
-
-        size_t row_start = (i == 0) ? 0 : i - 1;
-        size_t col_start = (j == 0) ? 0 : j - 1;
-
-        for (size_t new_row = row_start; new_row < rows && new_row <= i + 1; new_row++) {
-          for (size_t new_col = col_start; new_col < cols && new_col <= j + 1; new_col++) {
-            if (new_row != i || new_col != j) {
-              summ += matrix[new_row * cols + new_col];
+        for (int new_row = static_cast<int>(i) - 1; new_row <= static_cast<int>(i) + 1; new_row++) {
+          for (int new_col = static_cast<int>(j) - 1; new_col <= static_cast<int>(j) + 1; new_col++) {
+            if (new_row >= 0 && new_row < static_cast<int>(rows) &&
+                new_col >= 0 && new_col < static_cast<int>(cols) &&
+                !(new_row == static_cast<int>(i) && new_col == static_cast<int>(j))) {
+              summ += matrix[static_cast<size_t>(new_row) * cols + static_cast<size_t>(new_col)];
               count++;
             }
           }
         }
 
         result[i * cols + j] = summ / count;
+        summ = 0;
+        count = 0;
       }
     }
   }
@@ -82,7 +83,7 @@ namespace cheberiak {
     return count;
   }
 
-  int processMatrix(std::ifstream &input, const char *outputFile, int *matrix, double *result, size_t rows, size_t cols)
+  int processMatrix(std::ifstream &input, const char *output_file, int *matrix, double *result, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
@@ -95,16 +96,16 @@ namespace cheberiak {
       return invalid_input;
     }
 
-    char extra;
+    char extra = 0;
     if (input >> extra) {
       std::cerr << "Extra data in input file\n";
       return invalid_input;
     }
 
     smoothMatrix(matrix, result, rows, cols);
-    size_t count = countNonZeroDiagonals(matrix, rows, cols);
+    const size_t count = countNonZeroDiagonals(matrix, rows, cols);
 
-    std::ofstream output(outputFile);
+    std::ofstream output(output_file);
 
     if (output.fail()) {
       std::cerr << "Cannot open output file\n";
@@ -171,8 +172,8 @@ int main(int argc, char *argv[])
     return cheberiak::invalid_input;
   }
 
-  size_t matrix_rows = static_cast<size_t>(rows);
-  size_t matrix_cols = static_cast<size_t>(cols);
+  const size_t matrix_rows = static_cast<size_t>(rows);
+  const size_t matrix_cols = static_cast<size_t>(cols);
 
   if (argv[1][0] == '1') {
     if (matrix_rows * matrix_cols > matrix_capacity) {
@@ -180,33 +181,38 @@ int main(int argc, char *argv[])
       return cheberiak::invalid_input;
     }
 
-    int matrix_[matrix_capacity];
-    double result_[matrix_capacity];
+    int matrix[matrix_capacity];
+    double result[matrix_capacity];
 
-    return cheberiak::processMatrix(
-      input, argv[output_arg], matrix_, result_, matrix_rows, matrix_cols
-    );
+    return cheberiak::processMatrix(input, argv[output_arg], matrix, result, matrix_rows, matrix_cols);
   }
 
-  int *matrix = nullptr;
-  double *result = nullptr;
+  if (argv[1][0] == '2') {
+    int *matrix = nullptr;
+    double *result = nullptr;
 
-  try {
-    matrix = new int[matrix_rows * matrix_cols];
-    result = new double[matrix_rows * matrix_cols];
-  } catch (const std::bad_alloc &) {
-    std::cerr << "Memory allocation failed\n";
+    try {
+      matrix = new int[matrix_rows * matrix_cols];
+    } catch (const std::bad_alloc &) {
+      std::cerr << "Memory allocation failed\n";
+      return cheberiak::invalid_input;
+    }
+
+    try {
+      result = new double[matrix_rows * matrix_cols];
+    } catch (const std::bad_alloc &) {
+      std::cerr << "Memory allocation failed\n";
+      delete[] matrix;
+      return cheberiak::invalid_input;
+    }
+
+    const int code = cheberiak::processMatrix(input, argv[output_arg], matrix, result, matrix_rows, matrix_cols);
+
     delete[] matrix;
     delete[] result;
-    return cheberiak::invalid_input;
+
+    return code;
   }
 
-  int code = cheberiak::processMatrix(
-    input, argv[output_arg], matrix, result, matrix_rows, matrix_cols
-  );
-
-  delete[] matrix;
-  delete[] result;
-
-  return code;
+  return cheberiak::success;
 }
