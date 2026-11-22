@@ -22,12 +22,11 @@ namespace cheberiak {
 
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
-        for (int new_row = static_cast<int>(i) - 1; new_row <= static_cast<int>(i) + 1; new_row++) {
-          for (int new_col = static_cast<int>(j) - 1; new_col <= static_cast<int>(j) + 1; new_col++) {
-            if (new_row >= 0 && new_row < static_cast<int>(rows) &&
-                new_col >= 0 && new_col < static_cast<int>(cols) &&
-                !(new_row == static_cast<int>(i) && new_col == static_cast<int>(j))) {
-              summ += matrix[static_cast<size_t>(new_row) * cols + static_cast<size_t>(new_col)];
+        for (int new_row = static_cast< int >(i) - 1; new_row <= static_cast< int >(i) + 1; new_row++) {
+          for (int new_col = static_cast< int >(j) - 1; new_col <= static_cast< int >(j) + 1; new_col++) {
+            if (new_row >= 0 && new_row < static_cast< int >(rows) && new_col >= 0 && new_col < static_cast< int >(cols)
+                && !(new_row == static_cast< int >(i) && new_col == static_cast< int >(j))) {
+              summ += matrix[static_cast< size_t >(new_row) * cols + static_cast< size_t >(new_col)];
               count++;
             }
           }
@@ -83,7 +82,8 @@ namespace cheberiak {
     return count;
   }
 
-  int processMatrix(std::ifstream &input, const char *output_file, int *matrix, double *result, size_t rows, size_t cols)
+  int processMatrix(
+      std::ifstream &input, const char *output_file, int *matrix, double *result, size_t rows, size_t cols)
   {
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
@@ -164,16 +164,14 @@ int main(int argc, char *argv[])
 
   input >> rows >> cols;
 
-  if (input.fail() || rows < 0 || cols < 0 ||
-      (rows == 0 && cols != 0) ||
-      (rows != 0 && cols == 0) ||
-      (rows != 0 && cols > std::numeric_limits<int>::max() / rows)) {
+  if (input.fail() || rows < 0 || cols < 0 || (rows == 0 && cols != 0) || (rows != 0 && cols == 0)
+      || (rows != 0 && cols > std::numeric_limits< int >::max() / rows)) {
     std::cerr << "Invalid matrix dimensions\n";
     return cheberiak::invalid_input;
   }
 
-  const size_t matrix_rows = static_cast<size_t>(rows);
-  const size_t matrix_cols = static_cast<size_t>(cols);
+  const size_t matrix_rows = static_cast< size_t >(rows);
+  const size_t matrix_cols = static_cast< size_t >(cols);
 
   if (argv[1][0] == '1') {
     if (matrix_rows * matrix_cols > matrix_capacity) {
