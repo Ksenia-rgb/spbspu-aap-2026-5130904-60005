@@ -141,7 +141,7 @@ namespace kuznetsov
       throw;
     }
 
-    delete matrix;
+    delete[] matrix;
   }
 
   void processStexMatrix(std::istream& input, std::ostream& output, size_t k_rows, size_t k_colomn)
@@ -167,7 +167,6 @@ int main(int argc, char** argv)
   const int arg_err_in_f = 2, arg_err_in_term = 1, k_arg = 4;
   const char mode_1 = '1', mode_2 = '2';
   size_t k_rows = 0, k_colomn = 0;
-  int arg_1 = 0, arg_2 = 0;
 
   const size_t size_stec = 10000;
 
