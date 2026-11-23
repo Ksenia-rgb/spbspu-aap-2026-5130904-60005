@@ -5,6 +5,42 @@
 
 namespace shcherbakov
 {
+  void checkLength(std::size_t length)
+  {
+    if (length == std::numeric_limits< std::size_t >::max())
+    {
+      throw std::overflow_error("Sequence is too long");
+    }
+  }
+
+  template< class Counter >
+  void updateCounter(Counter & counter, bool & is_ok, int num)
+  {
+    if (is_ok)
+    {
+      try
+      {
+        counter(num);
+      }
+      catch (const std::overflow_error &)
+      {
+        is_ok = false;
+      }
+    }
+  }
+
+  void printResult(std::ostream & out, std::ostream & err, bool is_ok, std::size_t result)
+  {
+    if (is_ok)
+    {
+      out << result << "\n";
+    }
+    else
+    {
+      err << "Calculation error\n";
+    }
+  }
+
   class MonIncCounter
   {
   public:
@@ -15,11 +51,7 @@ namespace shcherbakov
 
     void count(int num)
     {
-      const std::size_t max_size = std::numeric_limits< std::size_t >::max();
-      if (cur_len_ == max_size)
-      {
-        throw std::overflow_error("Sequence is too long");
-      }
+      checkLength(cur_len_);
 
       if (is_first_)
       {
@@ -68,11 +100,7 @@ namespace shcherbakov
 
     void count(int num)
     {
-      const std::size_t max_size = std::numeric_limits< std::size_t >::max();
-      if (cur_count_ == max_size)
-      {
-        throw std::overflow_error("Sequence is too long");
-      }
+      checkLength(cur_count_);
 
       const int even_divisor = 2;
       if (num % even_divisor != 0)
@@ -108,29 +136,8 @@ namespace shcherbakov
 
     void nextN(int num)
     {
-      if (is_mon_ok_)
-      {
-        try
-        {
-          mon_inc_(num);
-        }
-        catch (const std::overflow_error &)
-        {
-          is_mon_ok_ = false;
-        }
-      }
-
-      if (is_evn_ok_)
-      {
-        try
-        {
-          evn_cnt_(num);
-        }
-        catch (const std::overflow_error &)
-        {
-          is_evn_ok_ = false;
-        }
-      }
+      updateCounter(mon_inc_, is_mon_ok_, num);
+      updateCounter(evn_cnt_, is_evn_ok_, num);
     }
 
     int print(std::ostream &out, std::ostream &err) const
@@ -138,23 +145,8 @@ namespace shcherbakov
       const int error_calc = 2;
       const int success = 0;
 
-      if (!is_mon_ok_)
-      {
-        err << "Calculation error\n";
-      }
-      else
-      {
-        out << mon_inc_.getResult() << "\n";
-      }
-
-      if (!is_evn_ok_)
-      {
-        err << "Calculation error\n";
-      }
-      else
-      {
-        out << evn_cnt_.getResult() << "\n";
-      }
+      printResult(out, err, is_mon_ok_, mon_inc_.getResult());
+      printResult(out, err, is_evn_ok_, evn_cnt_.getResult());
 
       if (!is_mon_ok_ || !is_evn_ok_)
       {

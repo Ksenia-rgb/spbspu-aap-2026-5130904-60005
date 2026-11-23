@@ -13,14 +13,7 @@ namespace shcherbakov
     char * current = dst;
     while (*src != '\0')
     {
-      if (std::isupper(*src))
-      {
-        *current = std::tolower(*src);
-      }
-      else
-      {
-        *current = *src;
-      }
+      *current = static_cast< char >(std::tolower(static_cast< unsigned char >(*src)));
       ++src;
       ++current;
     }
@@ -33,7 +26,7 @@ namespace shcherbakov
     char * current = dst;
     while (*src != '\0')
     {
-      if (!std::isalpha(*src))
+      if (!std::isalpha(static_cast< unsigned char >(*src)))
       {
         *current = *src;
         ++current;
