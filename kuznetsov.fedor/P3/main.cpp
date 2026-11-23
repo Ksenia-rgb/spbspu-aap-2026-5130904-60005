@@ -129,8 +129,8 @@ namespace kuznetsov
     try
     {
       dataCp(input, matrix, k_rows, k_colomn);
-      int arg1 = numRowLsr(matrix, k_rows, k_colomn);
-      int arg2 = minSumSdg(matrix, k_rows, k_colomn);
+      const int arg1 = numRowLsr(matrix, k_rows, k_colomn);
+      const int arg2 = minSumSdg(matrix, k_rows, k_colomn);
 
       output << arg1 << "\n";
       output << arg2 << "\n";
@@ -155,8 +155,8 @@ namespace kuznetsov
     int matrix[size] = {};
     dataCp(input, matrix, k_rows, k_colomn);
 
-    int arg1 = numRowLsr(matrix, k_rows, k_colomn);
-    int arg2 = minSumSdg(matrix, k_rows, k_colomn);
+    const int arg1 = numRowLsr(matrix, k_rows, k_colomn);
+    const int arg2 = minSumSdg(matrix, k_rows, k_colomn);
 
     output << arg1 << "\n";
     output << arg2 << "\n";
