@@ -9,6 +9,7 @@ namespace evsyukov {
   const int k_arg_error = 1;
   const int k_data_error = 2;
   const int k_arg_count = 4;
+  const int k_static_mode = 1;
   const size_t k_static_limit = 10000;
   const size_t k_dynamic_limit = 100000000;
 
@@ -23,9 +24,9 @@ namespace evsyukov {
     return min_arg;
   }
 
-  int countLocalMax(const int* a, size_t rows, size_t cols)
+  size_t countLocalMax(const int* a, size_t rows, size_t cols)
   {
-    int count = 0;
+    size_t count = 0;
     for (size_t i = 1; i + 1 < rows; ++i) {
       for (size_t j = 1; j + 1 < cols; ++j) {
         bool is_max = true;
@@ -72,11 +73,12 @@ namespace evsyukov {
       }
     }
     char extra = 0;
-    if (in >> extra) {
+    in >> extra;
+    if (!in.eof()) {
       std::cerr << "Error arguments matrix\n";
       return k_data_error;
     }
-    const int count = countLocalMax(a, rows, cols);
+    const size_t count = countLocalMax(a, rows, cols);
     std::ofstream out(out_name);
     if (!out) {
       std::cerr << "Cannot open output\n";
@@ -131,7 +133,7 @@ namespace evsyukov {
       std::cerr << "Error rows or cols\n";
       return k_data_error;
     }
-    if (num == 1) {
+    if (num == k_static_mode) {
       if (rows * cols > k_static_limit) {
         std::cerr << "Matrix is too large for static array\n";
         return k_data_error;
