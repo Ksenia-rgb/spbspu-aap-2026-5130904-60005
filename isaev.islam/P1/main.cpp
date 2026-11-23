@@ -16,7 +16,7 @@ namespace isaev
   class IncreasingRunCounter
   {
   public:
-    IncreasingRunCounter();
+    IncreasingRunCounter() noexcept;
     void operator()(long long int next);
     std::size_t operator()() const noexcept;
 
@@ -30,7 +30,7 @@ namespace isaev
   class BetweenCounter
   {
   public:
-    BetweenCounter();
+    BetweenCounter() noexcept;
     void operator()(long long int next);
     std::size_t operator()() const noexcept;
 
@@ -46,7 +46,7 @@ namespace isaev
   int process(std::istream& in, std::ostream& out, std::ostream& err);
 }
 
-isaev::IncreasingRunCounter::IncreasingRunCounter():
+isaev::IncreasingRunCounter::IncreasingRunCounter() noexcept:
   previous_(0),
   current_length_(0),
   max_length_(0),
@@ -81,7 +81,7 @@ std::size_t isaev::IncreasingRunCounter::operator()() const noexcept
   return max_length_;
 }
 
-isaev::BetweenCounter::BetweenCounter():
+isaev::BetweenCounter::BetweenCounter() noexcept:
   previous_(0),
   current_(0),
   count_(0),
@@ -116,7 +116,6 @@ std::size_t isaev::BetweenCounter::operator()() const noexcept
 {
   return count_;
 }
-
 int isaev::process(std::istream& in, std::ostream& out, std::ostream& err)
 {
   isaev::IncreasingRunCounter run_counter;
@@ -124,39 +123,77 @@ int isaev::process(std::istream& in, std::ostream& out, std::ostream& err)
   int read_count = 0;
   long long int number = 0;
 
-  try
+  bool run_overflow = false;
+  bool between_overflow = false;
+
+  while ((in >> number) && (number != 0))
   {
-    while ((in >> number) && (number != 0))
+    if (!run_overflow)
     {
-      run_counter(number);
-      between_counter(number);
-      if (read_count < isaev::required_count)
+      try
       {
-        ++read_count;
+        run_counter(number);
+      }
+      catch (const std::overflow_error&)
+      {
+        run_overflow = true;
       }
     }
-  }
-  catch (const std::overflow_error&)
-  {
-    err << "overflow" << std::endl;
-    return isaev::overflow_exit_code;
+
+    if (!between_overflow)
+    {
+      try
+      {
+        between_counter(number);
+      }
+      catch (const std::overflow_error&)
+      {
+        between_overflow = true;
+      }
+    }
+
+    if (read_count < isaev::required_count)
+    {
+      ++read_count;
+    }
   }
 
   if (!in)
   {
     if (read_count < isaev::required_count)
     {
-      err << "uncorrect data format" << std::endl;
+      err << "uncorrect data format\n";
     }
     else
     {
-      err << "uncorrect symbols" << std::endl;
+      err << "uncorrect symbols\n";
     }
     return isaev::error_exit_code;
   }
 
-  out << run_counter() << std::endl;
-  out << between_counter() << std::endl;
+  if (run_overflow)
+  {
+    err << "overflow\n";
+  }
+  else
+  {
+    out << run_counter() << "\n";
+  }
+
+  if (between_overflow)
+  {
+    err << "overflow\n";
+  }
+  else
+  {
+    out << between_counter() << "\n";
+  }
+
+  if (run_overflow || between_overflow)
+  {
+    return isaev::overflow_exit_code;
+  }
+
   return 0;
 }
 
@@ -164,3 +201,4 @@ int main()
 {
   return isaev::process(std::cin, std::cout, std::cerr);
 }
+

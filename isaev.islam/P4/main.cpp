@@ -61,10 +61,8 @@ char* isaev::readLine(std::istream& in)
       }
       next = in.get();
     }
-    if (in.bad())
-    {
-      throw std::runtime_error("Input error");
-    }
+    buffer[length] = '\0';
+    return buffer;
   }
   catch (...)
   {
@@ -176,3 +174,4 @@ int main()
   delete[] input;
   return status;
 }
+
