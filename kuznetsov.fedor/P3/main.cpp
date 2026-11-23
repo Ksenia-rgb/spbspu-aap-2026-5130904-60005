@@ -12,26 +12,30 @@ namespace kuznetsov
     {
       throw(std::invalid_argument("invalid_argument\n"));
     }
-    int* matrix = new int[k_rows * k_colomn];
     try
     {
-      return matrix;
+      return new int[k_rows * k_colomn];
     }
     catch (const std::bad_alloc&)
     {
       std::cerr << "bad_alloc\n";
-      delete matrix;
+      return nullptr;
     }
   }
 
   void dataCp(std::istream& input, int* matrix, size_t k_row, size_t k_column)
   {
+    char last_symb{};
     for (size_t i = 0; i < k_row * k_column; ++i)
     {
       if (!(input >> matrix[i]))
       {
         throw std::invalid_argument("invalid arg\n");
       }
+    }
+    if (input >> last_symb)
+    {
+      throw std::invalid_argument("invalid_arg\n");
     }
   }
   int numRowLsr(const int* matrix, size_t k_row, size_t k_colomn)
@@ -119,20 +123,60 @@ namespace kuznetsov
     return res;
   }
 
+  void processFsMatrix(std::istream& input, std::ostream& output, size_t k_rows, size_t k_colomn)
+  {
+    int* matrix = new int[k_rows * k_colomn];
+    try
+    {
+      dataCp(input, matrix, k_rows, k_colomn);
+      int arg1 = numRowLsr(matrix, k_rows, k_colomn);
+      int arg2 = minSumSdg(matrix, k_rows, k_colomn);
+
+      output << arg1 << "\n";
+      output << arg2 << "\n";
+    }
+    catch (...)
+    {
+      delete[] matrix;
+      throw;
+    }
+
+    delete matrix;
+  }
+
+  void processStexMatrix(std::istream& input, std::ostream& output, size_t k_rows, size_t k_colomn)
+  {
+    const size_t size = 10000;
+    if (k_rows * k_colomn > size)
+    {
+      throw std::invalid_argument("out of range\n");
+    }
+
+    int matrix[size] = {};
+    dataCp(input, matrix, k_rows, k_colomn);
+
+    int arg1 = numRowLsr(matrix, k_rows, k_colomn);
+    int arg2 = minSumSdg(matrix, k_rows, k_colomn);
+
+    output << arg1 << "\n";
+    output << arg2 << "\n";
+  }
 }
 int main(int argc, char** argv)
 {
-  const int arg_err_in_f = 2, arg_err_in_term = 1;
+  const int arg_err_in_f = 2, arg_err_in_term = 1, k_arg = 4;
+  const char mode_1 = '1', mode_2 = '2';
   size_t k_rows = 0, k_colomn = 0;
+  int arg_1 = 0, arg_2 = 0;
 
   const size_t size_stec = 10000;
 
-  if (argc < 4)
+  if (argc < k_arg)
   {
     std::cerr << "Not enough arguments" << "\n";
     return arg_err_in_term;
   }
-  if (argc > 4)
+  if (argc > k_arg)
   {
     std::cerr << "Too many arguments" << "\n";
     return arg_err_in_term;
@@ -141,7 +185,7 @@ int main(int argc, char** argv)
   const char* const input_path = argv[2];
   const char* const output_path = argv[3];
 
-  if ((mode[0] == '1' || mode[0] == '2') && mode[1] == '\0')
+  if ((mode[0] == mode_1 || mode[0] == mode_2) && mode[1] == '\0')
   {
     std::ifstream input{input_path};
     if (!input)
@@ -151,7 +195,7 @@ int main(int argc, char** argv)
 
     switch (mode[0])
     {
-    case '1':
+    case mode_1:
     {
       if (!(input >> k_rows >> k_colomn))
       {
@@ -161,45 +205,21 @@ int main(int argc, char** argv)
       {
         return 0;
       }
-      const std::ofstream output(output_path);
-
-      int arg_1 = 0, arg_2 = 0;
-      int matrix[size_stec] = {};
-      try
-      {
-        kuznetsov::dataCp(input, matrix, k_rows, k_colomn);
-      }
-      catch (...)
-      {
-        std::cerr << "invalid arg in dataCp" << "\n";
-        return arg_err_in_f;
-      }
-      try
-      {
-        arg_1 = kuznetsov::numRowLsr(matrix, k_rows, k_colomn);
-      }
-      catch (...)
-      {
-        std::cerr << "Unreal numRowLsr" << "\n";
-        return arg_err_in_f;
-      }
-
-      std::cout << arg_1 << "\n";
+      std::ofstream output(output_path);
 
       try
       {
-        arg_2 = kuznetsov::minSumSdg(matrix, k_rows, k_colomn);
+        kuznetsov::processStexMatrix(input, output, k_rows, k_colomn);
       }
       catch (...)
       {
-        std::cerr << "Unreal minSumSdg" << "\n";
+        std::cerr << "err in processStexMatrix";
         return arg_err_in_f;
       }
-      std::cout << arg_2 << "\n";
 
       break;
     }
-    case '2':
+    case mode_2:
     {
       input >> k_rows >> k_colomn;
       if (!input)
@@ -214,38 +234,15 @@ int main(int argc, char** argv)
       }
       std::ofstream output(output_path);
 
-      int arg_1 = 0, arg_2 = 0;
-
-      int* matrix_fs = kuznetsov::fsForMatrix(k_rows, k_colomn);
       try
       {
-        kuznetsov::dataCp(input, matrix_fs, k_rows, k_colomn);
+        kuznetsov::processFsMatrix(input, output, k_rows, k_colomn);
       }
       catch (...)
       {
-        std::cerr << "invalid arg in dataCp" << "\n";
-
-        delete[] matrix_fs;
+        std::cerr << "err in processFsMatrix\n";
         return arg_err_in_f;
       }
-      arg_1 = kuznetsov::numRowLsr(matrix_fs, k_rows, k_colomn);
-      try
-      {
-        arg_2 = kuznetsov::minSumSdg(matrix_fs, k_rows, k_colomn);
-      }
-      catch (...)
-      {
-        output << arg_1 << "\n";
-        std::cerr << "invalid arg in minSumSdg\n";
-
-        delete[] matrix_fs;
-        return arg_err_in_f;
-      }
-
-      output << arg_1 << "\n";
-      output << arg_2 << "\n";
-
-      delete[] matrix_fs;
     }
 
     break;
