@@ -4,13 +4,13 @@
 #include <limits>
 
 namespace cheberiak {
-  static int hasRep(const char *const text, const std::size_t length)
+  static int hasRep(const char *const text)
   {
-    if (length == 0) {
+    if (text[0] == '\0' || text[1] == '\0') {
       return 0;
     }
-    for (std::size_t i = 0; i < length; ++i) {
-      for (std::size_t j = i + 1; j < length; ++j) {
+    for (std::size_t i = 0; text[i] != '\0'; i++) {
+      for (std::size_t j = i + 1; text[j] != '\0'; j++) {
         if (text[i] == text[j]) {
           return 1;
         }
@@ -19,19 +19,20 @@ namespace cheberiak {
     return 0;
   }
 
-  static int seqSym(const char *const text, const std::size_t length)
+  static int seqSym(const char *const text)
   {
-    if (length == 0) {
+    if (text[0] == '\0' || text[1] == '\0') {
       return 0;
     }
-    for (std::size_t i = 0; i < length - 1; ++i) {
+    std::size_t i = 0;
+    while (text[i] != '\0') {
       if (text[i] == text[i + 1]) {
         return 1;
       }
+      i++;
     }
     return 0;
   }
-
 }
 
 int main()
@@ -76,7 +77,7 @@ int main()
     std::free(text);
     return exit_code_input_error;
   }
-  std::cout << cheberiak::seqSym(text, length) << std::endl << cheberiak::hasRep(text, length) << std::endl;
+  std::cout << cheberiak::seqSym(text) << std::endl << cheberiak::hasRep(text) << std::endl;
   std::free(text);
   return exit_code_success;
 }
