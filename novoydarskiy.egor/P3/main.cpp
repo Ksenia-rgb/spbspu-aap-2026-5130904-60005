@@ -10,7 +10,7 @@ namespace novoydarskiy {
   const int invalid_arguments = 1;
   const int invalid_input_file = 2;
   const int arg_count = 4;
-
+  const int first_mode = 1;
   bool mode(const char* s, int& mode)
   {
     if (s == nullptr) {
@@ -129,8 +129,8 @@ namespace novoydarskiy {
         return false;
       }
     }
-    long long extra = 0;
-    if (in >> extra) {
+    char extra = '\0';
+    if (!(in >> extra).eof()) {
       return false;
     }
 
@@ -161,8 +161,8 @@ namespace novoydarskiy {
         return false;
       }
     }
-    long long extra = 0;
-    if (in >> extra) {
+    char extra = '\0';
+    if (!(in >> extra).eof()) {
       delete[] buffer;
       return false;
     }
@@ -202,7 +202,7 @@ int main(int argc, char** argv)
   }
 
   bool completed = false;
-  if (mode == 1) {
+  if (mode == novoydarskiy::first_mode) {
     completed = novoydarskiy::fixedMassiv(input, output);
   } else {
     completed = novoydarskiy::dynamicMassiv(input, output);
