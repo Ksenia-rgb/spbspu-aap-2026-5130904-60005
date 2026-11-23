@@ -8,7 +8,7 @@ namespace cheberiak {
 
   const int success = 0;
   const int invalid_arguments = 1;
-  const int invalid_input = 2;
+  const int invalid_file = 2;
 
   void smoothMatrix(const int *const matrix, double *const result, size_t rows, size_t cols)
   {
@@ -22,11 +22,12 @@ namespace cheberiak {
 
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
-        for (int new_row = static_cast< int >(i) - 1; new_row <= static_cast< int >(i) + 1; new_row++) {
-          for (int new_col = static_cast< int >(j) - 1; new_col <= static_cast< int >(j) + 1; new_col++) {
-            if (new_row >= 0 && new_row < static_cast< int >(rows) && new_col >= 0 && new_col < static_cast< int >(cols)
-                && !(new_row == static_cast< int >(i) && new_col == static_cast< int >(j))) {
-              summ += matrix[static_cast< size_t >(new_row) * cols + static_cast< size_t >(new_col)];
+        const size_t row_begin = i == 0 ? 0 : i - 1;
+        const size_t col_begin = j == 0 ? 0 : j - 1;
+        for (size_t new_row = row_begin; new_row <= i + 1 && new_row < rows; new_row++) {
+          for (size_t new_col = col_begin; new_col <= j + 1 && new_col < cols; new_col++) {
+            if (!(new_row == i && new_col == j)) {
+              summ += matrix[new_row * cols + new_col];
               count++;
             }
           }
@@ -93,13 +94,13 @@ namespace cheberiak {
 
     if (input.fail()) {
       std::cerr << "Failed to read matrix element\n";
-      return invalid_input;
+      return invalid_file;
     }
 
     char extra = 0;
     if (input >> extra) {
       std::cerr << "Extra data in input file\n";
-      return invalid_input;
+      return invalid_file;
     }
 
     smoothMatrix(matrix, result, rows, cols);
@@ -109,7 +110,7 @@ namespace cheberiak {
 
     if (output.fail()) {
       std::cerr << "Cannot open output file\n";
-      return invalid_input;
+      return invalid_file;
     }
 
     output << rows << ' ' << cols << '\n';
@@ -127,7 +128,7 @@ namespace cheberiak {
 
     if (output.fail()) {
       std::cerr << "Failed to write output file\n";
-      return invalid_input;
+      return invalid_file;
     }
 
     return success;
@@ -140,14 +141,14 @@ int main(int argc, char *argv[])
   constexpr int expected_argc = 4;
   constexpr int input_arg = 2;
   constexpr int output_arg = 3;
-  constexpr size_t matrix_capacity = 10000;
+  const char mode_1 = '1', mode_2 = '2';
 
   if (argc != expected_argc) {
     std::cerr << "Wrong arguments\n";
     return cheberiak::invalid_arguments;
   }
 
-  if ((argv[1][0] != '1' && argv[1][0] != '2') || argv[1][1] != '\0') {
+  if ((argv[1][0] != mode_1 && argv[1][0] != mode_2) || argv[1][1] != '\0') {
     std::cerr << "Invalid mode: expected 1 or 2\n";
     return cheberiak::invalid_arguments;
   }
@@ -156,7 +157,7 @@ int main(int argc, char *argv[])
 
   if (input.fail()) {
     std::cerr << "Cannot open file\n";
-    return cheberiak::invalid_input;
+    return cheberiak::invalid_file;
   }
 
   int rows = 0;
@@ -167,16 +168,17 @@ int main(int argc, char *argv[])
   if (input.fail() || rows < 0 || cols < 0 || (rows == 0 && cols != 0) || (rows != 0 && cols == 0)
       || (rows != 0 && cols > std::numeric_limits< int >::max() / rows)) {
     std::cerr << "Invalid matrix dimensions\n";
-    return cheberiak::invalid_input;
+    return cheberiak::invalid_file;
   }
 
-  const size_t matrix_rows = static_cast< size_t >(rows);
-  const size_t matrix_cols = static_cast< size_t >(cols);
+  const size_t matrix_rows = rows;
+  const size_t matrix_cols = cols;
 
-  if (argv[1][0] == '1') {
+  if (argv[1][0] == mode_1) {
+    constexpr size_t matrix_capacity = 10000;
     if (matrix_rows * matrix_cols > matrix_capacity) {
       std::cerr << "Matrix exceeds fixed capacity\n";
-      return cheberiak::invalid_input;
+      return cheberiak::invalid_file;
     }
 
     int matrix[matrix_capacity];
@@ -185,7 +187,7 @@ int main(int argc, char *argv[])
     return cheberiak::processMatrix(input, argv[output_arg], matrix, result, matrix_rows, matrix_cols);
   }
 
-  if (argv[1][0] == '2') {
+  if (argv[1][0] == mode_2) {
     int *matrix = nullptr;
     double *result = nullptr;
 
@@ -193,7 +195,7 @@ int main(int argc, char *argv[])
       matrix = new int[matrix_rows * matrix_cols];
     } catch (const std::bad_alloc &) {
       std::cerr << "Memory allocation failed\n";
-      return cheberiak::invalid_input;
+      return cheberiak::invalid_file;
     }
 
     try {
@@ -201,7 +203,7 @@ int main(int argc, char *argv[])
     } catch (const std::bad_alloc &) {
       std::cerr << "Memory allocation failed\n";
       delete[] matrix;
-      return cheberiak::invalid_input;
+      return cheberiak::invalid_file;
     }
 
     const int code = cheberiak::processMatrix(input, argv[output_arg], matrix, result, matrix_rows, matrix_cols);
