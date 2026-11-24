@@ -196,7 +196,7 @@ int main(int argc, char** argv)
     return novoydarskiy::invalid_input_file;
   }
 
-  bool completed = novoydarskiy::readMassiv(input, output, mode);
+  const bool completed = novoydarskiy::readMassiv(input, output, mode);
 
   if (!completed) {
     std::cerr << "Ошибка чтения входного файла\n";
