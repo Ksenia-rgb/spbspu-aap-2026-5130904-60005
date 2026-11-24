@@ -29,8 +29,9 @@ namespace komova {
         throw std::invalid_argument("Ошибка чтения элементов матрицы");
       }
     }
-    char extra = 0;
-    if (input >> extra) {
+    char extra;
+    input >> extra;
+    if (!input.eof()) {
       throw std::invalid_argument("В файле содержатся лишние данные");
     }
   }
