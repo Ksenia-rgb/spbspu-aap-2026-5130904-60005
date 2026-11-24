@@ -61,6 +61,11 @@ namespace nekhorukov
         return false;
       }
     }
+    input >> std::ws;
+    if (input.peek() != std::char_traits< char >::eof())
+    {
+      return false;
+    }
     return true;
   }
 
