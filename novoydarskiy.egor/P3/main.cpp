@@ -11,6 +11,7 @@ namespace novoydarskiy {
   const int invalid_input_file = 2;
   const int arg_count = 4;
   const int first_mode = 1;
+  const int second_mode = 2;
   bool mode(const char* s, int& mode)
   {
     if (s == nullptr) {
@@ -30,12 +31,12 @@ namespace novoydarskiy {
     return false;
   }
 
-  long long longestColsSeries(const long long* data, size_t rows, size_t cols)
+  size_t longestColsSeries(const long long* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
     }
-    long long best_col = 1;
+    size_t best_col = 1;
     size_t best_len = 0;
     for (size_t c = 0; c < cols; ++c) {
       size_t current_len = 1;
@@ -52,18 +53,18 @@ namespace novoydarskiy {
       }
       if (max_len > best_len) {
         best_len = max_len;
-        best_col = static_cast< long long >(c) + 1;
+        best_col = c + 1;
       }
     }
     return best_col;
   }
 
-  long long longestRowsSeries(const long long* data, size_t rows, size_t cols)
+  size_t longestRowsSeries(const long long* data, size_t rows, size_t cols)
   {
     if (rows == 0 || cols == 0) {
       return 0;
     }
-    long long best_row = 1;
+    size_t best_row = 1;
     size_t best_len = 0;
     for (size_t r = 0; r < rows; ++r) {
       size_t current_len = 1;
@@ -80,7 +81,7 @@ namespace novoydarskiy {
       }
       if (max_len > best_len) {
         best_len = max_len;
-        best_row = static_cast< long long >(r) + 1;
+        best_row = r + 1;
       }
     }
     return best_row;
@@ -108,68 +109,62 @@ namespace novoydarskiy {
     return out.good();
   }
 
-  bool fixedMassiv(std::istream& in, std::ostream& out)
+  bool readMassiv(std::istream& in, std::ostream& out, int& mode)
   {
     size_t rows = 0, cols = 0;
-    if (!readSizes(in, rows, cols)) {
-      return false;
-    }
-
     const size_t CAPACITY = 10000;
-    if (rows != 0 && cols > std::numeric_limits< size_t >::max() / rows) {
-      return false;
-    }
-    if (rows * cols > CAPACITY) {
-      return false;
-    }
 
-    long long buffer[CAPACITY];
-    for (size_t i = 0; i < rows * cols; ++i) {
-      if (!(in >> buffer[i])) {
-        return false;
-      }
-    }
-    char extra = '\0';
-    if (!(in >> extra).eof()) {
-      return false;
-    }
-
-    return writeResults(out, buffer, rows, cols);
-  }
-
-  bool dynamicMassiv(std::istream& in, std::ostream& out)
-  {
-    size_t rows = 0, cols = 0;
     if (!readSizes(in, rows, cols)) {
       return false;
     }
     if (rows != 0 && cols > std::numeric_limits< size_t >::max() / rows) {
       return false;
     }
-    const size_t total = rows * cols;
-    long long* buffer = nullptr;
-    if (total > 0) {
-      buffer = new (std::nothrow) long long[total];
-      if (buffer == nullptr) {
+
+    if (mode == first_mode) {
+      if (rows * cols > CAPACITY) {
         return false;
       }
+
+      long long buffer[CAPACITY];
+      for (size_t i = 0; i < rows * cols; ++i) {
+        if (!(in >> buffer[i])) {
+          return false;
+        }
+      }
+      char extra = '\0';
+      if (!(in >> extra).eof()) {
+        return false;
+      }
+      return writeResults(out, buffer, rows, cols);
     }
 
-    for (size_t i = 0; i < total; ++i) {
-      if (!(in >> buffer[i])) {
+    if (mode == second_mode) {
+      const size_t total = rows * cols;
+      long long* buffer = nullptr;
+      if (total > 0) {
+        buffer = new (std::nothrow) long long[total];
+        if (buffer == nullptr) {
+          return false;
+        }
+      }
+
+      for (size_t i = 0; i < total; ++i) {
+        if (!(in >> buffer[i])) {
+          delete[] buffer;
+          return false;
+        }
+      }
+      char extra = '\0';
+      if (!(in >> extra).eof()) {
         delete[] buffer;
         return false;
       }
-    }
-    char extra = '\0';
-    if (!(in >> extra).eof()) {
+      const bool res_of_func = writeResults(out, buffer, rows, cols);
       delete[] buffer;
-      return false;
+      return res_of_func;
     }
-
-    const bool res_of_func = writeResults(out, buffer, rows, cols);
-    delete[] buffer;
-    return res_of_func;
+    return false;
   }
 }
 
@@ -201,12 +196,7 @@ int main(int argc, char** argv)
     return novoydarskiy::invalid_input_file;
   }
 
-  bool completed = false;
-  if (mode == novoydarskiy::first_mode) {
-    completed = novoydarskiy::fixedMassiv(input, output);
-  } else {
-    completed = novoydarskiy::dynamicMassiv(input, output);
-  }
+  bool completed = novoydarskiy::readMassiv(input, output, mode);
 
   if (!completed) {
     std::cerr << "Ошибка чтения входного файла\n";
