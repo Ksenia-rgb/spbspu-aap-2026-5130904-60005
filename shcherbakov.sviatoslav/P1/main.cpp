@@ -14,7 +14,7 @@ namespace shcherbakov
   }
 
   template< class Counter >
-  void updateCounter(Counter & counter, bool & is_ok, int num)
+  void updateCounter(Counter &counter, bool &is_ok, int num)
   {
     if (is_ok)
     {
@@ -29,7 +29,7 @@ namespace shcherbakov
     }
   }
 
-  void printResult(std::ostream & out, std::ostream & err, bool is_ok, std::size_t result)
+  void printResult(std::ostream &out, std::ostream &err, bool is_ok, std::size_t result)
   {
     if (is_ok)
     {
