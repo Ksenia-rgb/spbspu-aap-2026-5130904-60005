@@ -174,7 +174,7 @@ bool read(std::istream& input, size_t& k_rows, size_t& k_colomn)
 
 bool nullmat(size_t k_rows, size_t k_colomn)
 {
-  return (k_rows == 0 || k_colomn == 0);
+  return k_rows == 0 || k_colomn == 0;
 }
 
 int main(int argc, char** argv)
