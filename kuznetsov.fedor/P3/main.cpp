@@ -159,7 +159,6 @@ namespace kuznetsov
     }
 
     int matrix[kuznetsov::size_stec] = {};
-    dataCp(input, matrix, k_rows, k_colomn);
     processMatrix(input, output, matrix, k_rows, k_colomn);
   }
 }
