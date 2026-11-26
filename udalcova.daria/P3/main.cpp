@@ -10,25 +10,24 @@ namespace udalcova {
   const char fixed_mode = '1';
   const char dynamic_mode = '2';
 
-  bool good(const int* a, size_t r, size_t c, size_t i, size_t j)
+  bool has_no_zero(const int* a, size_t r, size_t c, size_t i, size_t j)
   {
-    size_t len = 0;
-    for (; i < r && j < c; ++i, ++j, ++len) {
+    for (; i < r && j < c; ++i, ++j, ++j) {
       if (a[i * c + j] == 0) {
         return false;
       }
     }
-    return len >= 2;
+    return true;
   }
 
   size_t count(const int* a, size_t r, size_t c)
   {
     size_t cnt = 0;
-    for (size_t i = 0; i < r; i++) {
-      cnt += good(a, r, c, i, 0);
+    for (size_t i = 1; i < r; i++) {
+      cnt += has_no_zero(a, r, c, i, 0);
     }
     for (size_t j = 1; j < c; ++j) {
-      cnt += good(a, r, c, 0, j);
+      cnt += has_no_zero(a, r, c, 0, j);
     }
     return cnt;
   }
@@ -81,6 +80,11 @@ namespace udalcova {
         return error_input;
       }
     }
+    char extra = 0;
+    if (in >> extra) {
+      std::cerr << "Ошибка: в файле лишние данные после матрицы\n";
+      return error_input;
+    }
     if (!process(a, r, c, out)) {
       std::cerr << "Ошибка: не удалось записать результат\n";
       return error_input;
@@ -90,7 +94,7 @@ namespace udalcova {
 
   int runStatic(std::istream& in, std::ostream& out, size_t r, size_t c)
   {
-    int fixed[max_size];
+    int fixed[max_size] = {};
     return solve(in, out, fixed, r, c);
   }
 
@@ -126,7 +130,7 @@ int main(int argc, char** argv)
 
   if (argc != expected_args) {
     std::cerr << "Ошибка: неверное количество аргументов\n";
-    return error_input;
+    return error_args;
   }
 
   const char* const num = argv[1];
