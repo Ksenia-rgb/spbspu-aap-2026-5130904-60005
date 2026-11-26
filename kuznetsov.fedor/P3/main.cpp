@@ -5,6 +5,8 @@
 
 namespace kuznetsov
 {
+  const size_t size_stec = 10000;
+  const int arg_err_in_f = 2, arg_err_in_term = 1, k_arg = 4;
 
   int* fsForMatrix(size_t k_rows, size_t k_colomn)
   {
@@ -123,17 +125,22 @@ namespace kuznetsov
     return res;
   }
 
+  void processMatrix(std::istream& input, std::ostream& output, int* matrix, size_t k_rows, size_t k_colomn)
+  {
+    dataCp(input, matrix, k_rows, k_colomn);
+    const int arg1 = numRowLsr(matrix, k_rows, k_colomn);
+    const int arg2 = minSumSdg(matrix, k_rows, k_colomn);
+
+    output << arg1 << "\n";
+    output << arg2 << "\n";
+  }
+
   void processFsMatrix(std::istream& input, std::ostream& output, size_t k_rows, size_t k_colomn)
   {
     int* matrix = new int[k_rows * k_colomn];
     try
     {
-      dataCp(input, matrix, k_rows, k_colomn);
-      const int arg1 = numRowLsr(matrix, k_rows, k_colomn);
-      const int arg2 = minSumSdg(matrix, k_rows, k_colomn);
-
-      output << arg1 << "\n";
-      output << arg2 << "\n";
+      processMatrix(input, output, matrix, k_rows, k_colomn);
     }
     catch (...)
     {
@@ -146,39 +153,45 @@ namespace kuznetsov
 
   void processStexMatrix(std::istream& input, std::ostream& output, size_t k_rows, size_t k_colomn)
   {
-    const size_t size = 10000;
-    if (k_rows * k_colomn > size)
+    if (k_rows * k_colomn > kuznetsov::size_stec)
     {
       throw std::invalid_argument("out of range\n");
     }
 
-    int matrix[size] = {};
+    int matrix[kuznetsov::size_stec] = {};
     dataCp(input, matrix, k_rows, k_colomn);
-
-    const int arg1 = numRowLsr(matrix, k_rows, k_colomn);
-    const int arg2 = minSumSdg(matrix, k_rows, k_colomn);
-
-    output << arg1 << "\n";
-    output << arg2 << "\n";
+    processMatrix(input, output, matrix, k_rows, k_colomn);
   }
 }
+
+bool read(std::istream& input, size_t& k_rows, size_t& k_colomn)
+{
+  if (!(input >> k_rows >> k_colomn))
+  {
+    return false;
+  }
+  return true;
+}
+
+bool nullmat(size_t k_rows, size_t k_colomn)
+{
+  return k_rows == 0 || k_colomn == 0;
+}
+
 int main(int argc, char** argv)
 {
-  const int arg_err_in_f = 2, arg_err_in_term = 1, k_arg = 4;
   const char mode_1 = '1', mode_2 = '2';
   size_t k_rows = 0, k_colomn = 0;
 
-  const size_t size_stec = 10000;
-
-  if (argc < k_arg)
+  if (argc < kuznetsov::k_arg)
   {
     std::cerr << "Not enough arguments" << "\n";
-    return arg_err_in_term;
+    return kuznetsov::arg_err_in_term;
   }
-  if (argc > k_arg)
+  if (argc > kuznetsov::k_arg)
   {
     std::cerr << "Too many arguments" << "\n";
-    return arg_err_in_term;
+    return kuznetsov::arg_err_in_term;
   }
   const char* const mode = argv[1];
   const char* const input_path = argv[2];
@@ -189,21 +202,22 @@ int main(int argc, char** argv)
     std::ifstream input{input_path};
     if (!input)
     {
-      return arg_err_in_f;
+      return kuznetsov::arg_err_in_f;
+    }
+    if (!(read(input, k_rows, k_colomn)))
+    {
+      std::cerr << "arg_err_in_f\n";
+      return kuznetsov::arg_err_in_f;
+    }
+    if (nullmat(k_rows, k_colomn))
+    {
+      return 0;
     }
 
     switch (mode[0])
     {
     case mode_1:
     {
-      if (!(input >> k_rows >> k_colomn))
-      {
-        return arg_err_in_f;
-      }
-      if ((k_rows == 0 || k_colomn == 0) && k_rows * k_colomn < size_stec)
-      {
-        return 0;
-      }
       std::ofstream output(output_path);
 
       try
@@ -213,24 +227,13 @@ int main(int argc, char** argv)
       catch (...)
       {
         std::cerr << "err in processStexMatrix";
-        return arg_err_in_f;
+        return kuznetsov::arg_err_in_f;
       }
 
       break;
     }
     case mode_2:
     {
-      input >> k_rows >> k_colomn;
-      if (!input)
-      {
-        std::cerr << "invalid arg\n";
-        return arg_err_in_f;
-      }
-
-      if (k_colomn == 0 || k_rows == 0)
-      {
-        return 0;
-      }
       std::ofstream output(output_path);
 
       try
@@ -240,7 +243,7 @@ int main(int argc, char** argv)
       catch (...)
       {
         std::cerr << "err in processFsMatrix\n";
-        return arg_err_in_f;
+        return kuznetsov::arg_err_in_f;
       }
     }
 
@@ -250,7 +253,7 @@ int main(int argc, char** argv)
   else
   {
     std::cerr << "Uncorrect mode argument" << "\n";
-    return arg_err_in_term;
+    return kuznetsov::arg_err_in_term;
   }
   return 0;
 }
