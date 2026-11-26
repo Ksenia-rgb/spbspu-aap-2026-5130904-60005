@@ -13,6 +13,9 @@ namespace nekhorukov
   };
 
   const std::size_t kMaxFixedElements = 10000;
+  const int kExpectedArgCount = 4;
+  const char kFixedMode = '1';
+  const char kDynamicMode = '2';
 
   bool isUpperTriangular(const long long * data, std::size_t rows, std::size_t cols)
   {
@@ -62,11 +65,7 @@ namespace nekhorukov
       }
     }
     input >> std::ws;
-    if (input.peek() != std::char_traits< char >::eof())
-    {
-      return false;
-    }
-    return true;
+    return input.eof();
   }
 
   bool writeResults(std::ostream & output, const long long * data, std::size_t rows, std::size_t cols)
@@ -83,10 +82,26 @@ namespace nekhorukov
     return output.good();
   }
 
+  int processMatrix(std::istream & input, std::ostream & output, long long * buffer, std::size_t rows, std::size_t cols)
+  {
+    const std::size_t total = rows * cols;
+    if (!readMatrix(input, buffer, total))
+    {
+      std::cerr << "invalid matrix data\n";
+      return kCalcError;
+    }
+    if (!writeResults(output, buffer, rows, cols))
+    {
+      std::cerr << "cannot write results\n";
+      return kCalcError;
+    }
+    return kSuccess;
+  }
+
   int process(const char * mode, const char * input_path, const char * output_path)
   {
-    const bool is_fixed = mode[0] == '1' && mode[1] == '\0';
-    const bool is_dynamic = mode[0] == '2' && mode[1] == '\0';
+    const bool is_fixed = mode[0] == kFixedMode && mode[1] == '\0';
+    const bool is_dynamic = mode[0] == kDynamicMode && mode[1] == '\0';
     if (!is_fixed && !is_dynamic)
     {
       std::cerr << "first argument must be 1 or 2\n";
@@ -141,17 +156,7 @@ namespace nekhorukov
         return kCalcError;
       }
       long long buffer[kMaxFixedElements] = {};
-      if (!readMatrix(input, buffer, total))
-      {
-        std::cerr << "invalid matrix data\n";
-        return kCalcError;
-      }
-      if (!writeResults(output, buffer, row_count, col_count))
-      {
-        std::cerr << "cannot write results\n";
-        return kCalcError;
-      }
-      return kSuccess;
+      return processMatrix(input, output, buffer, row_count, col_count);
     }
     long long * buffer = nullptr;
     try
@@ -163,26 +168,15 @@ namespace nekhorukov
       std::cerr << "memory allocation failed\n";
       return kCalcError;
     }
-    if (!readMatrix(input, buffer, total))
-    {
-      delete[] buffer;
-      std::cerr << "invalid matrix data\n";
-      return kCalcError;
-    }
-    if (!writeResults(output, buffer, row_count, col_count))
-    {
-      delete[] buffer;
-      std::cerr << "cannot write results\n";
-      return kCalcError;
-    }
+    const int result = processMatrix(input, output, buffer, row_count, col_count);
     delete[] buffer;
-    return kSuccess;
+    return result;
   }
 }
 
 int main(int argc, char * argv[])
 {
-  if (argc != 4)
+  if (argc != nekhorukov::kExpectedArgCount)
   {
     std::cerr << "expected 3 arguments\n";
     return nekhorukov::kInputError;
