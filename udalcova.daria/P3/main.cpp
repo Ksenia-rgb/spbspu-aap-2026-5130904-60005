@@ -7,6 +7,8 @@ namespace udalcova {
   const int error_input = 2;
   const int expected_args = 4;
   const size_t max_size = 10000;
+  const char fixed_mode = '1';
+  const char dynamic_mode = '2';
 
   bool good(const int* a, size_t r, size_t c, size_t i, size_t j)
   {
@@ -128,7 +130,7 @@ int main(int argc, char** argv)
   }
 
   const char* const num = argv[1];
-  if ((num[0] != '1' && num[0] != '2') || num[1] != '\0') {
+  if ((num[0] != fixed_mode && num[0] != dynamic_mode) || num[1] != '\0') {
     std::cerr << "Ошибка: первый параметр должен быть 1 или 2\n";
     return error_args;
   }
@@ -144,5 +146,5 @@ int main(int argc, char** argv)
     return error_args;
   }
 
-  return run(in, out, num[0] == '2');
+  return run(in, out, num[0] == dynamic_mode);
 }
