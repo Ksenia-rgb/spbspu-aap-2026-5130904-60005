@@ -4,12 +4,11 @@
 #include <stdexcept>
 #include <cmath>
 
-#include <shapes/base-types.hpp>
-#include <shapes/shape.hpp>
-
-#include <shapes/rectangle.hpp>
-#include <shapes/ellipse.hpp>
-#include <shapes/regular.hpp>
+#include "../common/shapes/base-types.hpp"
+#include "../common/shapes/shape.hpp"
+#include "../common/shapes/rectangle.hpp"
+#include "../common/shapes/ellipse.hpp"
+#include "../common/shapes/regular.hpp"
 
 namespace chernenko
 {
