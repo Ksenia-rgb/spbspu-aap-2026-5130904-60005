@@ -28,7 +28,7 @@ namespace kuznetsov
   void dataCp(std::istream& input, int* matrix, size_t k_row, size_t k_column)
   {
     char last_symb{};
-    for (size_t i = 0; i <= k_row * k_column; ++i)
+    for (size_t i = 0; i < k_row * k_column; ++i)
     {
       if (!(input >> matrix[i]))
       {
@@ -175,7 +175,7 @@ bool read(std::istream& input, size_t& k_rows, size_t& k_colomn)
 
 bool nullmat(size_t k_rows, size_t k_colomn)
 {
-  return k_rows == 0 || k_colomn == 0;
+  return (k_rows == 0 || k_colomn == 0);
 }
 
 int main(int argc, char** argv)
