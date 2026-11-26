@@ -10,7 +10,7 @@ namespace udalcova {
   const char fixed_mode = '1';
   const char dynamic_mode = '2';
 
-  bool has_no_zero(const int* a, size_t r, size_t c, size_t i, size_t j)
+  bool hasNoZero(const int* a, size_t r, size_t c, size_t i, size_t j)
   {
     for (; i < r && j < c; ++i, ++j, ++j) {
       if (a[i * c + j] == 0) {
@@ -24,10 +24,10 @@ namespace udalcova {
   {
     size_t cnt = 0;
     for (size_t i = 1; i < r; i++) {
-      cnt += has_no_zero(a, r, c, i, 0);
+      cnt += hasNoZero(a, r, c, i, 0);
     }
     for (size_t j = 1; j < c; ++j) {
-      cnt += has_no_zero(a, r, c, 0, j);
+      cnt += hasNoZero(a, r, c, 0, j);
     }
     return cnt;
   }
