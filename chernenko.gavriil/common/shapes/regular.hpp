@@ -1,8 +1,8 @@
 #ifndef REGULAR_HPP
 #define REGULAR_HPP
 
-#include <shapes/base-types.hpp>
-#include <shapes/shape.hpp>
+#include "base-types.hpp"
+#include "shape.hpp"
 
 namespace chernenko
 {

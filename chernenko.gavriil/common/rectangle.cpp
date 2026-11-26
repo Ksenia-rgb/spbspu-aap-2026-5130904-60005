@@ -1,6 +1,6 @@
-#include <shapes/rectangle.hpp>
-#include <shapes/base-types.hpp>
 #include <stdexcept>
+#include "shapes/rectangle.hpp"
+#include "shapes/base-types.hpp"
 
 chernenko::Rectangle::Rectangle(double w, double h, point_t p):
   content_{w, h, p}

@@ -1,7 +1,7 @@
-#include <shapes/regular.hpp>
-#include <shapes/base-types.hpp>
 #include <cmath>
 #include <stdexcept>
+#include "shapes/regular.hpp"
+#include "shapes/base-types.hpp"
 
 chernenko::Regular::Regular(unsigned angles, double lenght, point_t center):
   angles_(angles),
