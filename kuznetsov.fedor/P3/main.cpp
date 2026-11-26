@@ -28,7 +28,7 @@ namespace kuznetsov
   void dataCp(std::istream& input, int* matrix, size_t k_row, size_t k_column)
   {
     char last_symb{};
-    for (size_t i = 0; i < k_row * k_column; ++i)
+    for (size_t i = 0; i <= k_row * k_column; ++i)
     {
       if (!(input >> matrix[i]))
       {
@@ -224,9 +224,9 @@ int main(int argc, char** argv)
       {
         kuznetsov::processStexMatrix(input, output, k_rows, k_colomn);
       }
-      catch (...)
+      catch (const std::exception& e)
       {
-        std::cerr << "err in processStexMatrix";
+        std::cerr << "err in processStexMatrix\n" << e.what() << "\n";
         return kuznetsov::arg_err_in_f;
       }
 
