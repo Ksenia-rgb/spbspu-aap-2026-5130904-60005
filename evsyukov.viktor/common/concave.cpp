@@ -1,9 +1,11 @@
 #include <shapes/concave.hpp>
 #include <stdexcept>
 #include <cmath>
-namespace evsyukov {
+namespace evsyukov
+{
 
-  namespace {
+  namespace
+  {
     double cross(const point_t &a, const point_t &b, const point_t &p)
     {
       return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
@@ -17,17 +19,23 @@ namespace evsyukov {
     }
     double min(double x, double y)
     {
-      if (x < y) {
+      if (x < y)
+      {
         return x;
-      } else {
+      }
+      else
+      {
         return y;
       }
     }
     double max(double x, double y)
     {
-      if (x > y) {
+      if (x > y)
+      {
         return x;
-      } else {
+      }
+      else
+      {
         return y;
       }
     }
@@ -37,20 +45,24 @@ namespace evsyukov {
     v_{a, b, c, d},
     concave_(4)
   {
-    for (size_t i = 0; i < 4; ++i) {
-      if (isStrictlyInside(v_[(i + 1) % 4], v_[(i + 2) % 4], v_[(i + 3) % 4], v_[i])) {
+    for (size_t i = 0; i < 4; ++i)
+    {
+      if (isStrictlyInside(v_[(i + 1) % 4], v_[(i + 2) % 4], v_[(i + 3) % 4], v_[i]))
+      {
         concave_ = i;
         break;
       }
     }
-    if (concave_ == 4) {
+    if (concave_ == 4)
+    {
       throw std::invalid_argument("Concave: quadrilateral must be non-convex");
     }
   }
   double Concave::getArea() const noexcept
   {
     double sum = 0;
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++)
+    {
       size_t j = (i + 1) % 4;
       sum += v_[i].x * v_[j].y - v_[j].x * v_[i].y;
     }
@@ -66,7 +78,8 @@ namespace evsyukov {
   }
   void Concave::move(double dx, double dy) noexcept
   {
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++)
+    {
       v_[i].x += dx;
       v_[i].y += dy;
     }
@@ -79,11 +92,13 @@ namespace evsyukov {
   }
   void Concave::scale(double k)
   {
-    if (k <= 0) {
+    if (k <= 0)
+    {
       throw std::invalid_argument("Concave: scale factor must be posotive");
     }
     point_t c = v_[concave_];
-    for (size_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++)
+    {
       v_[i].x = c.x + k * (v_[i].x - c.x);
       v_[i].y = c.y + k * (v_[i].y - c.y);
     }

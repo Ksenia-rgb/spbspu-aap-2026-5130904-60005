@@ -1,14 +1,16 @@
 #include <shapes/rectangle.hpp>
 #include <stdexcept>
 
-namespace evsyukov {
+namespace evsyukov
+{
 
   Rectangle::Rectangle(const point_t &center, double width, double height):
     pos_(center),
     width_(width),
     height_(height)
   {
-    if (width <= 0.0 || height <= 0.0) {
+    if (width <= 0.0 || height <= 0.0)
+    {
       throw std::invalid_argument("Rectangle: woght or height must be positive");
     }
   }
@@ -36,7 +38,8 @@ namespace evsyukov {
 
   void Rectangle::scale(double k)
   {
-    if (k <= 0) {
+    if (k <= 0)
+    {
       throw std::invalid_argument("Rectangle: scale factor must be positive");
     }
     width_ *= k;

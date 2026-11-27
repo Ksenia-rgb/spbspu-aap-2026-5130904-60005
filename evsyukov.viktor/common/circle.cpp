@@ -1,13 +1,15 @@
 #include <shapes/circle.hpp>
 #include <stdexcept>
 
-namespace evsyukov {
+namespace evsyukov
+{
   const double pi = 3.141592;
   Circle::Circle(const point_t &center, double radius):
     pos_(center),
     radius_(radius)
   {
-    if (radius <= 0.0) {
+    if (radius <= 0.0)
+    {
       throw std::invalid_argument("Circle: radius must be positive");
     }
   }
@@ -30,7 +32,8 @@ namespace evsyukov {
   }
   void Circle::scale(double k)
   {
-    if (k <= 0) {
+    if (k <= 0)
+    {
       throw std::invalid_argument("Circle: scale factor must be positive");
     }
     radius_ *= k;
