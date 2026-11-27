@@ -6,7 +6,7 @@
 
 namespace evsyukov {
   class Rectangle: public Shape {
-    public: 
+    public:
       Rectangle(const point_t & center, double width, double height);
       double getArea() const noexcept override;
       rectangle_t getFrameRect() const noexcept override;
