@@ -1,4 +1,3 @@
-#include <cstddef>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -8,13 +7,12 @@ namespace evsyukov {
 
   const int k_arg_error = 1;
   const int k_data_error = 2;
-  const int k_arg_count = 4;
-  const size_t k_static_limit = 10000;
-  const size_t k_dynamic_limit = 100000000;
+  const long long k_static_limit = 10000;
+  const long long k_dynamic_limit = 100000000;
 
-  size_t min(size_t a, size_t b)
+  long long min(long long a, long long b)
   {
-    size_t min_arg = 0;
+    long long min_arg = 0;
     if (a < b) {
       min_arg = a;
     } else {
@@ -23,18 +21,18 @@ namespace evsyukov {
     return min_arg;
   }
 
-  int countLocalMax(const int* a, size_t rows, size_t cols)
+  int countLocalMax(const int* a, long long rows, long long cols)
   {
     int count = 0;
-    for (size_t i = 1; i + 1 < rows; ++i) {
-      for (size_t j = 1; j + 1 < cols; ++j) {
+    for (long long i = 1; i + 1 < rows; ++i) {
+      for (long long j = 1; j + 1 < cols; ++j) {
         bool is_max = true;
-        for (size_t ni = i - 1; ni <= i + 1 && is_max; ++ni) {
-          for (size_t nj = j - 1; nj <= j + 1; ++nj) {
-            if (ni == i && nj == j) {
+        for (int di = -1; di <= 1 && is_max; ++di) {
+          for (int dj = -1; dj <= 1; ++dj) {
+            if (di == 0 && dj == 0) {
               continue;
             }
-            if (a[i * cols + j] <= a[ni * cols + nj]) {
+            if (a[i * cols + j] <= a[(i + di) * cols + (j + dj)]) {
               is_max = false;
               break;
             }
@@ -48,13 +46,13 @@ namespace evsyukov {
     return count;
   }
 
-  bool fillIncWav(int* a, size_t rows, size_t cols)
+  bool fillIncWav(int* a, long long rows, long long cols)
   {
-    const long long max_int = std::numeric_limits< int >::max();
-    for (size_t i = 0; i < rows; ++i) {
-      for (size_t j = 0; j < cols; ++j) {
-        const size_t layer = min(min(i, j), min(rows - 1 - i, cols - 1 - j)) + 1;
-        if (a[i * cols + j] > max_int - static_cast< long long >(layer)) {
+    long long layer = 0;
+    for (long long i = 0; i < rows; ++i) {
+      for (long long j = 0; j < cols; ++j) {
+        layer = min(min(i, j), min(rows - 1 - i, cols - 1 - j)) + 1;
+        if (a[i * cols + j] > std::numeric_limits< int >::max() - layer) {
           return false;
         }
         a[i * cols + j] += static_cast< int >(layer);
@@ -63,16 +61,16 @@ namespace evsyukov {
     return true;
   }
 
-  int process(std::ifstream& in, int* a, size_t rows, size_t cols, const char* out_name)
+  int process(std::ifstream& in, int* a, long long rows, long long cols, const char* out_name)
   {
-    for (size_t i = 0; i < rows * cols; ++i) {
+    for (long long i = 0; i < rows * cols; ++i) {
       if (!(in >> a[i])) {
         std::cerr << "Error arguments matrix\n";
         return k_data_error;
       }
     }
-    char extra = 0;
-    if (in >> extra) {
+    int dummy = 0;
+    if (in >> dummy) {
       std::cerr << "Error arguments matrix\n";
       return k_data_error;
     }
@@ -87,7 +85,7 @@ namespace evsyukov {
       std::cerr << "FLL-INC-WAV error\n";
     } else {
       out << rows << " " << cols;
-      for (size_t i = 0; i < rows * cols; ++i) {
+      for (long long i = 0; i < rows * cols; ++i) {
         out << " " << a[i];
       }
       out << "\n";
@@ -101,7 +99,7 @@ namespace evsyukov {
 
   int run(int argc, char** argv)
   {
-    if (argc != k_arg_count) {
+    if (argc != 4) {
       std::cerr << "Invalid_input\n";
       return k_arg_error;
     }
@@ -116,13 +114,11 @@ namespace evsyukov {
       std::cerr << "Invalid_file\n";
       return k_data_error;
     }
-    long long raw_rows = 0, raw_cols = 0;
-    if (!(in >> raw_rows >> raw_cols) || raw_rows < 0 || raw_cols < 0) {
+    long long rows = 0, cols = 0;
+    if (!(in >> rows >> cols) || rows < 0 || cols < 0) {
       std::cerr << "Error rows or cols/over_flow\n";
       return k_data_error;
     }
-    const size_t rows = static_cast< size_t >(raw_rows);
-    const size_t cols = static_cast< size_t >(raw_cols);
     if (rows > k_dynamic_limit || cols > k_dynamic_limit) {
       std::cerr << "Error rows or cols\n";
       return k_data_error;
@@ -131,23 +127,25 @@ namespace evsyukov {
       std::cerr << "Error rows or cols\n";
       return k_data_error;
     }
+    int buf[k_static_limit];
+    int* matrix = buf;
     if (num == 1) {
       if (rows * cols > k_static_limit) {
         std::cerr << "Matrix is too large for static array\n";
         return k_data_error;
       }
-      int buf[k_static_limit];
-      return process(in, buf, rows, cols, argv[3]);
-    }
-    int* matrix = nullptr;
-    try {
-      matrix = new int[rows * cols];
-    } catch (const std::bad_alloc&) {
-      std::cerr << "Not enough memory\n";
-      return k_data_error;
+    } else {
+      try {
+        matrix = new int[rows * cols];
+      } catch (const std::bad_alloc&) {
+        std::cerr << "Not enough memory\n";
+        return k_data_error;
+      }
     }
     const int code = process(in, matrix, rows, cols, argv[3]);
-    delete[] matrix;
+    if (num == 2) {
+      delete[] matrix;
+    }
     return code;
   }
 }
