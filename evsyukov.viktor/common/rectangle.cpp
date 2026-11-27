@@ -45,4 +45,5 @@ namespace evsyukov
     width_ *= k;
     height_ *= k;
   }
+}
 
