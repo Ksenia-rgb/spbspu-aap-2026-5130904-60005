@@ -1,8 +1,7 @@
 #ifndef RECTANGLE_HPP
 #define RECTANGLE_HPP
 
-#include <shapes/shape.hpp>
-
+#include "shape.hpp"
 namespace evsyukov {
 class Rectangle : public Shape {
 public:

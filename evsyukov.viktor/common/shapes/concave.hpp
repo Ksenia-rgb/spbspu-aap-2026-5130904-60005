@@ -2,7 +2,7 @@
 #define CONCAVE_HPP
 
 #include <cstddef>
-#include <shapes/shape.hpp>
+#include "shape.hpp"
 
 namespace evsyukov {
 

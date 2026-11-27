@@ -1,7 +1,7 @@
 #ifndef CIRCLE_HPP
 #define CIRCLE_HPP
 
-#include <shapes/shape.hpp>
+#include "shape.hpp"
 
 namespace evsyukov {
 

@@ -1,8 +1,8 @@
+#include "../common/shapes/rectangle.hpp"
+#include "../common/shapes/circle.hpp"
+#include "../common/shapes/concave.hpp"
 #include <cstddef>
 #include <iostream>
-#include <shapes/circle.hpp>
-#include <shapes/concave.hpp>
-#include <shapes/rectangle.hpp>
 
 namespace evsyukov
 {
@@ -18,10 +18,10 @@ namespace evsyukov
     {
       double total = 0.0;
       const rectangle_t first = shapes[0]->getFrameRect();
-      double min_x = first.pos.x - first.width / 2.0;
-      double max_x = first.pos.x + first.width / 2.0;
-      double min_y = first.pos.y - first.height / 2.0;
-      double max_y = first.pos.y + first.height / 2.0;
+      double min_x = first.pos.x - first.width / k_half;
+      double max_x = first.pos.x + first.width / k_half;
+      double min_y = first.pos.y - first.height / k_half;
+      double max_y = first.pos.y + first.height / k_half;
       for (size_t i = 0; i < n; ++i)
       {
         const double area = shapes[i]->getArea();
@@ -51,7 +51,7 @@ namespace evsyukov
         }
       }
       std::cout << "Total area: " << total << "\n";
-      rectangle_t f_r_result = {max_x - min_x, max_y - min_y, {(min_x + max_x) / 2.0, (min_y + max_y) / 2.0}};
+      rectangle_t f_r_result = {max_x - min_x, max_y - min_y, {(min_x + max_x) / k_half, (min_y + max_y) / k_half}};
       std::cout << "Total frame: ";
       printFrame(f_r_result);
     }
@@ -78,7 +78,7 @@ int main()
   constexpr double k_circle_y = 3.0;
   constexpr double k_circle_radius = 1.5;
   constexpr double k_concave_far = 4.0;
-  constexpr std::size_t k_shape_count = 3;
+  constexpr size_t k_shape_count = 3;
   try
   {
     Rectangle rect({0.0, 0.0}, k_rect_width, k_rect_height);

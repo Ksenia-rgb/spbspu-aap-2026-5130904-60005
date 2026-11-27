@@ -1,5 +1,5 @@
 #include <cmath>
-#include <shapes/concave.hpp>
+#include "shapes/concave.hpp"
 #include <stdexcept>
 namespace evsyukov
 {
@@ -75,7 +75,7 @@ namespace evsyukov
     const double max_x = max(max(v_[0].x, v_[1].x), max(v_[2].x, v_[3].x));
     const double min_y = min(min(v_[0].y, v_[1].y), min(v_[2].y, v_[3].y));
     const double max_y = max(max(v_[0].y, v_[1].y), max(v_[2].y, v_[3].y));
-    return {max_x - min_x, max_y - min_y, {(min_x + max_x) / 2.0, (min_y + max_y) / 2.0}};
+    return {max_x - min_x, max_y - min_y, {(min_x + max_x) / k_half, (min_y + max_y) / k_half}};
   }
   void Concave::move(double dx, double dy) noexcept
   {
