@@ -1,3 +1,4 @@
+#include <shapes/base-types.hpp>
 #include <shapes/shape.hpp>
 #include <iostream>
 #include <stdexcept>

@@ -1,4 +1,4 @@
-#include <shapes/shape.hpp>
+#include "shapes/shape.hpp"
 #include <stdexcept>
 
 namespace demyanov
@@ -49,4 +49,3 @@ namespace demyanov
     rect_.height *= k;
   }
 }
-
