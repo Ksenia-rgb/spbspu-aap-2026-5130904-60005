@@ -1,4 +1,7 @@
-#include "base-types.hpp"
+#ifndef SHAPE_HPP
+#define SHAPE_HPP
+
+#include <base-types.hpp>
 
 namespace demyanov {
 class Shape {
@@ -58,4 +61,4 @@ private:
 };
 }
 
-
+#endif

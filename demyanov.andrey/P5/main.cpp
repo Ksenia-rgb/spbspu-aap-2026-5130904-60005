@@ -11,7 +11,7 @@ using demyanov::Shape;
 
 constexpr size_t shape_count = 3;
 
-void scale_shapes(Shape **shapes, const point_t data[], point_t scale_point, double k, size_t count)
+void scaleShapes(Shape **shapes, const point_t data[], point_t scale_point, double k, size_t count)
 {
   for (size_t i = 0; i < count; i++)
   {
@@ -23,7 +23,7 @@ void scale_shapes(Shape **shapes, const point_t data[], point_t scale_point, dou
   }
 }
 
-rectangle_t get_total_frame(Shape **shapes, size_t count)
+rectangle_t getTotalFrame(Shape **shapes, size_t count)
 {
   const rectangle_t frame1 = shapes[0]->getFrameRect();
   double min_x = frame1.pos.x - frame1.width / 2;
@@ -104,7 +104,7 @@ int main()
               << frame_rectangle.pos.y << " " << shapes[j]->getArea() << "\n";
   }
 
-  rectangle_t total_frame = get_total_frame(shapes, shape_count);
+  rectangle_t total_frame = getTotalFrame(shapes, shape_count);
 
   std::cout << total_frame.width << " " << total_frame.height << " " << total_frame.pos.x << " " << total_frame.pos.y
             << "\n";
@@ -123,7 +123,7 @@ int main()
     {
       throw std::invalid_argument("Invalid scale coefficient");
     }
-    scale_shapes(shapes, data, scale_point, k, shape_count);
+    scaleShapes(shapes, data, scale_point, k, shape_count);
 
     total_area = 0.0;
     for (size_t j = 0; j < shape_count; ++j)
@@ -141,7 +141,7 @@ int main()
     return 1;
   }
 
-  total_frame = get_total_frame(shapes, shape_count);
+  total_frame = getTotalFrame(shapes, shape_count);
 
   std::cout << total_frame.width << " " << total_frame.height << " " << total_frame.pos.x << " " << total_frame.pos.y
             << "\n";
