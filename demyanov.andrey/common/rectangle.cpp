@@ -1,4 +1,4 @@
-#include <shape.hpp>
+#include <shapes/shape.hpp>
 #include <stdexcept>
 
 namespace demyanov {
