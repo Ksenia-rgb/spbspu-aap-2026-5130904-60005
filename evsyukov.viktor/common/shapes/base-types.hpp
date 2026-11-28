@@ -1,16 +1,19 @@
 #ifndef BASE_TYPES_HPP
 #define BASE_TYPES_HPP
 
-namespace evsyukov {
+namespace evsyukov
+{
 
-struct point_t {
-  double x, y;
-};
+  struct point_t
+  {
+    double x, y;
+  };
 
-struct rectangle_t {
-  double width, height;
-  point_t pos;
-};
+  struct rectangle_t
+  {
+    double width, height;
+    point_t pos;
+  };
 
 }
 
