@@ -148,8 +148,8 @@ void isaev::displayShapesSpecs(std::ostream& out, const char* title, const Shape
   for (std::size_t i = 0; i < k; i++)
   {
     out << "Shape " << i + 1 << ":\n";
-    out << "  area = " << shapes[i]->getArea() << "\n";
-    out << "  frame: " << shapes[i]->getFrameRect() << "\n";
+    out << " area = " << shapes[i]->getArea() << "\n";
+    out << " frame: " << shapes[i]->getFrameRect() << "\n";
   }
   out << "Total area = " << calcSumArea(shapes, k) << "\n";
   out << "Total frame: " << formTotalFrameRect(shapes, k) << "\n";
