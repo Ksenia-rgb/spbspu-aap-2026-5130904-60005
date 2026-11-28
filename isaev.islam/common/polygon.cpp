@@ -7,7 +7,66 @@
 
 namespace
 {
+  using isaev::point_t;
+
   constexpr double epsilon = 1e-12;
+
+  double getSignedArea(const std::vector< point_t > & v)
+  {
+    const point_t & o = v[0];
+    double sum = 0.0;
+    const std::size_t n = v.size();
+    for (std::size_t i = 0; i < n; ++i)
+    {
+      const point_t & a = v[i];
+      const point_t & b = v[(i + 1) % n];
+      sum += (a.x - o.x) * (b.y - o.y) - (b.x - o.x) * (a.y - o.y);
+    }
+    return sum / 2.0;
+  }
+
+  point_t getCenter(const std::vector< point_t > & v)
+  {
+    const point_t & o = v[0];
+    const double area = getSignedArea(v);
+    double cx = 0.0;
+    double cy = 0.0;
+    const std::size_t n = v.size();
+    for (std::size_t i = 0; i < n; ++i)
+    {
+      const point_t & a = v[i];
+      const point_t & b = v[(i + 1) % n];
+      const double ax = a.x - o.x;
+      const double ay = a.y - o.y;
+      const double bx = b.x - o.x;
+      const double by = b.y - o.y;
+      const double cross = ax * by - bx * ay;
+      cx += (ax + bx) * cross;
+      cy += (ay + by) * cross;
+    }
+    return {o.x + cx / (6.0 * area), o.y + cy / (6.0 * area)};
+  }
+
+  void validate(const std::vector< point_t > & v)
+  {
+    for (const point_t & p: v)
+    {
+      if (!std::isfinite(p.x) || !std::isfinite(p.y))
+      {
+        throw std::invalid_argument("Polygon: invalid or overflowing coordinates");
+      }
+    }
+    const double area = getSignedArea(v);
+    if (!std::isfinite(area) || area == 0.0)
+    {
+      throw std::invalid_argument("Polygon: invalid or overflowing area");
+    }
+    const point_t c = getCenter(v);
+    if (!std::isfinite(c.x) || !std::isfinite(c.y))
+    {
+      throw std::invalid_argument("Polygon: invalid or overflowing center");
+    }
+  }
 }
 
 isaev::Polygon::Polygon(const point_t * vertices, std::size_t count)
@@ -16,46 +75,18 @@ isaev::Polygon::Polygon(const point_t * vertices, std::size_t count)
   {
     throw std::invalid_argument("Polygon: at least 3 vertices are required");
   }
-  vertices_.assign(vertices, vertices + count);
-  if (std::abs(getSignedArea()) < epsilon)
+  std::vector< point_t > tmp(vertices, vertices + count);
+  validate(tmp);
+  if (std::abs(getSignedArea(tmp)) < epsilon)
   {
     throw std::invalid_argument("Polygon: area must be non-zero");
   }
-}
-
-double isaev::Polygon::getSignedArea() const
-{
-  double sum = 0.0;
-  const std::size_t n = vertices_.size();
-  for (std::size_t i = 0; i < n; ++i)
-  {
-    const point_t & a = vertices_[i];
-    const point_t & b = vertices_[(i + 1) % n];
-    sum += a.x * b.y - b.x * a.y;
-  }
-  return sum / 2.0;
-}
-
-isaev::point_t isaev::Polygon::getCenter() const
-{
-  const double area = getSignedArea();
-  double cx = 0.0;
-  double cy = 0.0;
-  const std::size_t n = vertices_.size();
-  for (std::size_t i = 0; i < n; ++i)
-  {
-    const point_t & a = vertices_[i];
-    const point_t & b = vertices_[(i + 1) % n];
-    const double cross = a.x * b.y - b.x * a.y;
-    cx += (a.x + b.x) * cross;
-    cy += (a.y + b.y) * cross;
-  }
-  return {cx / (6.0 * area), cy / (6.0 * area)};
+  vertices_.swap(tmp);
 }
 
 double isaev::Polygon::getArea() const
 {
-  return std::abs(getSignedArea());
+  return std::abs(getSignedArea(vertices_));
 }
 
 isaev::rectangle_t isaev::Polygon::getFrameRect() const
@@ -76,29 +107,35 @@ isaev::rectangle_t isaev::Polygon::getFrameRect() const
 
 void isaev::Polygon::move(const point_t & p)
 {
-  const point_t c = getCenter();
+  const point_t c = getCenter(vertices_);
   move(p.x - c.x, p.y - c.y);
 }
 
 void isaev::Polygon::move(double dx, double dy)
 {
-  for (point_t & v: vertices_)
+  std::vector< point_t > tmp(vertices_);
+  for (point_t & v: tmp)
   {
     v.x += dx;
     v.y += dy;
   }
+  validate(tmp);
+  vertices_.swap(tmp);
 }
 
 void isaev::Polygon::scale(double k)
 {
-  if (k <= 0.0)
+  if (!(k > 0.0) || !std::isfinite(k))
   {
-    throw std::invalid_argument("Polygon: scale factor must be positive");
+    throw std::invalid_argument("Polygon: scale factor must be positive and finite");
   }
-  const point_t c = getCenter();
-  for (point_t & v: vertices_)
+  const point_t c = getCenter(vertices_);
+  std::vector< point_t > tmp(vertices_);
+  for (point_t & v: tmp)
   {
     v.x = c.x + (v.x - c.x) * k;
     v.y = c.y + (v.y - c.y) * k;
   }
+  validate(tmp);
+  vertices_.swap(tmp);
 }

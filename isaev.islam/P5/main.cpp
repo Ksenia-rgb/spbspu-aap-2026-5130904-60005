@@ -1,7 +1,9 @@
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <iomanip>
 #include <iostream>
+#include <ostream>
 #include <stdexcept>
 
 #include "../common/shapes/base-types.hpp"
@@ -10,145 +12,183 @@
 #include "../common/shapes/square.hpp"
 #include "../common/shapes/polygon.hpp"
 
-namespace
+namespace isaev
 {
-  using isaev::point_t;
-  using isaev::rectangle_t;
-  using isaev::Shape;
+  const int bad_ec = 1;
+  const int good_ec = 0;
 
-  void freeShapes(Shape ** shapes, std::size_t count)
-  {
-    for (std::size_t i = 0; i < count; ++i)
-    {
-      delete shapes[i];
-      shapes[i] = nullptr;
-    }
-  }
+  const std::size_t shapes_count_v = 5;
+  const double max_value_v = 1e6;
+  const int precision_v = 3;
 
-  double getTotalArea(const Shape * const * shapes, std::size_t count)
-  {
-    double total = 0.0;
-    for (std::size_t i = 0; i < count; ++i)
-    {
-      total += shapes[i]->getArea();
-    }
-    return total;
-  }
+  const point_t rect_center_p{0.0, 0.0};
+  const double rect_width_v = 4.0;
+  const double rect_height_v = 2.0;
+  const point_t rect_left_bottom_p{-3.0, -1.0};
+  const point_t rect_right_top_p{1.0, 2.5};
+  const point_t square_center_p{5.0, 5.0};
+  const double square_side_v = 3.0;
+  const point_t polygon_vertices_a[] = {{1.0, 1.0}, {5.0, 1.0}, {6.0, 4.0}, {3.0, 6.0}, {0.0, 4.0}};
+  const std::size_t polygon_vertices_count_v = 5;
+  const std::size_t triangle_vertices_count_v = 3;
 
-  rectangle_t getTotalFrameRect(const Shape * const * shapes, std::size_t count)
-  {
-    rectangle_t first = shapes[0]->getFrameRect();
-    double minX = first.pos.x - first.width / 2.0;
-    double maxX = first.pos.x + first.width / 2.0;
-    double minY = first.pos.y - first.height / 2.0;
-    double maxY = first.pos.y + first.height / 2.0;
-    for (std::size_t i = 1; i < count; ++i)
-    {
-      rectangle_t r = shapes[i]->getFrameRect();
-      minX = std::min(minX, r.pos.x - r.width / 2.0);
-      maxX = std::max(maxX, r.pos.x + r.width / 2.0);
-      minY = std::min(minY, r.pos.y - r.height / 2.0);
-      maxY = std::max(maxY, r.pos.y + r.height / 2.0);
-    }
-    return {maxX - minX, maxY - minY, {(minX + maxX) / 2.0, (minY + maxY) / 2.0}};
-  }
+  std::ostream& operator<<(std::ostream& out, const rectangle_t& rect);
 
-  void printFrameRect(std::ostream & out, const rectangle_t & r)
-  {
-    out << "width = " << r.width << ", height = " << r.height;
-    out << ", center = (" << r.pos.x << ", " << r.pos.y << ")";
-  }
-
-  void printShapes(std::ostream & out, const Shape * const * shapes, std::size_t count, const char * title)
-  {
-    out << "=== " << title << " ===\n";
-    for (std::size_t i = 0; i < count; ++i)
-    {
-      out << "Shape " << i + 1 << ":\n";
-      out << "  area = " << shapes[i]->getArea() << "\n";
-      out << "  frame: ";
-      printFrameRect(out, shapes[i]->getFrameRect());
-      out << "\n";
-    }
-    out << "Total area = " << getTotalArea(shapes, count) << "\n";
-    out << "Total frame: ";
-    printFrameRect(out, getTotalFrameRect(shapes, count));
-    out << "\n";
-  }
-
-  void scaleAboutPoint(Shape ** shapes, std::size_t count, const point_t & p, double k)
-  {
-    if (k <= 0.0)
-    {
-      throw std::invalid_argument("scale factor must be positive");
-    }
-    for (std::size_t i = 0; i < count; ++i)
-    {
-      const point_t before = shapes[i]->getFrameRect().pos;
-      shapes[i]->move(p);
-      const point_t after = shapes[i]->getFrameRect().pos;
-      shapes[i]->scale(k);
-      shapes[i]->move((before.x - after.x) * k, (before.y - after.y) * k);
-    }
-  }
+  double readDouble(std::istream& input);
+  point_t readPoint(std::istream& input);
+  void checkScaleParams(const point_t& anchor, double scale_coef);
+  void scaleAbout(Shape& s, const point_t& anchor, double scale_coef);
+  void scaleShapes(Shape* const* shapes, std::size_t k, const point_t& anchor, double scale_coef);
+  double calcSumArea(const Shape* const* shapes, std::size_t k);
+  rectangle_t formTotalFrameRect(const Shape* const* shapes, std::size_t k);
+  void displayShapesSpecs(std::ostream& out, const char* title, const Shape* const* shapes, std::size_t k);
+  int process(std::istream& input, std::ostream& out, std::ostream& err_out);
 }
 
 int main()
 {
-  using namespace isaev;
+  return isaev::process(std::cin, std::cout, std::cerr);
+}
 
-  constexpr std::size_t count = 5;
-  Shape * shapes[count] = {};
+std::ostream& isaev::operator<<(std::ostream& out, const rectangle_t& rect)
+{
+  out << "width = " << rect.width << ", height = " << rect.height;
+  return out << ", center = (" << rect.pos.x << ", " << rect.pos.y << ")";
+}
 
+double isaev::readDouble(std::istream& input)
+{
+  double res = 0.0;
+  input >> res;
+  if (!input)
+  {
+    throw std::runtime_error("Invalid input");
+  }
+  return res;
+}
+
+isaev::point_t isaev::readPoint(std::istream& input)
+{
+  return point_t{readDouble(input), readDouble(input)};
+}
+
+void isaev::checkScaleParams(const point_t& anchor, double scale_coef)
+{
+  if (!(scale_coef > 0.0))
+  {
+    throw std::invalid_argument("Scale factor must be positive");
+  }
+  if (std::abs(anchor.x) > max_value_v || std::abs(anchor.y) > max_value_v || scale_coef > max_value_v)
+  {
+    throw std::invalid_argument("Values must satisfy |x|, |y| <= 1e6 and scale factor <= 1e6");
+  }
+}
+
+void isaev::scaleAbout(Shape& s, const point_t& anchor, double scale_coef)
+{
+  const point_t before = s.getFrameRect().pos;
+  s.move(anchor);
+  const point_t after = s.getFrameRect().pos;
+  s.scale(scale_coef);
+  s.move((before.x - after.x) * scale_coef, (before.y - after.y) * scale_coef);
+}
+
+void isaev::scaleShapes(Shape* const* shapes, std::size_t k, const point_t& anchor, double scale_coef)
+{
+  for (std::size_t i = 0; i < k; i++)
+  {
+    scaleAbout(*shapes[i], anchor, scale_coef);
+  }
+}
+
+double isaev::calcSumArea(const Shape* const* shapes, std::size_t k)
+{
+  double res = 0.0;
+  for (std::size_t i = 0; i < k; i++)
+  {
+    res += shapes[i]->getArea();
+  }
+  return res;
+}
+
+isaev::rectangle_t isaev::formTotalFrameRect(const Shape* const* shapes, std::size_t k)
+{
+  if (shapes == nullptr || k == 0)
+  {
+    throw std::invalid_argument("Empty shapes array");
+  }
+  double min_x = 0.0;
+  double min_y = 0.0;
+  double max_x = 0.0;
+  double max_y = 0.0;
+  for (std::size_t i = 0; i < k; i++)
+  {
+    const rectangle_t frame = shapes[i]->getFrameRect();
+    const double left = frame.pos.x - frame.width / 2.0;
+    const double right = frame.pos.x + frame.width / 2.0;
+    const double bottom = frame.pos.y - frame.height / 2.0;
+    const double top = frame.pos.y + frame.height / 2.0;
+    min_x = (i == 0) ? left : std::min(min_x, left);
+    max_x = (i == 0) ? right : std::max(max_x, right);
+    min_y = (i == 0) ? bottom : std::min(min_y, bottom);
+    max_y = (i == 0) ? top : std::max(max_y, top);
+  }
+  const double w = max_x - min_x;
+  const double h = max_y - min_y;
+  return rectangle_t{w, h, {min_x + w / 2.0, min_y + h / 2.0}};
+}
+
+void isaev::displayShapesSpecs(std::ostream& out, const char* title, const Shape* const* shapes, std::size_t k)
+{
+  if (shapes == nullptr || k == 0)
+  {
+    throw std::invalid_argument("Empty shapes array");
+  }
+  out << "=== " << title << " ===\n";
+  for (std::size_t i = 0; i < k; i++)
+  {
+    out << "Shape " << i + 1 << ":\n";
+    out << "  area = " << shapes[i]->getArea() << "\n";
+    out << "  frame: " << shapes[i]->getFrameRect() << "\n";
+  }
+  out << "Total area = " << calcSumArea(shapes, k) << "\n";
+  out << "Total frame: " << formTotalFrameRect(shapes, k) << "\n";
+}
+
+int isaev::process(std::istream& input, std::ostream& out, std::ostream& err_out)
+{
   try
   {
-    const point_t polygonVertices[] = {{1.0, 1.0}, {5.0, 1.0}, {6.0, 4.0}, {3.0, 6.0}, {0.0, 4.0}};
-    shapes[0] = new Rectangle(point_t{0.0, 0.0}, 4.0, 2.0);
-    shapes[1] = new Rectangle(point_t{-3.0, -1.0}, point_t{1.0, 2.5});
-    shapes[2] = new Square(point_t{5.0, 5.0}, 3.0);
-    shapes[3] = new Polygon(polygonVertices, sizeof(polygonVertices) / sizeof(polygonVertices[0]));
-    shapes[4] = new Polygon(polygonVertices, 3);
+    Rectangle rect_a(rect_center_p, rect_width_v, rect_height_v);
+    Rectangle rect_b(rect_left_bottom_p, rect_right_top_p);
+    Square square_s(square_center_p, square_side_v);
+    Polygon polygon_p(polygon_vertices_a, polygon_vertices_count_v);
+    Polygon triangle_p(polygon_vertices_a, triangle_vertices_count_v);
+    Shape* shapes_arr[shapes_count_v]{&rect_a, &rect_b, &square_s, &polygon_p, &triangle_p};
+    out << std::fixed << std::setprecision(precision_v);
+    out << "Input anchor point x and y" << std::endl;
+    const point_t anchor_p = readPoint(input);
+    out << "Input scale multiplier" << std::endl;
+    const double scale_coef = readDouble(input);
+    checkScaleParams(anchor_p, scale_coef);
+    displayShapesSpecs(out, "Before scaling", shapes_arr, shapes_count_v);
+    scaleShapes(shapes_arr, shapes_count_v, anchor_p, scale_coef);
+    displayShapesSpecs(out, "After scaling", shapes_arr, shapes_count_v);
   }
-  catch (const std::exception & e)
+  catch (const std::invalid_argument& e)
   {
-    std::cerr << "Error: " << e.what() << "\n";
-    freeShapes(shapes, count);
-    return 1;
+    err_out << "Invalid argument: " << e.what() << std::endl;
+    return bad_ec;
   }
-
-  std::cout << std::fixed << std::setprecision(3);
-
-  std::cout << "Enter scaling point (x y) and scale factor k: ";
-  point_t p{0.0, 0.0};
-  double k = 0.0;
-  if (!(std::cin >> p.x >> p.y >> k))
+  catch (const std::runtime_error& e)
   {
-    std::cerr << "Error: invalid input\n";
-    freeShapes(shapes, count);
-    return 1;
+    err_out << "Runtime error: " << e.what() << std::endl;
+    return bad_ec;
   }
-  if (k <= 0.0)
+  catch (const std::exception& e)
   {
-    std::cerr << "Error: scale factor must be positive\n";
-    freeShapes(shapes, count);
-    return 1;
+    err_out << "Error: " << e.what() << std::endl;
+    return bad_ec;
   }
-
-  printShapes(std::cout, shapes, count, "Before scaling");
-
-  try
-  {
-    scaleAboutPoint(shapes, count, p, k);
-  }
-  catch (const std::exception & e)
-  {
-    std::cerr << "Error: " << e.what() << "\n";
-    freeShapes(shapes, count);
-    return 1;
-  }
-
-  printShapes(std::cout, shapes, count, "After scaling");
-
-  freeShapes(shapes, count);
-  return 0;
+  return good_ec;
 }

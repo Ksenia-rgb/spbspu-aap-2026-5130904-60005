@@ -20,8 +20,6 @@ namespace isaev
     void scale(double k) override;
   private:
     std::vector< point_t > vertices_;
-    double getSignedArea() const;
-    point_t getCenter() const;
   };
 }
 
