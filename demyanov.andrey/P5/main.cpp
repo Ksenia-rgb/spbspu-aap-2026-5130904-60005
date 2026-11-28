@@ -11,9 +11,10 @@ using demyanov::Shape;
 
 constexpr size_t shape_count = 3;
 
-void scale_shapes(Shape **shapes, const point_t data[], point_t scale_point,
-                  double k, size_t count) {
-  for (size_t i = 0; i < count; i++) {
+void scale_shapes(Shape **shapes, const point_t data[], point_t scale_point, double k, size_t count)
+{
+  for (size_t i = 0; i < count; i++)
+  {
     const double dx = data[i].x - scale_point.x;
     const double dy = data[i].y - scale_point.y;
     shapes[i]->move(scale_point);
@@ -22,28 +23,34 @@ void scale_shapes(Shape **shapes, const point_t data[], point_t scale_point,
   }
 }
 
-rectangle_t get_total_frame(Shape **shapes, size_t count) {
+rectangle_t get_total_frame(Shape **shapes, size_t count)
+{
   const rectangle_t frame1 = shapes[0]->getFrameRect();
   double min_x = frame1.pos.x - frame1.width / 2;
   double max_x = frame1.pos.x + frame1.width / 2;
   double min_y = frame1.pos.y - frame1.height / 2;
   double max_y = frame1.pos.y + frame1.height / 2;
 
-  for (size_t i = 1; i < count; i++) {
+  for (size_t i = 1; i < count; i++)
+  {
     const rectangle_t frame2 = shapes[i]->getFrameRect();
-    if ((frame2.pos.x - frame2.width / 2) < min_x) {
+    if ((frame2.pos.x - frame2.width / 2) < min_x)
+    {
       min_x = frame2.pos.x - frame2.width / 2;
     }
     const double right_x = frame2.pos.x + frame2.width / 2;
-    if (right_x > max_x) {
+    if (right_x > max_x)
+    {
       max_x = right_x;
     }
     const double bottom_y = frame2.pos.y - frame2.height / 2;
-    if (bottom_y < min_y) {
+    if (bottom_y < min_y)
+    {
       min_y = bottom_y;
     }
     const double top_y = frame2.pos.y + frame2.height / 2;
-    if (top_y > max_y) {
+    if (top_y > max_y)
+    {
       max_y = top_y;
     }
   }
@@ -57,7 +64,8 @@ rectangle_t get_total_frame(Shape **shapes, size_t count) {
   return rectangle_t{width, height, pos_xy};
 }
 
-int main() {
+int main()
+{
   constexpr double rectangle_width = 5.0;
   constexpr double rectangle_height = 3.0;
   constexpr double big_radius = 5.0;
@@ -81,58 +89,62 @@ int main() {
 
   double total_area = 0.0;
 
-  for (size_t i = 0; i < shape_count; ++i) {
+  for (size_t i = 0; i < shape_count; ++i)
+  {
     std::cout << shapes[i]->getArea() << "\n";
     total_area += shapes[i]->getArea();
   }
 
   std::cout << total_area << "\n";
 
-  for (size_t j = 0; j < shape_count; ++j) {
+  for (size_t j = 0; j < shape_count; ++j)
+  {
     const rectangle_t frame_rectangle = shapes[j]->getFrameRect();
-    std::cout << frame_rectangle.width << " " << frame_rectangle.height << " "
-              << frame_rectangle.pos.x << " " << frame_rectangle.pos.y << " "
-              << shapes[j]->getArea() << "\n";
+    std::cout << frame_rectangle.width << " " << frame_rectangle.height << " " << frame_rectangle.pos.x << " "
+              << frame_rectangle.pos.y << " " << shapes[j]->getArea() << "\n";
   }
 
   rectangle_t total_frame = get_total_frame(shapes, shape_count);
 
-  std::cout << total_frame.width << " " << total_frame.height << " "
-            << total_frame.pos.x << " " << total_frame.pos.y << "\n";
+  std::cout << total_frame.width << " " << total_frame.height << " " << total_frame.pos.x << " " << total_frame.pos.y
+            << "\n";
 
-  try {
+  try
+  {
     point_t scale_point;
     std::cin >> scale_point.x >> scale_point.y;
     double k = 0.0;
     std::cin >> k;
-    if (!std::cin) {
+    if (!std::cin)
+    {
       throw std::invalid_argument("Invalid input");
     }
-    if (k <= 0) {
+    if (k <= 0)
+    {
       throw std::invalid_argument("Invalid scale coefficient");
     }
     scale_shapes(shapes, data, scale_point, k, shape_count);
 
     total_area = 0.0;
-    for (size_t j = 0; j < shape_count; ++j) {
+    for (size_t j = 0; j < shape_count; ++j)
+    {
       const rectangle_t frame_rectangle = shapes[j]->getFrameRect();
-      std::cout << frame_rectangle.width << " " << frame_rectangle.height
-                << " " << frame_rectangle.pos.x << " "
-                << frame_rectangle.pos.y << " " << shapes[j]->getArea()
-                << "\n";
+      std::cout << frame_rectangle.width << " " << frame_rectangle.height << " " << frame_rectangle.pos.x << " "
+                << frame_rectangle.pos.y << " " << shapes[j]->getArea() << "\n";
       total_area += shapes[j]->getArea();
     }
     std::cout << total_area << "\n";
-
-  } catch (const std::invalid_argument &error) {
+  }
+  catch (const std::invalid_argument &error)
+  {
     std::cerr << error.what() << "\n";
     return 1;
   }
 
   total_frame = get_total_frame(shapes, shape_count);
 
-  std::cout << total_frame.width << " " << total_frame.height << " "
-            << total_frame.pos.x << " " << total_frame.pos.y << "\n";
+  std::cout << total_frame.width << " " << total_frame.height << " " << total_frame.pos.x << " " << total_frame.pos.y
+            << "\n";
 
   return 0;
 }
