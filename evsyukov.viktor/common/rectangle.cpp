@@ -1,4 +1,4 @@
-#include <shapes/rectangle.hpp>
+#include "shapes/rectangle.hpp"
 #include <stdexcept>
 
 namespace evsyukov

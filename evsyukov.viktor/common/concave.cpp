@@ -64,10 +64,10 @@ namespace evsyukov
     double sum = 0;
     for (size_t i = 0; i < k_vertex_count; i++)
     {
-      size_t j = (i + 1) % k_vertex_count;
+      const size_t j = (i + 1) % k_vertex_count;
       sum += v_[i].x * v_[j].y - v_[j].x * v_[i].y;
     }
-    return std::abs(sum) / 2.0;
+    return std::abs(sum) / k_half;
   }
   rectangle_t Concave::getFrameRect() const noexcept
   {

@@ -51,7 +51,8 @@ namespace evsyukov
         }
       }
       std::cout << "Total area: " << total << "\n";
-      rectangle_t f_r_result = {max_x - min_x, max_y - min_y, {(min_x + max_x) / k_half, (min_y + max_y) / k_half}};
+      const rectangle_t f_r_result
+          = {max_x - min_x, max_y - min_y, {(min_x + max_x) / k_half, (min_y + max_y) / k_half}};
       std::cout << "Total frame: ";
       printFrame(f_r_result);
     }
