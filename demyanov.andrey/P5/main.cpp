@@ -1,5 +1,5 @@
-#include <shapes/base-types.hpp>
-#include <shapes/shape.hpp>
+#include "../common/shapes/base-types.hpp"
+#include "../common/shapes/shape.hpp"
 #include <iostream>
 #include <stdexcept>
 
