@@ -1,4 +1,4 @@
-#include <shapes/base-types.hpp>
+#include "base-types.hpp"
 
 namespace demyanov {
 class Shape {
@@ -26,8 +26,8 @@ private:
 
 class Rubber : public Shape {
 public:
-  Rubber(double bigRadius, double smallRadius, point_t bigCenter,
-         point_t smallCenter);
+  Rubber(double big_radius, double small_radius, point_t big_center,
+         point_t small_center);
   double getArea() const override;
   rectangle_t getFrameRect() const override;
   void move(double dx, double dy) override;
@@ -35,10 +35,10 @@ public:
   void scale(double) override;
 
 private:
-  double bigRadius_;
-  double smallRadius_;
-  point_t bigCenter_;
-  point_t smallCenter_;
+  double big_radius_;
+  double small_radius_;
+  point_t big_center_;
+  point_t small_center_;
 };
 
 class Concave : public Shape {
@@ -56,4 +56,4 @@ private:
   point_t p3_;
   point_t p4_;
 };
-} // namespace demyanov
+}

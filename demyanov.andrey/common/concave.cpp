@@ -7,64 +7,61 @@ Concave::Concave(point_t p1, point_t p2, point_t p3, point_t p4)
     : p1_(p1), p2_(p2), p3_(p3), p4_(p4) {}
 
 double Concave::getArea() const {
-  double s =
+  const double area =
       std::abs(p1_.x * p2_.y + p2_.x * p3_.y + p3_.x * p4_.y + p4_.x * p1_.y -
                p1_.y * p2_.x - p2_.y * p3_.x - p3_.y * p4_.x - p4_.y * p1_.x) /
       2;
-  return s;
+  return area;
 }
 
 rectangle_t Concave::getFrameRect() const {
-  double minX = p1_.x;
-  if (minX > p2_.x) {
-    minX = p2_.x;
+  double min_x = p1_.x;
+  if (min_x > p2_.x) {
+    min_x = p2_.x;
   }
-  if (minX > p3_.x) {
-    minX = p3_.x;
+  if (min_x > p3_.x) {
+    min_x = p3_.x;
   }
-  if (minX > p4_.x) {
-    minX = p4_.x;
-  }
-
-  double minY = p1_.y;
-  if (minY > p2_.y) {
-    minY = p2_.y;
-  }
-  if (minY > p3_.y) {
-    minY = p3_.y;
-  }
-  if (minY > p4_.y) {
-    minY = p4_.y;
+  if (min_x > p4_.x) {
+    min_x = p4_.x;
   }
 
-  double maxX = p1_.x;
-  if (maxX < p2_.x) {
-    maxX = p2_.x;
+  double min_y = p1_.y;
+  if (min_y > p2_.y) {
+    min_y = p2_.y;
   }
-  if (maxX < p3_.x) {
-    maxX = p3_.x;
+  if (min_y > p3_.y) {
+    min_y = p3_.y;
   }
-  if (maxX < p4_.x) {
-    maxX = p4_.x;
-  }
-
-  double maxY = p1_.y;
-  if (maxY < p2_.y) {
-    maxY = p2_.y;
-  }
-  if (maxY < p3_.y) {
-    maxY = p3_.y;
-  }
-  if (maxY < p4_.y) {
-    maxY = p4_.y;
+  if (min_y > p4_.y) {
+    min_y = p4_.y;
   }
 
-  double width = maxX - minX;
-  double height = maxY - minY;
+  double max_x = p1_.x;
+  if (max_x < p2_.x) {
+    max_x = p2_.x;
+  }
+  if (max_x < p3_.x) {
+    max_x = p3_.x;
+  }
+  if (max_x < p4_.x) {
+    max_x = p4_.x;
+  }
 
-  point_t pos = {0, 0};
-  pos.x = (minX + maxX) / 2;
-  pos.y = (minY + maxY) / 2;
+  double max_y = p1_.y;
+  if (max_y < p2_.y) {
+    max_y = p2_.y;
+  }
+  if (max_y < p3_.y) {
+    max_y = p3_.y;
+  }
+  if (max_y < p4_.y) {
+    max_y = p4_.y;
+  }
+
+  const double width = max_x - min_x;
+  const double height = max_y - min_y;
+  const point_t pos = {(min_x + max_x) / 2, (min_y + max_y) / 2};
 
   return rectangle_t{width, height, pos};
 }
@@ -84,8 +81,8 @@ void Concave::move(double dx, double dy) {
 }
 
 void Concave::move(const point_t &point) {
-  double dx = point.x - p1_.x;
-  double dy = point.y - p1_.y;
+  const double dx = point.x - p1_.x;
+  const double dy = point.y - p1_.y;
   move(dx, dy);
 }
 
@@ -93,31 +90,20 @@ void Concave::scale(double k) {
   if (k <= 0) {
     throw std::invalid_argument("Invalid scale coefficient");
   }
-  double dx = p2_.x - p1_.x;
-  double newX = p1_.x + dx * k;
 
-  double dy = p2_.y - p1_.y;
-  double newY = p1_.y + dy * k;
+  const double dx2 = p2_.x - p1_.x;
+  const double dy2 = p2_.y - p1_.y;
+  p2_.x = p1_.x + dx2 * k;
+  p2_.y = p1_.y + dy2 * k;
 
-  p2_.x = newX;
-  p2_.y = newY;
+  const double dx3 = p3_.x - p1_.x;
+  const double dy3 = p3_.y - p1_.y;
+  p3_.x = p1_.x + dx3 * k;
+  p3_.y = p1_.y + dy3 * k;
 
-  dx = p3_.x - p1_.x;
-  newX = p1_.x + dx * k;
-
-  dy = p3_.y - p1_.y;
-  newY = p1_.y + dy * k;
-
-  p3_.x = newX;
-  p3_.y = newY;
-
-  dx = p4_.x - p1_.x;
-  newX = p1_.x + dx * k;
-
-  dy = p4_.y - p1_.y;
-  newY = p1_.y + dy * k;
-
-  p4_.x = newX;
-  p4_.y = newY;
+  const double dx4 = p4_.x - p1_.x;
+  const double dy4 = p4_.y - p1_.y;
+  p4_.x = p1_.x + dx4 * k;
+  p4_.y = p1_.y + dy4 * k;
 }
-} // namespace demyanov
+}

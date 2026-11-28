@@ -13,9 +13,7 @@ Rectangle::Rectangle(double width, double height, point_t pos)
 }
 
 double Rectangle::getArea() const {
-  double a = rect_.width;
-  double b = rect_.height;
-  double s = a * b;
+  const double s = rect_.width * rect_.height;
   return s;
 }
 
@@ -35,7 +33,8 @@ void Rectangle::scale(double k) {
   if (k <= 0) {
     throw std::invalid_argument("Error: k cannot be <= 0");
   }
-  rect_.width = rect_.width * k;
-  rect_.height = rect_.height * k;
+  rect_.width *= k;
+  rect_.height *= k;
 }
-} // namespace demyanov
+}
+

@@ -9,4 +9,4 @@ struct rectangle_t {
   double height;
   point_t pos;
 };
-} // namespace demyanov
+}
